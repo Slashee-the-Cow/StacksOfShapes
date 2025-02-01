@@ -1,0 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.qmlc
+
+# Translations
+
+# Models
+models/Calibration-Extruder-Offset-6parts-export.stl
+resources/~$CalibrationCalcul.xlsx
+*.xlsx
