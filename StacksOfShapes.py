@@ -16,7 +16,7 @@ import math
 import numpy
 import trimesh
 
-from typing import Optional, List, Any
+from typing import Optional, List, Any, TYPE_CHECKING
 
 from UM.Extension import Extension
 from UM.Application import Application
@@ -40,7 +40,10 @@ from UM.Message import Message
 
 from UM.i18n import i18nCatalog
 
+
 from PyQt6.QtCore import QObject, pyqtSlot, pyqtSignal, pyqtProperty
+
+from .interactions import UIInteraction, MainInteraction
 
 # Suggested solution from fieldOfView . in this discussion solved in Cura 4.9
 # https://github.com/5axes/Calibration-Shapes/issues/1
@@ -55,11 +58,11 @@ if catalog.hasTranslationLoaded():
     Logger.log("i", "Stacks of Shapes translation loaded")
 
 #This class is the extension and doubles as QObject to manage the qml    
-class StacksOfShapes(QObject, Extension):
+class StacksOfShapes(QObject, Extension, MainInteraction):
     
     
-    def __init__(self, parent = None) -> None:
-        super().__init__()
+    def __init__(self, shape_list_ui: UIInteraction, parent = None):
+        super().__init__(parent)
         
         # set the preferences to store the default value
         self._preferences = CuraApplication.getInstance().getPreferences()
@@ -68,6 +71,8 @@ class StacksOfShapes(QObject, Extension):
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
 
         self._settings_popup = None
+        self._shape_list_ui = shape_list_ui
+        self._shape_list_ui.set_model_data(self.Shapes)
         
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
         self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
@@ -75,7 +80,8 @@ class StacksOfShapes(QObject, Extension):
         self._controller = CuraApplication.getInstance().getController()
         
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cube"), self.addCube)
+        self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self._shape_list_ui.showListPopup)
+        """self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cube"), self.addCube)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cylinder"), self.addCylinder)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a sphere"), self.addSphere)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a tube"), self.addTube)
@@ -105,11 +111,25 @@ class StacksOfShapes(QObject, Extension):
         self.addMenuItem("  ", lambda: None)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Cube bi-color"), self.addCubeBiColor)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Bi-Color Calibration Cube"), self.addHollowCalibrationCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Extruder Offset Calibration Part"), self.addExtruderOffsetCalibration)        
+        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Extruder Offset Calibration Part"), self.addExtruderOffsetCalibration)        """
         self.addMenuItem("   ", lambda: None)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Set default size"), self.showSettingsPopup)
 
-  
+    
+    Shapes = {
+        catalog.i18nc("shape_category", "Basics"): {
+            catalog.i18nc("shape_name", "Cube"): "platonics/hexahedron.stl",
+            catalog.i18nc("shape_name", "Sphere"): "basics/sphere.stl",
+        },
+        catalog.i18nc("shape_category", "Platonic Solids"): {
+            catalog.i18nc("shape_name", "Tetrahedron (4 sides)"): "platonics/tetrahedron.stl",
+            catalog.i18nc("shape_name", "Hexahedron (6 sides)"): "platonics/hexahedron.stl",
+            catalog.i18nc("shape_name", "Octahedron (8 sides)"): "platonics/octahedron.stl",
+            catalog.i18nc("shape_name", "Dodecahedron (12 sides)"): "platonics/dodecahedron.stl",
+            catalog.i18nc("shape_name", "Icosahedron (20 sides)"): "platonics/icosahedron.stl",
+        }
+    }
+
     # Define the default value for the standard element
     def showSettingsPopup(self):
         if self._settings_popup is None:
@@ -312,6 +332,9 @@ class StacksOfShapes(QObject, Extension):
         mesh_data = MeshData(vertices=vertices, indices=indices, normals=normals)
 
         return mesh_data        
+    
+    def _createShape(self, shape_type):
+        Logger.log("i", f"StacksOfShapes._createShape called with {shape_type}")
         
     # Initial Source code from  fieldOfView
     # https://github.com/fieldOfView/Cura-SimpleShapes/blob/bac9133a2ddfbf1ca6a3c27aca1cfdd26e847221/SimpleShapes.py#L70

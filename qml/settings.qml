@@ -8,7 +8,7 @@ import UM 1.6 as UM
 import Cura 1.7 as Cura
 
 UM.Dialog {
-    id: csrSettings
+    id: sosSettings
 
     property bool validInput: false
 
@@ -19,23 +19,23 @@ UM.Dialog {
     
     property int shapeSizeValue: 999
 
-    property variant catalog: UM.I18nCatalog { name: "calibrationshapesreborn" }
+    property variant catalog: UM.I18nCatalog { name: "stacksofshapes" }
 
     Component.onCompleted: {
         shapeSizeValue = manager.ShapeSize
         shapeSizeTextField.forceActiveFocus()
     }
 
-    title: catalog.i18nc("@title", "Calibration Shapes Reborn Settings")
+    title: catalog.i18nc("@title", "Stacks of Shapes Settings")
 
     backgroundColor: UM.Theme.getColor("main_background")
     buttonSpacing: UM.Theme.getSize("default_margin").width
     minimumWidth: Math.max((mainLayout.Layout.minimumWidth + 3 * UM.Theme.getSize("default_margin").width),
-        (errorMessage.contentWidth + 50 * screenScaleFactor + 3 * UM.Theme.getSize("default_margin").width),
+        (sizeErrorMessage.contentWidth + 50 * screenScaleFactor + 3 * UM.Theme.getSize("default_margin").width),
         (saveButton.width + cancelButton.width + 4 * UM.Theme.getSize("default_margin").width))
     maximumWidth: minimumWidth
     width: minimumWidth
-    minimumHeight: mainLayout.Layout.minimumHeight + errorMessage.contentHeight + (2 * UM.Theme.getSize("default_margin").height) + saveButton.height + UM.Theme.getSize("default_lining").height
+    minimumHeight: mainLayout.Layout.minimumHeight + sizeErrorMessage.contentHeight + (2 * UM.Theme.getSize("default_margin").height) + saveButton.height + UM.Theme.getSize("default_lining").height
     //minimumHeight: 300 * screenScaleFactor
     maximumHeight: minimumHeight
     height: minimumHeight
@@ -78,9 +78,9 @@ UM.Dialog {
                     }
 
                     Connections {
-                        target: csrSettings
+                        target: sosSettings
                         function onShapeSizeValueChanged() {
-                            shapeSizeTextField.text = csrSettings.shapeSizeValue.toString()
+                            shapeSizeTextField.text = sosSettings.shapeSizeValue.toString()
                         }
                     }
 
@@ -104,7 +104,7 @@ UM.Dialog {
         }
 
         UM.Label {
-            id: errorMessage
+            id: sizeErrorMessage
             color: "red"
             text: catalog.i18nc("@warning_text", "Please enter a valid number<br>Between 1 and 200")
             visible: !validInput
@@ -121,7 +121,7 @@ UM.Dialog {
             text: catalog.i18nc("@cancel", "Cancel")
             
             onClicked: {
-                csrSettings.reject()
+                sosSettings.reject()
             } 
         },
         Cura.PrimaryButton {
@@ -130,7 +130,7 @@ UM.Dialog {
             enabled: validInput // Disable the button if input is invalid
             onClicked: {
                 if(validInput){
-                    csrSettings.accept()
+                    sosSettings.accept()
                 } else {
                     shapeSizeTextField.forceActiveFocus()        
                 }
