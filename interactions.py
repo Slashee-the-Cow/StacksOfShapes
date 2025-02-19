@@ -6,7 +6,7 @@ class UIInteraction():
     def showListPopup(self):
         raise NotImplementedError
 
-    def set_model_data(self, data: dict):
+    def set_shape_data(self, data: dict):
         raise NotImplementedError
 
     def set_main_instance(self, main_instance: MainInteraction):

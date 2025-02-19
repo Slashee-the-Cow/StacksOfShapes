@@ -1,5 +1,4 @@
 # Part of initial code by fieldOfView 2018
-# Slight amounts of code from 5@xes 2020-2022 remain
 # Stacks of Shapes copyright Slashee the Cow 2025-
 
 # Utah Teapot model by zzubnik  -  https://www.thingiverse.com/thing:852078 under the Creative Commons Public Domain licence
@@ -72,7 +71,7 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
 
         self._settings_popup = None
         self._shape_list_ui = shape_list_ui
-        self._shape_list_ui.set_model_data(self.Shapes)
+        self._shape_list_ui.set_shape_data(self.Shapes)
         
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
         self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
@@ -165,78 +164,6 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
         # addShape
         self._addShape(mesh_name,self._toMeshData(mesh), **kwargs)
                      
-    def addCalibrationCube(self) -> None:
-        self._registerShapeStl("CalibrationCube")
-
-    def addMultiCube(self) -> None:
-        self._registerShapeStl("MultiCube")
-
-    def addJunctionDeviationTower(self) -> None:
-        self._registerShapeStl("JunctionDeviationTower")
-        
-    def addRetractTest(self) -> None:
-        self._registerShapeStl("RetractTest")
-
-    def addLayerAdhesion(self) -> None:
-        self._registerShapeStl("LayerAdhesion")    
-    
-    def addXYCalibration(self) -> None:
-        self._registerShapeStl("xy_calibration")
-        
-    def addBridgeTest(self) -> None:
-        self._registerShapeStl("BridgeTest")
-
-    def addThinWall(self) -> None:
-        self._registerShapeStl("ThinWall")
- 
-    def addThinWall2(self) -> None:
-        self._registerShapeStl("ThinWallRought")
-
-    def addBacklashTest(self) -> None:
-        self._registerShapeStl("Backlash")  
-  
-    def addOverhangTest(self) -> None:
-        self._registerShapeStl("OverhangTest", "Overhang.stl")
- 
-    def addFlowTest(self) -> None:
-        self._registerShapeStl("FlowTest", "FlowTest.stl")
-        
-    def addHoleTest(self) -> None:
-        self._registerShapeStl("FlowTest", "HoleTest.stl")
-
-    def addTolerance(self) -> None:
-        self._registerShapeStl("Tolerance")
-
-    def addLithophaneTest(self) -> None:
-        self._registerShapeStl("Lithophane")
-        
-    # Dotdash addition 2 - Support test
-    def addSupportTest(self) -> None:
-        self._registerShapeStl("SupportTest")
-
-    # Dimensional Accuracy Test
-    def addDimensionalTest(self) -> None:
-        self._registerShapeStl("DimensionalAccuracyTest")
-        
-    # Dotdash addition - for Linear/Pressure advance
-    def addPressureAdvTower(self) -> None:
-        self._registerShapeStl("PressureAdv", "PressureAdvTower.stl")
-
-    #-----------------------------
-    #   Dual Extruder 
-    #----------------------------- 
-    def addCubeBiColor(self) -> None:
-        self._registerShapeStl("CubeBiColorExt1", "CubeBiColorWhite.stl", ext_pos=1)
-        self._registerShapeStl("CubeBiColorExt2", "CubeBiColorRed.stl", ext_pos=2)
-
-    def addHollowCalibrationCube(self) -> None:
-        self._registerShapeStl("CubeBiColorExt", "HollowCalibrationCube.stl", ext_pos=1)
-        self._registerShapeStl("CubeBiColorInt", "HollowCenterCube.stl", ext_pos=2)
-        
-    def addExtruderOffsetCalibration(self) -> None:
-        self._registerShapeStl("CalibrationMultiExtruder1", "nozzle-to-nozzle-xy-offset-calibration-pattern-a.stl", ext_pos=1)
-        self._registerShapeStl("CalibrationMultiExtruder1", "nozzle-to-nozzle-xy-offset-calibration-pattern-b.stl", ext_pos=2)
-
     #-----------------------------
     #   Standard Geometry  
     #-----------------------------    

@@ -2,10 +2,8 @@
 
 from .StacksOfShapes import StacksOfShapes
 from .shapelistui import ShapeListUI
-from .shapelistmodel import ShapeListModel
 
-model = ShapeListModel()
-shapes_ui_instance = ShapeListUI(model)
+shapes_ui_instance = ShapeListUI()
 main_instance = StacksOfShapes(shapes_ui_instance)
 shapes_ui_instance.set_main_instance(main_instance)
 

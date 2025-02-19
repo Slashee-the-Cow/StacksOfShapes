@@ -13,58 +13,43 @@ UM.Dialog {
     ColumnLayout {
         anchors.fill: parent
 
-        Timer {
-        id: updateTimer
-        interval: 100 // Small delay (milliseconds)
-        repeat: false
-            onTriggered: {
-                rootObject.forceLayoutUpdate();
-            }
-        }
-
-        Component.onCompleted: {
-            updateTimer.start();
-        }
-
-        ListView {
-            id: categoryListView
-            width: parent.width
-            height: 150
-            model: shapeListModel
+        ListView {  // Categories
+            width: shapeDialog.width / 2
+            height: 200
+            model: categories
             delegate: Rectangle {
-                width: categoryListView.width
+                width: parent.width
                 height: 40
                 color: "lightblue"
                 Text {
-                    text: modelData ? modelData.category : "BlankCategory"
+                    text: modelData
                     anchors.centerIn: parent
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        shapeListModel.select_category(modelData.category)
+                        shapeListUI.selectedCategoryIndex = categoryList.currentIndex
                     }
                 }
             }
         }
 
-        ListView {
-            id: shapeListView
-            width: parent.width
-            height: parent.height - categoryListView.height
-            model: shapeListModel  // Use the same model
+        ListView {  // Shapes (filtered)
+            width: shapeDialog.width / 2
+            height: 200
+            model: shapesListUI.selectedCategoryIndex >= 0 ? shapesList[shapesListUI.selectedCategoryIndex] : []
             delegate: Rectangle {
-                width: shapeListView.width
+                width: parent.width
                 height: 40
                 color: "lightgray"
                 Text {
-                    text: modelData ? modelData.shapeName : "BlankShapeName"
+                    text: modelData.name
                     anchors.centerIn: parent
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        shapeListUI._handleShapeSelection(modelData.shapeName) // And here!
+                        shapeListUI.create_shape(modelData.path); // Call Python function
                     }
                 }
             }
