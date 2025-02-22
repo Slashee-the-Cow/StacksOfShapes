@@ -7,8 +7,6 @@
 # 1.0.0:    Initial release.
 
 
-    
-# Imports from the python standard library to build the plugin functionality
 import os
 import sys
 import math
@@ -40,9 +38,24 @@ from UM.Message import Message
 from UM.i18n import i18nCatalog
 
 
-from PyQt6.QtCore import QObject, pyqtSlot, pyqtSignal, pyqtProperty
+from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty
 
-from .interactions import UIInteraction, MainInteraction
+DEBUG_MODE = True
+
+def log(level, message):
+    """Wrapper function for logging messages using Cura's Logger, but with debug mode so as not to spam you."""
+    if level == "d" and DEBUG_MODE:
+        Logger.log("d", message)
+    elif level == "i":
+        Logger.log("i", message)
+    elif level == "w":
+        Logger.log("w", message)
+    elif level == "e":
+        Logger.log("e", message)
+    elif level == "c":
+        Logger.log("c", message)
+    elif DEBUG_MODE:
+        Logger.log("w", f"Invalid log level: {level} for message {message}")
 
 # Suggested solution from fieldOfView . in this discussion solved in Cura 4.9
 # https://github.com/5axes/Calibration-Shapes/issues/1
@@ -57,10 +70,10 @@ if catalog.hasTranslationLoaded():
     Logger.log("i", "Stacks of Shapes translation loaded")
 
 #This class is the extension and doubles as QObject to manage the qml    
-class StacksOfShapes(QObject, Extension, MainInteraction):
+class StacksOfShapes(QObject, Extension):
     
     
-    def __init__(self, shape_list_ui: UIInteraction, parent = None):
+    def __init__(self, parent = None):
         super().__init__(parent)
         
         # set the preferences to store the default value
@@ -69,17 +82,23 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
 
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
 
-        self._settings_popup = None
-        self._shape_list_ui = shape_list_ui
-        self._shape_list_ui.set_shape_data(self.Shapes)
+        self._shape_list_dialog = None
         
+        self._shapelist_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "shapeslist.qml"))
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
-        self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
+        #self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
+
+        self._category_names = list(self.Shapes.keys())
+        self._shape_names: list = []
+
+        self._current_category: str = ""
         
         self._controller = CuraApplication.getInstance().getController()
+
+        #self.selectCategory("Basics")
         
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self._shape_list_ui.showListPopup)
+        self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapelistPopup)
         """self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cube"), self.addCube)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cylinder"), self.addCylinder)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a sphere"), self.addSphere)
@@ -110,9 +129,9 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
         self.addMenuItem("  ", lambda: None)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Cube bi-color"), self.addCubeBiColor)
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Bi-Color Calibration Cube"), self.addHollowCalibrationCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Extruder Offset Calibration Part"), self.addExtruderOffsetCalibration)        """
-        self.addMenuItem("   ", lambda: None)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Set default size"), self.showSettingsPopup)
+        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Extruder Offset Calibration Part"), self.addExtruderOffsetCalibration)        
+        self.addMenuItem("   ", lambda: None)"""
+        #self.addMenuItem(catalog.i18nc("@item:inmenu", "Set default size"), self.showSettingsPopup)
 
     
     Shapes = {
@@ -129,16 +148,75 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
         }
     }
 
-    # Define the default value for the standard element
-    def showSettingsPopup(self):
-        if self._settings_popup is None:
-            self._createSettingsPopup()
-        self._settings_popup.show()
+    Symbols = {
+        catalog.i18nc("symbol_category", "Arrows"): {
+            catalog.i18nc("symbol_name", "Straight Arrow"): "2d/arrows/arrow_single.stl",
+        },
+        catalog.i18nc("symbol_category", "Hearts"): {
+            catalog.i18nc("symbol_name", "Heart"): "2d/hearts/heart.stl"
+        }
+    }
+
+    # Pop up the shape list
+    def showShapelistPopup(self):
+        if self._shape_list_dialog:  # You've got to be cruel to the code to be kind to the user
+            self._shape_list_dialog.destroy()
+            self._shape_list_dialog = None
+
+        if self._shape_list_dialog is None:
+            self._createShapelistPopup()
+        self._shape_list_dialog.show()
             
-    def _createSettingsPopup(self):
+    def _createShapelistPopup(self):
         #qml_file_path = os.path.join(os.path.dirname(__file__), "qml", "settings.qml")
-        self._settings_popup = CuraApplication.getInstance().createQmlComponent(self._settings_qml, {"manager": self})
+        dialog_context = {
+            "manager": self,
+            "categoryList": self.categoryList
+        }
+        self._shape_list_dialog = CuraApplication.getInstance().createQmlComponent(self._shapelist_qml, dialog_context)
     
+    categoryListChanged = pyqtSignal()
+    shapeListChanged = pyqtSignal()
+
+    @pyqtProperty(list, notify=categoryListChanged)
+    def categoryList(self):
+        return self._category_names
+    
+    def setShapeList(self, value):
+        log("e", ">>>>>>>>>>>>> setShapeList setter FUNCTION WAS CALLED! <<<<<<<<<<<<<<<<<<")
+        log("d", f"setShapeList: category_name argument passed = {value}")
+        self.updateShapeList(value)
+        log("d", f"setShapeList: after updateShapeList, self._shape_names = {self._shape_names} and self.shapeList = {self.shapeList}")
+
+    
+    @pyqtProperty(list, notify=shapeListChanged, fset=setShapeList)
+    def shapeList(self):
+        return self._shape_names
+    
+    @pyqtSlot(str)
+    def selectCategory(self, category_name):
+        if category_name == self._current_category:  # Nothing to do here, don't want to waste time recomposing a ListView
+            return
+        log("d", f"Current category is {self._current_category} - Trying to access shapes category: {category_name}")
+        self.updateShapeList(category_name)
+
+    def updateShapeList(self, category_name):
+        log("d", f"In updateShapeList. Before clearing, self.shapeList = {self.shapeList}")
+        self._shape_names = []
+        if category_name in self.Shapes:
+            self._shape_names = list(self.Shapes[category_name].keys())
+            self._current_category = category_name
+        log("d", f"For {category_name} we got {self._shape_names}")
+        self.shapeListChanged.emit()
+    
+    @pyqtSlot(str)
+    def loadModel(self, value: str) -> None:
+        self._registerShapeStl(value, self.Shapes[self._current_category][value])
+
+    @pyqtSlot(str)
+    def logMessage(self, value: str) -> None:
+        log("i", f"StacksOfShapes QML Log: {value}")
+
     _shape_size_changed = pyqtSignal()
     
     @pyqtSlot(int)
@@ -159,6 +237,8 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
             mesh_filename = mesh_name + ".stl"
         
         model_definition_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", mesh_filename)
+        log("d", f"_registerShapeStl going to load {model_definition_path}")
+        log("d", f"self._shape_size = {self._shape_size}")
         mesh =  trimesh.load(model_definition_path)
         
         # addShape
@@ -211,7 +291,7 @@ class StacksOfShapes(QObject, Extension, MainInteraction):
         # How to scale to a target size: the Slashee contribution
         # 1 - Get the bounding box of the model
         bounds_list: list[numpy.ndarray] = tri_node.bounds
-        bounds: tuple[numpy.ndarray, numpy.ndarray] = (bounds_list[0, bounds_list[1]])
+        bounds: tuple[numpy.ndarray, numpy.ndarray] = (bounds_list[0], bounds_list[1])
         min_point: numpy.ndarray = bounds[0]
         max_point: numpy.ndarray = bounds[1]
 
