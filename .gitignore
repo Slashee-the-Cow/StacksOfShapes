@@ -6,7 +6,5 @@ __pycache__/
 
 # Translations
 
-# Models
-models/Calibration-Extruder-Offset-6parts-export.stl
-resources/~$CalibrationCalcul.xlsx
-*.xlsx
+# Editor settings
+/.vscode

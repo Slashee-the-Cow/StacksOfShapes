@@ -12,6 +12,7 @@ import sys
 import math
 import numpy
 import trimesh
+from enum import Enum, auto
 
 from typing import Optional, List, Any, TYPE_CHECKING
 
@@ -39,6 +40,10 @@ from UM.i18n import i18nCatalog
 
 
 from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty
+
+class ShapeTypes(Enum):
+    SHAPE = "SHAPE"
+    SYMBOL = "SYMBOL"
 
 DEBUG_MODE = True
 
@@ -78,9 +83,14 @@ class StacksOfShapes(QObject, Extension):
         
         # set the preferences to store the default value
         self._preferences = CuraApplication.getInstance().getPreferences()
+        
+        # Add preferences with their default if we don't already have them
         self._preferences.addPreference("stacksofshapes/shapesize", 20)
+        self._preferences.addPreference("stacksofshapes/symbolsize", 50)
 
+        # Get values from preferences
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
+        self._symbol_size = float(self._preferences.getValue("stacksofshapes/symbolsize"))
 
         self._shape_list_dialog = None
         
@@ -88,9 +98,11 @@ class StacksOfShapes(QObject, Extension):
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
         #self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
 
+        # Set the default to use the Shapes dictionary
+        self._current_type_dict = self.Shapes
         self._category_names = list(self.Shapes.keys())
         self._shape_names: list = []
-
+        self._current_type = ShapeTypes.SHAPE
         self._current_category: str = ""
         
         self._controller = CuraApplication.getInstance().getController()
@@ -171,7 +183,6 @@ class StacksOfShapes(QObject, Extension):
         #qml_file_path = os.path.join(os.path.dirname(__file__), "qml", "settings.qml")
         dialog_context = {
             "manager": self,
-            "categoryList": self.categoryList
         }
         self._shape_list_dialog = CuraApplication.getInstance().createQmlComponent(self._shapelist_qml, dialog_context)
     
@@ -200,18 +211,60 @@ class StacksOfShapes(QObject, Extension):
         log("d", f"Current category is {self._current_category} - Trying to access shapes category: {category_name}")
         self.updateShapeList(category_name)
 
-    def updateShapeList(self, category_name):
+    def updateShapeList(self, category_name = "", clear_only: bool = False):
+        if clear_only:
+            log("d", f"updateShapeList called with clear_only")
+            self._shape_names = []
+            self.shapeListChanged.emit()
+            return
         log("d", f"In updateShapeList. Before clearing, self.shapeList = {self.shapeList}")
         self._shape_names = []
-        if category_name in self.Shapes:
-            self._shape_names = list(self.Shapes[category_name].keys())
+        if category_name in self._current_type_dict:
+            self._shape_names = list(self._current_type_dict[category_name].keys())
             self._current_category = category_name
         log("d", f"For {category_name} we got {self._shape_names}")
         self.shapeListChanged.emit()
+
+    @pyqtSlot(str)
+    def selectType(self, type_name):
+        log("d", f"StackOfShapes.selectType called with {type_name}")
+        match type_name:
+            case ShapeTypes.SHAPE.value:
+                log("d", f"StackOfShapes.selectType matched Shape")
+                self._current_type = ShapeTypes.SHAPE
+                self._current_type_dict = self.Shapes
+            case ShapeTypes.SYMBOL.value:
+                log("d", f"StackOfShapes.selectType matched Symbol")
+                self._current_type = ShapeTypes.SYMBOL
+                self._current_type_dict = self.Symbols
+            case _:
+                log("d", f"StackOfShapes.selectType matched Symbol")
+                return  # We shouldn't be here.
+        self.updateCategoryList()
+        self.updateShapeList(clear_only=True)
+
+    _current_type_changed = pyqtSignal()
+
+    @pyqtProperty(str, notify = _current_type_changed)
+    def CurrentType(self) -> str:
+        return self._current_type.value
+
+    def updateCategoryList(self, clear_only: bool = False):
+        log("d", f"StackOfShapes.updateCategoryList run. self._current_type = {self._current_type} and self._current_type_dict = {self._current_type_dict}")
+        if clear_only:
+            log("d", f"updateCategoryList called with clear_only")
+            self._category_names = []
+            self.categoryListChanged.emit()
+            return
+        if self._current_type_dict is not None:  # It shouldn't be None. But you never know.
+            self._category_names = []  # Shouldn't be necessary when the next one should replace it entirely.
+            self._category_names = list(self._current_type_dict.keys())
+            self.categoryListChanged.emit()
+
     
     @pyqtSlot(str)
     def loadModel(self, value: str) -> None:
-        self._registerShapeStl(value, self.Shapes[self._current_category][value])
+        self._registerShapeStl(value, self._current_type_dict[self._current_category][value])
 
     @pyqtSlot(str)
     def logMessage(self, value: str) -> None:
@@ -219,17 +272,27 @@ class StacksOfShapes(QObject, Extension):
 
     _shape_size_changed = pyqtSignal()
     
-    @pyqtSlot(int)
     def SetShapeSize(self, value: int) -> None:
         #Logger.log("d", f"Attempting to set ShapeSize from pyqtProperty: {value}")
         self._preferences.setValue("stacksofshapes/shapesize", value)
         self._shape_size = value
         self._shape_size_changed.emit()
 
-    @pyqtProperty(int, notify = _shape_size_changed)
+    @pyqtProperty(int, notify = _shape_size_changed, fset=SetShapeSize)
     def ShapeSize(self) -> int:
         #Logger.log("d", f"ShapeSize pyqtProperty accessed: {self._shape_size}, cast to {int(self._shape_size)}")
         return int(self._shape_size)
+    
+    _symbol_size_changed = pyqtSignal()
+
+    def SetSymbolSize(self, value: int) -> None:
+        self._preferences.setValue("stacksofshapes/symbolsize", value)
+        self._symbol_size = value  # There's an IntValidator on the TextField so it should be alright
+        self._symbol_size_changed.emit()
+
+    @pyqtProperty(int, notify = _symbol_size_changed, fset=SetSymbolSize)
+    def SymbolSize(self) -> int:
+        return int(self._symbol_size)
           
            
     def _registerShapeStl(self, mesh_name, mesh_filename=None, **kwargs) -> None:
@@ -251,7 +314,7 @@ class StacksOfShapes(QObject, Extension):
     # S = trimesh.transformations.scale_matrix(20, origin)
     # xaxis = [1, 0, 0]
     # Rx = trimesh.transformations.rotation_matrix(math.radians(90), xaxis)    
-    def addCube(self) -> None:
+    """def addCube(self) -> None:
         Tz = trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5])
         self._addShape("Cube",self._toMeshData(trimesh.creation.box(extents = [self._shape_size, self._shape_size, self._shape_size], transform = Tz )))
         
@@ -270,7 +333,7 @@ class StacksOfShapes(QObject, Extension):
         # subdivisions (int) – How many times to subdivide the mesh. Note that the number of faces will grow as function of 4 ** subdivisions, so you probably want to keep this under ~5
         mesh = trimesh.creation.icosphere(subdivisions=4,radius = self._shape_size / 2,)
         mesh.apply_transform(trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5]))
-        self._addShape("Sphere",self._toMeshData(mesh))
+        self._addShape("Sphere",self._toMeshData(mesh))"""
 
 
     #----------------------------------------
@@ -278,16 +341,14 @@ class StacksOfShapes(QObject, Extension):
     #----------------------------------------  
     def _toMeshData(self, tri_node: trimesh.base.Trimesh, target_size: float = None) -> MeshData:
         if target_size is None:
-            target_size = self._shape_size
-        """Converts a trimesh object to MeshData with scaling.
+            match self._current_type:
+                case ShapeTypes.SHAPE:
+                    target_size = self._shape_size
+                case ShapeTypes.SYMBOL:
+                    target_size = self._symbol_size
+                case _:  # This shouldn't happen. But be prepared for anything.
+                    target_size = 20
 
-        Args:
-            tri_node: The trimesh object.
-            target_size: The desired size of the largest dimension of the shape.
-
-        Returns:
-            MeshData: The mesh data.
-        """   
         # How to scale to a target size: the Slashee contribution
         # 1 - Get the bounding box of the model
         bounds_list: list[numpy.ndarray] = tri_node.bounds

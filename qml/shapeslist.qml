@@ -7,12 +7,25 @@ import UM 1.6 as UM
 import Cura 1.7 as Cura
 
 UM.Dialog {
+
+    function isValidInt(text){
+        let value = parseInt(text)  // Should be NaN on blank
+        return !isNaN(value)
+    }
+
+    readonly property string shapeTypeShape: "SHAPE"  // Would the equivalent of an enum be a regular object? Eh, this is easier
+    readonly property string shapeTypeSymbol: "SYMBOL"
+
+    property string currentShapeType: shapeTypeShape  // Default at startup
+
     property variant catalog: UM.I18nCatalog { name: "stacksofshapes" }
 
     id: shapeDialog
     title: catalog.i18nc("dialog:title", "Stacks of Shapes")
     width: 600
     height: 400
+    x: 200
+    y: 200
 
     modality: Qt.NonModal
     flags: (Qt.platform.os == "windows" ? Qt.Dialog : Qt.Window)  // <-- Ugly workaround for a bug in Windows, where the close-button doesn't show up unless we have a Dialog (but _not_ a Window).
@@ -33,10 +46,16 @@ UM.Dialog {
     }*/
 
     Component.onCompleted: { // Root Component.onCompleted - keep this for logging
-        //manager.logMessage("root Component.onCompleted: categoryList = " + categoryList); // Keep root log
+        //manager.logMessage("root Component.onCompleted: categoryList = " + manager.categoryList); // Keep root log
         manager.logMessage("Component.onCompleted: Triggering categoryList access...");
-        categoryList; // Keep for potential initial category list refresh
-        manager.logMessage("Component.onCompleted: categoryList = " + categoryList);
+        manager.categoryList; // Keep for potential initial category list refresh
+        manager.logMessage("Component.onCompleted: categoryList = " + manager.categoryList);
+        manager.logMessage("Component.onCompleted: manager.CurrentType = " + manager.CurrentType)
+        currentShapeType = manager.CurrentType
+        if(currentShapeType == shapeTypeSymbol){
+            shapeTypeTabShape.checked = false
+            shapeTypeTabSymbol.checked = true
+        }
     }
 
     ColumnLayout{
@@ -47,13 +66,32 @@ UM.Dialog {
         UM.TabRow {
             id: shapeSymbolTabRow
             Layout.fillWidth: true
+            Layout.preferredHeight: childrenRect.height
 
             UM.TabRowButton {
+                id: shapeTypeTabShape
                 text: catalog.i18nc("dialog:shape_tab", "Shapes")
+                height: 30
+
+                onClicked: {
+                    if (currentShapeType !== shapeTypeShape){
+                        manager.selectType(shapeTypeShape)
+                        currentShapeType = shapeTypeShape
+                    }
+                }
             }
 
             UM.TabRowButton {
+                id: shapeTypeTabSymbol
                 text: catalog.i18nc("dialog:symbol_tab", "Symbols")
+                height: 30
+
+                onClicked: {
+                    if (currentShapeType !== shapeTypeSymbol){
+                        manager.selectType(shapeTypeSymbol)
+                        currentShapeType = shapeTypeSymbol
+                    }
+                }
             }
         }
 
@@ -76,7 +114,7 @@ UM.Dialog {
                     id: categoryListView
                     Layout.fillWidth: true
                     Layout.fillHeight: true // Make listview fill column height
-                    model: categoryList  // Pulling a list straight from the Python file. Hey, if it works, right?
+                    model: manager.categoryList  // Pulling a list straight from the Python file. Hey, if it works, right?
                     delegate: UM.Label {
                         text: modelData // Display category name
                         height: 50
@@ -93,7 +131,7 @@ UM.Dialog {
                         }
                     }
                     Component.onCompleted: { // Delegate onCompleted - for debugging!
-                        //manager.logMessage("ListView Component.onCompleted: categoryList = " + categoryList + ", typeof categoryList = " + typeof categoryList); // LIST LOG!
+                        //manager.logMessage("ListView Component.onCompleted: categoryList = " + manager.categoryList + ", typeof categoryList = " + typeof manager.categoryList); // LIST LOG!
                     }
                 }
             }
@@ -165,6 +203,7 @@ UM.Dialog {
 
             RowLayout{
                 id: shapeSizeHolder
+                visible: currentShapeType == shapeTypeShape
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 Layout.preferredHeight: implicitHeight
                 Layout.row: 1
@@ -180,11 +219,62 @@ UM.Dialog {
                 UM.TextFieldWithUnit{
                     id: shapeSizeTextField
                     unit: "mm"
+                    property string displayShapeSize: ""
                     Layout.preferredWidth: 80
                     validator: IntValidator{
                         bottom: 1
                     }
-                    text: "20"
+                    text: displayShapeSize
+                    //background: Rectangle { color: "red"}
+                    onTextChanged: {
+                        manager.logMessage("shapeSizeTextField text changed")
+                        if (isValidInt(text)) {
+                            manager.logMessage("shapeSizeTextField text change is valid int: " + text)
+                            manager.ShapeSize = parseInt(text)
+                        }
+                    }
+                    Component.onCompleted: {
+                        displayShapeSize = manager.ShapeSize.toString()
+                        manager.logMessage("shapeSizeTextField has been completed and its text is " + text)
+                    }
+                }
+            }
+
+            RowLayout{
+                id: symbolSizeHolder
+                visible: currentShapeType == shapeTypeSymbol
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.preferredHeight: implicitHeight
+                Layout.row: 1
+                Layout.column: 0
+                UM.Label{
+                    id: symbolSizeText
+                    text: catalog.i18nc("dialog:symbolSize", "Symbol size: ")
+                    //Layout.preferredWidth: 40
+                    //width: 60
+                    //background: Rectangle { color: "pink"}
+                }
+
+                UM.TextFieldWithUnit{
+                    id: symbolSizeTextField
+                    unit: "mm"
+                    property string displaySymbolSize: ""
+                    Layout.preferredWidth: 80
+                    validator: IntValidator{
+                        bottom: 1
+                    }
+                    text: displaySymbolSize
+                    onTextChanged: {
+                        manager.logMessage("symbolSizeTextField text changed")
+                        if (isValidInt(text)) {
+                            manager.logMessage("symbolSizeTextField text change is valid int: " + text)
+                            manager.SymbolSize = parseInt(text)
+                        }
+                    }
+                    Component.onCompleted: {
+                        displaySymbolSize = manager.SymbolSize.toString()
+                        manager.logMessage("symbolSizeTextField has been completed and its text is " + text)
+                    }
                     //background: Rectangle { color: "red"}
                 }
             }
