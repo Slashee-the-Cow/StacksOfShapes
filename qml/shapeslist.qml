@@ -30,20 +30,6 @@ UM.Dialog {
     modality: Qt.NonModal
     flags: (Qt.platform.os == "windows" ? Qt.Dialog : Qt.Window)  // <-- Ugly workaround for a bug in Windows, where the close-button doesn't show up unless we have a Dialog (but _not_ a Window).
         | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint
-    /*Connections {
-        target: manager
-        onShapeListChanged:{
-            manager.logMessage("onShapeListChanged signal received. shapeList = " + shapeList + " typeof shapeList = " + typeof shapeList)
-            shapeModel.clear()
-            manager.logMessage("shapeModel has been cleared")
-            for (let i = 0; i < shapeList.length; i++){
-                let shapeName = shapeList[i]
-                shapeModel.append({"shapeName": shapeName})
-                manager.logMessage("Appended to shapeModel, shapeName = " + shapeName)
-            }
-            manager.logMessage("shapeModel population completed.")
-        }
-    }*/
 
     Component.onCompleted: { // Root Component.onCompleted - keep this for logging
         //manager.logMessage("root Component.onCompleted: categoryList = " + manager.categoryList); // Keep root log
@@ -106,29 +92,27 @@ UM.Dialog {
                 Layout.fillHeight: true
                 //Layout.preferredWidth: 200
 
-                UM.Label{
+                /*UM.Label{
                     text: "Categories"
-                } // Category label
+                } // Category label*/
 
                 ListView {
                     id: categoryListView
-                    Layout.fillWidth: true
+                    clip: true
+                    Layout.preferredWidth: 200
                     Layout.fillHeight: true // Make listview fill column height
                     model: manager.categoryList  // Pulling a list straight from the Python file. Hey, if it works, right?
-                    delegate: UM.Label {
-                        text: modelData // Display category name
-                        height: 50
-                        MouseArea{
-                            anchors.fill: parent
-                            onClicked: {
-                                manager.logMessage(modelData + " has been clicked, and before change the current manager.shapeList = " + manager.shapeList)
-                                manager.selectCategory(modelData)
-                            }
+                    delegate: ShapeListDelegate{
+                        delegateText: modelData
+                        delegateImageSource: {
+                            let image_path = manager.getCategoryImage(modelData)
+                            manager.logMessage("Delegate trying to get image for category " + modelData + " got " + image_path + " which is type " + typeof image_path)
+                            return image_path
                         }
-                        // ... (Styling, mouse click handling for category selection) ...
-                        Component.onCompleted: { // Delegate onCompleted - for debugging!
-                            //manager.logMessage("Delegate Component.onCompleted: modelData = " + modelData + ", typeof modelData = " + typeof modelData); // DELEGATE LOG!
-                        }
+                        delegateClickedFunction: function(categoryName) {manager.selectCategory(categoryName)}
+                    }
+                    ScrollBar.vertical: ScrollBar{
+                        policy: categoryListView.contentHeight > categoryListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
                     }
                     Component.onCompleted: { // Delegate onCompleted - for debugging!
                         //manager.logMessage("ListView Component.onCompleted: categoryList = " + manager.categoryList + ", typeof categoryList = " + typeof manager.categoryList); // LIST LOG!
@@ -140,32 +124,21 @@ UM.Dialog {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                UM.Label { text: "Shapes" } // Shape label
-
-                ListModel {
-                    id: shapeModel
-                }
+                /*UM.Label { text: "Shapes" } // Shape label*/
 
                 ListView {
                     id: shapeListView
-
+                    clip: true
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    ScrollBar.vertical: ScrollBar{
+                        policy: shapeListView.contentHeight > shapeListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+                    }
                     model: manager.shapeList
-                    delegate: UM.Label {
-                        text: modelData // Display shape name
-                        height: 50
-                        MouseArea{
-                            anchors.fill: parent
-                            onClicked: {
-                                manager.logMessage(modelData + " has been clicked, and before change the current manager.shapeList = " + manager.shapeList)
-                                manager.loadModel(modelData)
-                            }
-                        }
-                        Component.onCompleted: { // Delegate onCompleted - for debugging!
-                            manager.logMessage("shapeModel Delegate Component.onCompleted: modelData = " + modelData + ", typeof modelData = " + typeof modelData); // DELEGATE LOG!
-                        }
-                        // ... (Styling, mouse click handling for shape selection) ...
+                    delegate: ShapeListDelegate{
+                        delegateText: modelData
+                        delegateImageSource: manager.getShapeImage(modelData)
+                        delegateClickedFunction: function(shapeName) {manager.loadModel(shapeName)}
                     }
                     Component.onCompleted: {
                         manager.logMessage("shapeListView onCompleted{}: Current model is" + model)

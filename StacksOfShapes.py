@@ -1,8 +1,6 @@
 # Part of initial code by fieldOfView 2018
 # Stacks of Shapes copyright Slashee the Cow 2025-
 
-# Utah Teapot model by zzubnik  -  https://www.thingiverse.com/thing:852078 under the Creative Commons Public Domain licence
-
 # Version history
 # 1.0.0:    Initial release.
 
@@ -13,6 +11,7 @@ import math
 import numpy
 import trimesh
 from enum import Enum, auto
+from pathlib import Path
 
 from typing import Optional, List, Any, TYPE_CHECKING
 
@@ -39,7 +38,7 @@ from UM.Message import Message
 from UM.i18n import i18nCatalog
 
 
-from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty
+from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty, QMetaType
 
 class ShapeTypes(Enum):
     SHAPE = "SHAPE"
@@ -95,6 +94,9 @@ class StacksOfShapes(QObject, Extension):
         self._shape_list_dialog = None
         
         self._shapelist_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "shapeslist.qml"))
+
+        self._qml_categories_icon_folder = "../categories/"
+        self._qml_models_icon_folder = "../models/"
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
         #self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
 
@@ -149,7 +151,7 @@ class StacksOfShapes(QObject, Extension):
     Shapes = {
         catalog.i18nc("shape_category", "Basics"): {
             catalog.i18nc("shape_name", "Cube"): "platonics/hexahedron.stl",
-            catalog.i18nc("shape_name", "Sphere"): "basics/sphere.stl",
+            catalog.i18nc("shape_name", "Sphere"): "spherical/sphere.stl",
         },
         catalog.i18nc("shape_category", "Platonic Solids"): {
             catalog.i18nc("shape_name", "Tetrahedron (4 sides)"): "platonics/tetrahedron.stl",
@@ -157,6 +159,15 @@ class StacksOfShapes(QObject, Extension):
             catalog.i18nc("shape_name", "Octahedron (8 sides)"): "platonics/octahedron.stl",
             catalog.i18nc("shape_name", "Dodecahedron (12 sides)"): "platonics/dodecahedron.stl",
             catalog.i18nc("shape_name", "Icosahedron (20 sides)"): "platonics/icosahedron.stl",
+        },
+        catalog.i18nc("shape_category", "Tetrominoes"): {
+            catalog.i18nc("shape_name", "J"): "tetrominoes/tetromino_j.stl",
+            catalog.i18nc("shape_name", "L"): "tetrominoes/tetromino_l.stl",
+            catalog.i18nc("shape_name", "S"): "tetrominoes/tetromino_s.stl",
+            catalog.i18nc("shape_name", "T"): "tetrominoes/tetromino_t.stl",
+            catalog.i18nc("shape_name", "Z"): "tetrominoes/tetromino_z.stl",
+            catalog.i18nc("shape_name", "Square"): "tetrominoes/tetromino_square.stl",
+            catalog.i18nc("shape_name", "Straight"): "tetrominoes/tetromino_straight.stl",
         }
     }
 
@@ -266,6 +277,23 @@ class StacksOfShapes(QObject, Extension):
     def loadModel(self, value: str) -> None:
         self._registerShapeStl(value, self._current_type_dict[self._current_category][value])
 
+    """def loadModel(self, shape_name):
+    # ... (path logic and mesh loading from above) ...
+
+    if not mesh: # Check if mesh loading was successful
+        return
+
+    try:
+        scene = Application.getInstance().getController().getScene() # Get the scene
+        if scene:
+            mesh_instance = MeshInstance(mesh) # Create a MeshInstance from the loaded mesh
+            scene.getRoot().addChild(mesh_instance) # Add MeshInstance to the scene root
+            self.logMessage(f"Added shape '{shape_name}' to the scene.")
+        else:
+            self.logMessage("Error: Scene not available.")
+    except Exception as e:
+        self.logMessage(f"Exception during scene addition: {e}")"""
+
     @pyqtSlot(str)
     def logMessage(self, value: str) -> None:
         log("i", f"StacksOfShapes QML Log: {value}")
@@ -293,7 +321,29 @@ class StacksOfShapes(QObject, Extension):
     @pyqtProperty(int, notify = _symbol_size_changed, fset=SetSymbolSize)
     def SymbolSize(self) -> int:
         return int(self._symbol_size)
-          
+    
+    @pyqtSlot(str, result=str)
+    def getCategoryImage(self, value: str) -> str:
+        image_path = f"{self._qml_categories_icon_folder}{value}.png"
+        abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", image_path))
+        log("d", f"getCategoryImage got relative image path: {image_path} which a abspath is {abs_path}")
+        if os.path.exists(abs_path):
+            return image_path
+        else:
+            return ""
+        # I tried about three zillion ways to get it to work with absolute paths.
+        # It's possible it just doesn't like Windows, considering the closest I got,
+        # it removed the : after the drive letter.
+
+    @pyqtSlot(str, result=str)
+    def getShapeImage(self, value: str) -> str:
+        model_relative_path = f"{self._qml_models_icon_folder}{self._current_type_dict[self._current_category][value]}".replace("stl", "png")
+        abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", model_relative_path))
+        log("d", f"getShapeImage got relative image path {model_relative_path} with an abspath of {abs_path}")
+        if os.path.exists(abs_path):
+            return model_relative_path
+        else:
+            return ""
            
     def _registerShapeStl(self, mesh_name, mesh_filename=None, **kwargs) -> None:
         if mesh_filename is None:
@@ -463,7 +513,7 @@ class StacksOfShapes(QObject, Extension):
             new_instance.resetState()  # Ensure that the state is not seen as a user state.
             settings.addInstance(new_instance)
 
-        node.setSetting(SceneNodeSettings.AutoDropDown, True)
+        # node.setSetting(SceneNodeSettings.AutoDropDown, True)  # I don't even know where this line came from
             
         active_build_plate = application.getMultiBuildPlateModel().activeBuildPlate
         node.addDecorator(BuildPlateDecorator(active_build_plate))
