@@ -1,4 +1,4 @@
-// Cone for Basic Shapes
+// Cone for Stacks of Shapes
 // by Slashee the Cow
 
 $fn = 128;

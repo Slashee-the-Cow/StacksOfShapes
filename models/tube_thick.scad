@@ -1,4 +1,4 @@
-// Tube (Thick) for Basic Shapes
+// Tube (Thick) for Stacks of Shapes
 // by Slashee the Cow
 $fn = 256;
 

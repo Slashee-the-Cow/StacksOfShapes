@@ -1,4 +1,4 @@
-// Cube for Basic Shapes
+// Cube for Stacks of Shapes
 // by Slashee the Cow
 
 translate([0,0,0.5])

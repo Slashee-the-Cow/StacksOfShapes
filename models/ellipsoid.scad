@@ -1,4 +1,4 @@
-// Ellipsoid for Basic Shapes
+// Ellipsoid for Stacks of Shapes
 // by Slashee the Cow
 $fn = $preview ? 16 : 128;
 

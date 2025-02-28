@@ -4,9 +4,14 @@ import QtQuick.Controls 6.0
 import UM 1.6 as UM
 
 Rectangle {  // Base element
+    Component.onCompleted: {
+        manager.logMessage("ShapeListDelegate Component.onCompleted: modelData =" + modelData);
+    }
+
     // Background colours so I don't have to grab them from UM more than once.
     readonly property var normalBackground: UM.Theme.getColor("main_background")
     readonly property var hoverBackground: UM.Theme.getColor("expandable_hover")
+    readonly property string tooltipKey: "tooltip"
 
     id: shapeDelegateRoot
     width: ListView.view.width
@@ -16,8 +21,12 @@ Rectangle {  // Base element
     property var delegateClickedFunction: function(text){}
     property alias delegateText: textItem.text
     property string delegateImageSource: ""
+    property string delegateTooltipText: ""
+    property bool delegateTooltipReposition: false
+
 
     MouseArea {
+        id: shapeDelegateMouseArea
         anchors.fill: parent
         hoverEnabled: true
 
@@ -36,32 +45,51 @@ Rectangle {  // Base element
         onExited: {
             shapeDelegateRoot.color = normalBackground
         }
+
+        UM.ToolTip {
+           id: delegateTooltip
+            text: delegateTooltipText
+            visible: delegateTooltipText != "" && shapeDelegateMouseArea.containsMouse
+        }
     }
 
-    UM.Label {
-        id: textItem
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 10  // Adjust as required
-        anchors.right: shapeImage.left
-        font.pixelSize: 16  // ^
-        text: "I'm a delegate!"
-        wrapMode: Text.WordWrap
+    Binding {
+        target: delegateTooltip
+        property: "x"
+        value: x + width
+        when: delegateTooltipReposition
+    }
+    Binding {
+        target: delegateTooltip
+        property: "y"
+        value: parent.y
+        when: delegateTooltipReposition
     }
 
     Image {
         id: shapeImage
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        anchors.left: parent.left
         anchors.bottomMargin: 5
         anchors.topMargin: 2
-        anchors.rightMargin: 5
         width: height
         source: delegateImageSource != "" ? Qt.resolvedUrl(delegateImageSource) : ""
         visible: delegateImageSource != ""
         fillMode: Image.PreserveAspectFit
     }
+
+    UM.Label {
+        id: textItem
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: shapeImage.right
+        anchors.leftMargin: 10  // Adjust as required
+        anchors.right: parent.right
+        font.pixelSize: 16  // ^
+        text: "I'm a delegate!"
+        wrapMode: Text.WordWrap
+    }
+
 
     Rectangle {  // Pretty separator
         anchors.horizontalCenter: parent.horizontalCenter

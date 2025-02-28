@@ -93,7 +93,7 @@ class StacksOfShapes(QObject, Extension):
 
         self._shape_list_dialog = None
         
-        self._shapelist_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "shapeslist.qml"))
+        self._shapelist_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "StacksOfShapesDialog.qml"))
 
         self._qml_categories_icon_folder = "../categories/"
         self._qml_models_icon_folder = "../models/"
@@ -113,72 +113,202 @@ class StacksOfShapes(QObject, Extension):
         
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapelistPopup)
-        """self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cube"), self.addCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a cylinder"), self.addCylinder)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a sphere"), self.addSphere)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a tube"), self.addTube)
-        self.addMenuItem("", lambda: None)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Calibration Cube"), self.addCalibrationCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Layer Adhesion Test"), self.addLayerAdhesion)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Retract Test"), self.addRetractTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a XY Calibration Test"), self.addXYCalibration)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Dimensional Accuracy Test"), self.addDimensionalTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Tolerance Test"), self.addTolerance)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Hole Test"), self.addHoleTest)
-        
-        # self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Junction Deviation Tower"), self.addJunctionDeviationTower)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Bridge Test"), self.addBridgeTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Thin Wall Test"), self.addThinWall)
-        # self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Thin Wall Test Cura 5.0"), self.addThinWall2)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Overhang Test"), self.addOverhangTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Flow Test"), self.addFlowTest)
-        
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Support Test"), self.addSupportTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Lithophane Test"), self.addLithophaneTest)
-        
-        # self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a MultiCube Calibration"), self.addMultiCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Bed Level Calibration"), self.addBedLevelCalibration)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Backlash Test"), self.addBacklashTest)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Linear/Pressure Adv Tower"), self.addPressureAdvTower)
-        self.addMenuItem("  ", lambda: None)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Cube bi-color"), self.addCubeBiColor)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add a Bi-Color Calibration Cube"), self.addHollowCalibrationCube)
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Add an Extruder Offset Calibration Part"), self.addExtruderOffsetCalibration)        
-        self.addMenuItem("   ", lambda: None)"""
-        #self.addMenuItem(catalog.i18nc("@item:inmenu", "Set default size"), self.showSettingsPopup)
 
-    
+    _shape_category_basics: str = catalog.i18nc("shape_category", "Basics")
+    _shape_category_spherical: str = catalog.i18nc("shape_category", "Spherical")
+    _shape_category_prisms: str = catalog.i18nc("shape_category", "Prisms")
+    _shape_category_pyramids: str = catalog.i18nc("shape_category", "Pyramids")
+    _shape_category_platonics: str = catalog.i18nc("shape_category", "Platonic Solids")
+    _shape_category_tetrominoes: str = catalog.i18nc("shape_category", "Tetrominoes")
+
+    PATH_KEY: str = "path"
+    TOOLTIP_KEY: str = "tooltip"
+
     Shapes = {
-        catalog.i18nc("shape_category", "Basics"): {
-            catalog.i18nc("shape_name", "Cube"): "platonics/hexahedron.stl",
-            catalog.i18nc("shape_name", "Sphere"): "spherical/sphere.stl",
+        _shape_category_basics: {
+            catalog.i18nc("shape_name", "Cube"): {
+                PATH_KEY: "platonics/hexahedron.stl",
+                TOOLTIP_KEY: "The corners are sharp. Don't poke your eyes out.",
+            },
+            catalog.i18nc("shape_name", "Sphere"): {
+                PATH_KEY: "spherical/sphere.stl",
+                TOOLTIP_KEY: "This one has zero corners. Your eyes are safe.",
+            },
         },
-        catalog.i18nc("shape_category", "Platonic Solids"): {
-            catalog.i18nc("shape_name", "Tetrahedron (4 sides)"): "platonics/tetrahedron.stl",
-            catalog.i18nc("shape_name", "Hexahedron (6 sides)"): "platonics/hexahedron.stl",
-            catalog.i18nc("shape_name", "Octahedron (8 sides)"): "platonics/octahedron.stl",
-            catalog.i18nc("shape_name", "Dodecahedron (12 sides)"): "platonics/dodecahedron.stl",
-            catalog.i18nc("shape_name", "Icosahedron (20 sides)"): "platonics/icosahedron.stl",
+        _shape_category_spherical: {
+            catalog.i18nc("shape_name", "Sphere"): {
+                PATH_KEY: "spherical/sphere.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Three Quarter Spherical Sector"): {
+                PATH_KEY: "spherical/three_quarter_spherical_sector.png",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Hemisphere"): {
+                PATH_KEY: "spherical/hemisphere.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Spherical Quadrant"): {
+                PATH_KEY: "spherical/spherical_quadrant.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Spherical Octant"): {
+                PATH_KEY: "spherical/spherical_octant.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Spherical Octant (Corner)"):{
+                PATH_KEY: "spherical/spherical_octant_corner.stl",
+                TOOLTIP_KEY: "",
+            },
         },
-        catalog.i18nc("shape_category", "Tetrominoes"): {
-            catalog.i18nc("shape_name", "J"): "tetrominoes/tetromino_j.stl",
-            catalog.i18nc("shape_name", "L"): "tetrominoes/tetromino_l.stl",
-            catalog.i18nc("shape_name", "S"): "tetrominoes/tetromino_s.stl",
-            catalog.i18nc("shape_name", "T"): "tetrominoes/tetromino_t.stl",
-            catalog.i18nc("shape_name", "Z"): "tetrominoes/tetromino_z.stl",
-            catalog.i18nc("shape_name", "Square"): "tetrominoes/tetromino_square.stl",
-            catalog.i18nc("shape_name", "Straight"): "tetrominoes/tetromino_straight.stl",
+        _shape_category_prisms: {
+            catalog.i18nc("shape_name", "Rectangular Prism"): {
+                PATH_KEY: "prisms/prism_rectangular.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Hexagonal Prism"): {
+                PATH_KEY: "prisms/prism_hexagonal.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Octangonal Prism"): {
+                PATH_KEY: "prisms/prism_octagonal.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Triangular Prism (Equilateral)"): {
+                PATH_KEY: "prisms/prism_triangular_equilateral.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Triangular Prism (Right)"): {
+                PATH_KEY: "prisms/prism_triangular_right.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Trapezium Prism"): {
+                PATH_KEY: "prisms/prism_trapezium.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Rhombic Prism"): {
+                PATH_KEY: "prisms/prism_rhombic.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Parallelogram Prism"): {
+                PATH_KEY: "prisms/prism_parallelogram.stl",
+                TOOLTIP_KEY: ""
+            }
+        },
+        _shape_category_pyramids: {
+            catalog.i18nc("shape_name", "Triangular Pyramid (3 sides)"): {
+                PATH_KEY: "platonics/tetrahedron.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Square Pyramid (4 sides)"): {
+                PATH_KEY: "pyramids/pyramid_square.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Pentagonal Pyramid (5 sides)"): {
+                PATH_KEY: "pyramids/pyramid_pentagon.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Hexagonal Pyramid (6 sides)"): {
+                PATH_KEY: "pyramids/pyramid_hexagon.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Octagonal Pyramid (8 sides)"): {
+                PATH_KEY: "pyramids/pyramid_octagon.stl",
+                TOOLTIP_KEY: "",
+            }
+        },
+        _shape_category_platonics: {
+            catalog.i18nc("shape_name", "Tetrahedron (4 sides)"): {
+                PATH_KEY: "platonics/tetrahedron.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Hexahedron (6 sides)"): {
+                PATH_KEY: "platonics/hexahedron.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_platonic", "Technically the term is *regular* hexahedron.\nBut I've gotten nerdy enough already."),
+            },
+            catalog.i18nc("shape_name", "Octahedron (8 sides)"): {
+                PATH_KEY: "platonics/octahedron.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Dodecahedron (12 sides)"): {
+                PATH_KEY: "platonics/dodecahedron.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Icosahedron (20 sides)"): {
+                PATH_KEY: "platonics/icosahedron.stl",
+                TOOLTIP_KEY: "",
+            }
+        },
+        _shape_category_tetrominoes: {
+            catalog.i18nc("shape_name", "J"): {
+                PATH_KEY: "tetrominoes/tetromino_j.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "L"): {
+                PATH_KEY: "tetrominoes/tetromino_l.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "S"): {
+                PATH_KEY: "tetrominoes/tetromino_s.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "T"): {
+                PATH_KEY: "tetrominoes/tetromino_t.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Z"): {
+                PATH_KEY: "tetrominoes/tetromino_z.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Square"): {
+                PATH_KEY: "tetrominoes/tetromino_square.stl",
+                TOOLTIP_KEY: "Also known as the \"O\""
+            },
+            catalog.i18nc("shape_name", "Straight"): {
+                PATH_KEY: "tetrominoes/tetromino_straight.stl",
+                TOOLTIP_KEY: "Also known as the \"I\""
+            }
         }
     }
 
+    Shape_Category_Tooltips = {
+        _shape_category_basics: "",
+        _shape_category_spherical: "Spheres. And parts of them. Keep your \"ball\" jokes to yourself.",
+        _shape_category_prisms: "",
+        _shape_category_pyramids: "",
+        _shape_category_platonics: "3D objects where all faces and angles are exactly the same.\nOften used as dice.",
+        _shape_category_tetrominoes: "The different shapes possible when combining four cubes."
+    }
+
+    _symbols_category_arrows = catalog.i18nc("symbol_category", "Arrows")
+    _symbols_category_hearts = catalog.i18nc("symbol_category", "Hearts")
+
     Symbols = {
-        catalog.i18nc("symbol_category", "Arrows"): {
+        _symbols_category_arrows: {
             catalog.i18nc("symbol_name", "Straight Arrow"): "2d/arrows/arrow_single.stl",
         },
-        catalog.i18nc("symbol_category", "Hearts"): {
+        _symbols_category_hearts: {
             catalog.i18nc("symbol_name", "Heart"): "2d/hearts/heart.stl"
         }
     }
+
+    Symbol_Category_Tooltips = {
+        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.\nRotate or mirror them and they can point at other things.")
+    }
+
+    @pyqtSlot(str, result=str)
+    def getCategoryTooltip(self, value):
+        log("d", f"getCategoryTooltip called. self._current_type = {self._current_type} and value passed to function is {value}")
+        tooltip_text: str = ""
+        match self._current_type:
+            case ShapeTypes.SHAPE:
+                tooltip_text = self.Shape_Category_Tooltips.get(value)
+            case ShapeTypes.SYMBOL:
+                tooltip_text = self.Symbol_Category_Tooltips.get(value)
+            case _:
+                return ""  # Frankly I'm more concerned _current_type isn't one of the things it should be
+        log("d", f"getCategoryTooltip got tooltip text {tooltip_text}")
+        return tooltip_text
 
     # Pop up the shape list
     def showShapelistPopup(self):
@@ -211,9 +341,28 @@ class StacksOfShapes(QObject, Extension):
         log("d", f"setShapeList: after updateShapeList, self._shape_names = {self._shape_names} and self.shapeList = {self.shapeList}")
 
     
+    #@pyqtProperty(list, notify=shapeListChanged, fset=setShapeList)
+    #def shapeList(self):
+    #    return self._shape_names
     @pyqtProperty(list, notify=shapeListChanged, fset=setShapeList)
     def shapeList(self):
-        return self._shape_names
+        shape_list_to_return = self._shape_names # Assuming self._shape_names is now the list of dicts as in Step 59A
+        log("d", f"shapeList property - About to return shape list (length: {len(shape_list_to_return)}):")
+        if not shape_list_to_return: # Handle empty list case
+            log("d", f"  Shape list is empty.")
+        else:
+            for index, shape_item in enumerate(shape_list_to_return):
+                log("d", f"  Item index {index}:")
+                log("d", f"    Type of item: {type(shape_item)}") # Log type of the item itself
+                log("d", f"    Representation (repr) of item: {repr(shape_item)}") # Log full representation - very detailed
+                if isinstance(shape_item, dict): # If it's a dictionary, log its keys and value types
+                    log("d", f"    Dictionary Keys and Value Types:")
+                    for key, value in shape_item.items():
+                        log("d", f"      Key: '{key}' (Type: {type(key)}), Value Type: {type(value)}, Value (repr): {repr(value)}")
+                else: # If it's NOT a dictionary (unexpected), log warning
+                    log("w", f"    WARNING: Item is NOT a dictionary! Type: {type(shape_item)}, Value (repr): {repr(shape_item)}")
+
+        return shape_list_to_return
     
     @pyqtSlot(str)
     def selectCategory(self, category_name):
@@ -222,6 +371,21 @@ class StacksOfShapes(QObject, Extension):
         log("d", f"Current category is {self._current_category} - Trying to access shapes category: {category_name}")
         self.updateShapeList(category_name)
 
+    """def updateShapeList(self, category_name = "", clear_only: bool = False):
+        if clear_only:
+            log("d", f"updateShapeList called with clear_only")
+            self._shape_names = []
+            self.shapeListChanged.emit()
+            return
+        #log("d", f"In updateShapeList. Before clearing, self.shapeList = {self.shapeList}")
+        self._shape_names = []
+        if category_name in self._current_type_dict:
+            self._shape_names = self._current_type_dict.get(category_name)
+            log("d", f"updateShapeList: self._shape_names = {self._shape_names} which is type {type(self._shape_names)}")
+            self._current_category = category_name
+        #log("d", f"For {category_name} we got {self._shape_names}")
+        self.shapeListChanged.emit()"""
+
     def updateShapeList(self, category_name = "", clear_only: bool = False):
         if clear_only:
             log("d", f"updateShapeList called with clear_only")
@@ -229,11 +393,17 @@ class StacksOfShapes(QObject, Extension):
             self.shapeListChanged.emit()
             return
         log("d", f"In updateShapeList. Before clearing, self.shapeList = {self.shapeList}")
-        self._shape_names = []
-        if category_name in self._current_type_dict:
-            self._shape_names = list(self._current_type_dict[category_name].keys())
+        self._shape_names = [] # Clear the old list (but now it will hold DICTS, not strings)
+        if category_name in self._current_type_dict: # e.g., self._current_type_dict is self.Shapes
+            category_shapes = self._current_type_dict[category_name] # Get the dictionary of shapes for this category
+            for shape_name, shape_data in category_shapes.items(): # Iterate through shape names and their data (dictionaries)
+                shape_item = { # Create a new dictionary for each shape
+                    "shapeName": shape_name, # Store the shape name
+                    "shapeData": shape_data  # Store the original shape data dictionary
+                }
+                self._shape_names.append(shape_item) # Add this dictionary to the list
             self._current_category = category_name
-        log("d", f"For {category_name} we got {self._shape_names}")
+        log("d", f"For {category_name} we got {[item['shapeName'] for item in self._shape_names]}") # Log just the shape names for clarity in logs
         self.shapeListChanged.emit()
 
     @pyqtSlot(str)
@@ -249,9 +419,10 @@ class StacksOfShapes(QObject, Extension):
                 self._current_type = ShapeTypes.SYMBOL
                 self._current_type_dict = self.Symbols
             case _:
-                log("d", f"StackOfShapes.selectType matched Symbol")
+                log("d", f"StackOfShapes.selectType matched... nothing?")
                 return  # We shouldn't be here.
         self.updateCategoryList()
+        self._current_category = ""
         self.updateShapeList(clear_only=True)
 
     _current_type_changed = pyqtSignal()
@@ -275,7 +446,10 @@ class StacksOfShapes(QObject, Extension):
     
     @pyqtSlot(str)
     def loadModel(self, value: str) -> None:
-        self._registerShapeStl(value, self._current_type_dict[self._current_category][value])
+        self._registerShapeStl(value, self.getModelPath(value))
+
+    def getModelPath(self, model: str) -> str:
+        return self._current_type_dict[self._current_category][model].get(self.PATH_KEY)
 
     """def loadModel(self, shape_name):
     # ... (path logic and mesh loading from above) ...
@@ -337,7 +511,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str, result=str)
     def getShapeImage(self, value: str) -> str:
-        model_relative_path = f"{self._qml_models_icon_folder}{self._current_type_dict[self._current_category][value]}".replace("stl", "png")
+        model_relative_path = f"{self._qml_models_icon_folder}{self.getModelPath(value)}".replace("stl", "png")
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", model_relative_path))
         log("d", f"getShapeImage got relative image path {model_relative_path} with an abspath of {abs_path}")
         if os.path.exists(abs_path):
@@ -356,35 +530,6 @@ class StacksOfShapes(QObject, Extension):
         
         # addShape
         self._addShape(mesh_name,self._toMeshData(mesh), **kwargs)
-                     
-    #-----------------------------
-    #   Standard Geometry  
-    #-----------------------------    
-    # Origin, xaxis, yaxis, zaxis = [0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]
-    # S = trimesh.transformations.scale_matrix(20, origin)
-    # xaxis = [1, 0, 0]
-    # Rx = trimesh.transformations.rotation_matrix(math.radians(90), xaxis)    
-    """def addCube(self) -> None:
-        Tz = trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5])
-        self._addShape("Cube",self._toMeshData(trimesh.creation.box(extents = [self._shape_size, self._shape_size, self._shape_size], transform = Tz )))
-        
-    def addCylinder(self) -> None:
-        mesh = trimesh.creation.cylinder(radius = self._shape_size / 2, height = self._shape_size, sections=90)
-        mesh.apply_transform(trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5]))
-        self._addShape("Cylinder",self._toMeshData(mesh))
-
-    def addTube(self) -> None:
-        mesh = trimesh.creation.annulus(r_min = self._shape_size / 4, r_max = self._shape_size / 2, height = self._shape_size, sections = 90)
-        mesh.apply_transform(trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5]))
-        self._addShape("Tube",self._toMeshData(mesh))
-        
-    # Sphere are not very usefull but I leave it for the moment    
-    def addSphere(self) -> None:
-        # subdivisions (int) – How many times to subdivide the mesh. Note that the number of faces will grow as function of 4 ** subdivisions, so you probably want to keep this under ~5
-        mesh = trimesh.creation.icosphere(subdivisions=4,radius = self._shape_size / 2,)
-        mesh.apply_transform(trimesh.transformations.translation_matrix([0, 0, self._shape_size*0.5]))
-        self._addShape("Sphere",self._toMeshData(mesh))"""
-
 
     #----------------------------------------
     # Initial Source code from the awesome fieldOfView - with some amendments by Slashee

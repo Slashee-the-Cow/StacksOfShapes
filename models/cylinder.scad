@@ -1,4 +1,4 @@
-// Cylinder for Basic Shapes
+// Cylinder for Stacks of Shapes
 // by Slashee the Cow
 $fn = 256;
 

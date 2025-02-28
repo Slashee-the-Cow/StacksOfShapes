@@ -1,4 +1,4 @@
-// Torus (thick) for Basic Shapes
+// Torus (thick) for Stacks of Shapes
 // by Slashee the Cow
 $fn = 64;
 

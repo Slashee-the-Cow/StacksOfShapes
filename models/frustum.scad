@@ -1,4 +1,4 @@
-// Frustum for Basic Shapes
+// Frustum for Stacks of Shapes
 // by Slashee the Cow
 $fn = 128;
 

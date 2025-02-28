@@ -1,4 +1,4 @@
-// Helix for Basic Shapes
+// Helix for Stacks of Shapes
 // by Slashee the Cow
 
 $fn = $preview ? 8 : 16 ;

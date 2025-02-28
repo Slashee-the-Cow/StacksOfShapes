@@ -1,4 +1,4 @@
-// Sphere for Basic Shapes
+// Sphere for Stacks of Shapes
 // by Slashee the Cow
 $fn = 128;
 

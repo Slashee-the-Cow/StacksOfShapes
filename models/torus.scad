@@ -1,4 +1,4 @@
-// Torus for Basic Shapes
+// Torus for Stacks of Shapes
 // by Slashee the Cow
 $fn = 64;
 

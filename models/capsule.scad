@@ -1,4 +1,4 @@
-// Capsule for Basic Shapes
+// Capsule for Stacks of Shapes
 // by Slashee the Cow
 $fn = 128;
 
