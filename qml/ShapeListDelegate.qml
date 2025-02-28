@@ -22,7 +22,6 @@ Rectangle {  // Base element
     property alias delegateText: textItem.text
     property string delegateImageSource: ""
     property string delegateTooltipText: ""
-    property bool delegateTooltipReposition: false
 
 
     MouseArea {
@@ -47,23 +46,10 @@ Rectangle {  // Base element
         }
 
         UM.ToolTip {
-           id: delegateTooltip
+            id: delegateTooltip
             text: delegateTooltipText
             visible: delegateTooltipText != "" && shapeDelegateMouseArea.containsMouse
         }
-    }
-
-    Binding {
-        target: delegateTooltip
-        property: "x"
-        value: x + width
-        when: delegateTooltipReposition
-    }
-    Binding {
-        target: delegateTooltip
-        property: "y"
-        value: parent.y
-        when: delegateTooltipReposition
     }
 
     Image {

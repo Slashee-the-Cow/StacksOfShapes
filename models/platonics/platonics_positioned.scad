@@ -3,11 +3,14 @@
 
 use <platonics.scad>
 
+// Tetrahedron
+//color("SteelBlue") translate([0,0,0.205]) tetrahedron();
+
 // Octahedron
-//translate([0,0,0.408]) rotate([54.7, 0, 0]) octahedron();
+//color("DarkMagenta")translate([0,0,0.408]) rotate([54.7, 0, 0]) octahedron();
 
 // Dodecahedron
-//translate([0,0,1.115]) rotate([-31.7, 0, 0]) dodecahedron();
+//color("IndianRed")Stranslate([0,0,1.115]) rotate([-31.7, 0, 0]) dodecahedron();
 
 // Icosahedron
-//translate([0,0,0.405]) resize([1,0,0], auto=true) rotate([0, 21, 0]) icosahedron();
+color("SpringGreen") translate([0,0,0.405]) resize([1,0,0], auto=true) rotate([0, 21, 0]) icosahedron();

@@ -12,6 +12,10 @@ UM.Dialog {
         let value = parseInt(text)  // Should be NaN on blank
         return !isNaN(value)
     }
+    function isValidFloat(text){
+        let value = parseFloat(text)
+        return !isNaN(value)
+    }
 
     readonly property string shapeTypeShape: "SHAPE"  // Would the equivalent of an enum be a regular object? Eh, this is easier
     readonly property string shapeTypeSymbol: "SYMBOL"
@@ -142,20 +146,20 @@ UM.Dialog {
                         delegateImageSource: manager.getShapeImage(modelData.shapeName)
                         delegateClickedFunction: function(shapeName) {manager.loadModel(shapeName)}
                         delegateTooltipText: {
-                            manager.logMessage("ShapeDelegate (Shape): modelData =" + modelData);
+                            /*manager.logMessage("ShapeDelegate (Shape): modelData =" + modelData);
                             for (var key in modelData) {
                                 manager.logMessage("  Key: " + key + ", Value: " + modelData[key]);
                             }
                             manager.logMessage("ShapeDelegate (Shape): tooltipKey = " + tooltipKey);
                             manager.logMessage("ShapeDelegate (Shape): modelData.shapeData[tooltipKey] = " + modelData.shapeData[tooltipKey]);
                             manager.logMessage("ShapeDelegate (Shape): modelData.shapeData[shapeDialog.tooltipKey] = " + modelData.shapeData[shapeDialog.tooltipKey]);
-                            manager.logMessage("ShapeDelegate (Shape) - DEBUGGING - Trying modelData.shapeData.tooltip Directly: " + modelData.shapeData.tooltip); // NEW! - Try direct property access!
+                            manager.logMessage("ShapeDelegate (Shape) - DEBUGGING - Trying modelData.shapeData.tooltip Directly: " + modelData.shapeData.tooltip); // NEW! - Try direct property access!*/
                             return modelData.shapeData[shapeDialog.tooltipKey]; // Keep original dictionary access for now, but log direct access result
                             // return modelData.tooltip; // ALTERNATIVE -  *TEMPORARILY* TRY RETURNING DIRECT ACCESS - for debugging ONLY
                         }
                     }
                     Component.onCompleted: {
-                        manager.logMessage("shapeListView onCompleted{}: Current model is" + model)
+                        manager.logMessage("shapeListView onCompleted{}: Current model is " + model)
                     }
                 }
             }
@@ -261,6 +265,46 @@ UM.Dialog {
                     Component.onCompleted: {
                         displaySymbolSize = manager.SymbolSize.toString()
                         manager.logMessage("symbolSizeTextField has been completed and its text is " + text)
+                    }
+                    //background: Rectangle { color: "red"}
+                }
+            }
+
+            RowLayout{
+                id: symbolHeightHolder
+                visible: currentShapeType == shapeTypeSymbol
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVTop
+                Layout.preferredHeight: implicitHeight
+                Layout.row: 2
+                Layout.column: 0
+                UM.Label{
+                    id: symbolHeightText
+                    text: catalog.i18nc("dialog:symbolHeight", "Symbol height: ")
+                    //Layout.preferredWidth: 40
+                    //width: 60
+                    //background: Rectangle { color: "pink"}
+                }
+
+                UM.TextFieldWithUnit{
+                    id: symbolHeightTextField
+                    unit: "mm"
+                    property string displaySymbolHeight: ""
+                    Layout.preferredWidth: 80
+                    validator: DoubleValidator{
+                        bottom: 0.1
+                        decimals: 2
+                    }
+                    text: displaySymbolHeight
+                    onTextChanged: {
+                        manager.logMessage("symbolHeightTextField text changed")
+                        if (isValidFloat(text)) {
+                            manager.logMessage("symbolHeightTextField text change is valid float: " + text)
+                            manager.SymbolHeight = parseFloat(text)
+                        }
+                    }
+                    Component.onCompleted: {
+                        displaySymbolHeight = manager.SymbolHeight.toString()
+                        manager.logMessage("symbolHeightTextField has been completed and its text is " + text)
                     }
                     //background: Rectangle { color: "red"}
                 }

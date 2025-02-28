@@ -86,10 +86,12 @@ class StacksOfShapes(QObject, Extension):
         # Add preferences with their default if we don't already have them
         self._preferences.addPreference("stacksofshapes/shapesize", 20)
         self._preferences.addPreference("stacksofshapes/symbolsize", 50)
+        self._preferences.addPreference("stacksofshapes/symbolheight", 5)
 
         # Get values from preferences
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
         self._symbol_size = float(self._preferences.getValue("stacksofshapes/symbolsize"))
+        self._symbol_height = float(self._preferences.getValue("stacksofshapes/symbolheight"))
 
         self._shape_list_dialog = None
         
@@ -285,15 +287,22 @@ class StacksOfShapes(QObject, Extension):
 
     Symbols = {
         _symbols_category_arrows: {
-            catalog.i18nc("symbol_name", "Straight Arrow"): "2d/arrows/arrow_single.stl",
+            catalog.i18nc("symbol_name", "Straight Arrow"): {
+                PATH_KEY: "2d/arrows/arrow_single.stl",
+                TOOLTIP_KEY: "",
+            },
         },
         _symbols_category_hearts: {
-            catalog.i18nc("symbol_name", "Heart"): "2d/hearts/heart.stl"
+            catalog.i18nc("symbol_name", "Heart"): {
+                PATH_KEY: "2d/hearts/heart.stl",
+                TOOLTIP_KEY: "Not anatomically correct.",
+            },
         }
     }
 
     Symbol_Category_Tooltips = {
-        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.\nRotate or mirror them and they can point at other things.")
+        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.\nRotate or mirror them and they can point at other things."),
+        _symbols_category_hearts: ""
     }
 
     @pyqtSlot(str, result=str)
@@ -496,6 +505,17 @@ class StacksOfShapes(QObject, Extension):
     def SymbolSize(self) -> int:
         return int(self._symbol_size)
     
+    _symbol_height_changed = pyqtSignal()
+
+    def SetSymbolHeight(self, value: float) -> None:
+        self._preferences.setValue("stacksofshapes/symbolheight", value)
+        self._symbol_height = value
+        self._symbol_height_changed.emit()
+
+    @pyqtProperty(float, notify = _symbol_height_changed, fset=SetSymbolHeight)
+    def SymbolHeight(self) -> float:
+        return float(self._symbol_height)
+    
     @pyqtSlot(str, result=str)
     def getCategoryImage(self, value: str) -> str:
         image_path = f"{self._qml_categories_icon_folder}{value}.png"
@@ -554,17 +574,36 @@ class StacksOfShapes(QObject, Extension):
         # 2 - Calculate the dimensions of the bounding box
         dimensions: numpy.ndarray = max_point - min_point
 
-        # 3 - Get the size of the largest dimension
-        max_bound: Any = numpy.max(dimensions)
+        if self._current_type == ShapeTypes.SHAPE:
+            # 3 - Get the size of the largest dimension
+            max_bound = numpy.max(dimensions)
+            # 4 - Calculate the scaling factor based on the largest dimension and the target size
+            if max_bound > 0:  # Make sure we handle a degenerate mesh gracefully
+                scale_factor = target_size / max_bound
+            else:
+                scale_factor = 1
+            # 5 - Scale your mesh by that much
+            tri_node.apply_scale(scale_factor)
+        elif self._current_type == ShapeTypes.SYMBOL:
+            max_bound_xy = max(dimensions[0], dimensions[1])
+            if max_bound_xy > 0:
+                scale_factor_xy = target_size / max_bound_xy
+            else:
+                scale_factor_xy = 1
+            
+            if dimensions[2] > 0:
+                scale_factor_z = self._symbol_height / dimensions[2]
+            else:
+                scale_factor_z = 1
+            
+            scale_vector =  [scale_factor_xy, scale_factor_xy, scale_factor_z]
+            tri_node.apply_scale(scale_vector)
+        else: # Defensive default case - SHOULD NEVER HAPPEN, but for robustness
+            log("w", f"Unexpected shape type in _toMeshData: {self._current_type}. Defaulting to uniform scaling.")
+            max_bound = numpy.max(dimensions)
+            scale_factor = target_size / max_bound if max_bound > 0 else 1
+            tri_node.apply_scale(scale_factor) # Apply uniform scale as fallback
 
-        # 4 - Calculate the scaling factor based on the largest dimension and the target size
-        if max_bound > 0:  # Make sure we handle a degenerate mesh gracefully
-            scale_factor = target_size / max_bound
-        else:
-            scale_factor = 1
-
-        # 5 - Scale your mesh by that much
-        tri_node.apply_scale(scale_factor)
 
         # Rotate the part to laydown on the build plate
         # Modification from 5@xes
