@@ -119,23 +119,47 @@ class StacksOfShapes(QObject, Extension):
     _shape_category_basics: str = catalog.i18nc("shape_category", "Basics")
     _shape_category_spherical: str = catalog.i18nc("shape_category", "Spherical")
     _shape_category_prisms: str = catalog.i18nc("shape_category", "Prisms")
-    _shape_category_pyramids: str = catalog.i18nc("shape_category", "Pyramids")
+    _shape_category_pyramids_cones: str = catalog.i18nc("shape_category", "Pyramids & Cones")
     _shape_category_platonics: str = catalog.i18nc("shape_category", "Platonic Solids")
+    _shape_category_torus: str = catalog.i18nc("shape_category", "Toruses")
+    _shape_category_curvy: str = catalog.i18nc("shape_category", "Curvy")
+    _shape_category_things: str = catalog.i18nc("shape_category", "Things")
     _shape_category_tetrominoes: str = catalog.i18nc("shape_category", "Tetrominoes")
+    _shape_category_negative_spherical: str = catalog.i18nc("shape_category", "Negative Spherical")
 
     PATH_KEY: str = "path"
     TOOLTIP_KEY: str = "tooltip"
 
     Shapes = {
         _shape_category_basics: {
-            catalog.i18nc("shape_name", "Cube"): {
+            catalog.i18nc("shape_name_basics", "Cube"): {
                 PATH_KEY: "platonics/hexahedron.stl",
-                TOOLTIP_KEY: "The corners are sharp. Don't poke your eyes out.",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cube", "All faces are the same size and all the angles are equal.\nIt is one of the platonic solids."),
             },
-            catalog.i18nc("shape_name", "Sphere"): {
+            catalog.i18nc("shape_name_basics", "Sphere"): {
                 PATH_KEY: "spherical/sphere.stl",
-                TOOLTIP_KEY: "This one has zero corners. Your eyes are safe.",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:sphere", "A perfectly round 3D shape. Often used as a ball.\nEvery part of the outside is the same distance from the centre."),
             },
+            catalog.i18nc("shape_name_basics", "Cylinder"): {
+                PATH_KEY: "cylinders/cylinder.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cylinder", "Two circles with a rounded surface connecting them.\nA can of soup is a cylinder."),
+            },
+            catalog.i18nc("shape_name_basics", "Cone"): {
+                PATH_KEY: "pyramids_cones/cone.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cone", "A round base which comes to a point at the top.\nCan be different heights depending on the taper angle."),
+            },
+            catalog.i18nc("shape_name_basics", "Square Pyramid"): {
+                PATH_KEY: "pyramids_cones/pyramid_square.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:pyramid_square", "Similar to a cone except the base is a square.\nThe ancient Egyptians buried their pharoahs in buildings shaped like this."),
+            },
+            catalog.i18nc("shape_name_basics", "Recangular Prism"): {
+                PATH_KEY: "prisms/prism_rectangular.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:prism_rectangular", "A \"cuboid\", like a cube except the faces are not the same size.\nMany things such as boxes are forms of this shape."),
+            },
+            catalog.i18nc("shape_name_basics", "Torus (Donut)"): {
+                PATH_KEY: "torus/torus.stl",
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:torus", "A ring shaped surface created by revolving a circle around a centre point.\nAlso a delicious treat.")
+            }
         },
         _shape_category_spherical: {
             catalog.i18nc("shape_name", "Sphere"): {
@@ -197,26 +221,38 @@ class StacksOfShapes(QObject, Extension):
                 TOOLTIP_KEY: ""
             }
         },
-        _shape_category_pyramids: {
+        _shape_category_pyramids_cones: {
             catalog.i18nc("shape_name", "Triangular Pyramid (3 sides)"): {
                 PATH_KEY: "platonics/tetrahedron.stl",
                 TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name", "Square Pyramid (4 sides)"): {
-                PATH_KEY: "pyramids/pyramid_square.stl",
+                PATH_KEY: "pyramids_cones/pyramid_square.stl",
                 TOOLTIP_KEY: "",
             },
+            catalog.i18nc("shape_name", "Cone"): {
+                PATH_KEY: "pyramids_cones/cone.stl",
+                TOOLTIP_KEY: "A cone is just a pyramid with a round base.",
+            },
             catalog.i18nc("shape_name", "Pentagonal Pyramid (5 sides)"): {
-                PATH_KEY: "pyramids/pyramid_pentagon.stl",
+                PATH_KEY: "pyramids_cones/pyramid_pentagon.stl",
                 TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name", "Hexagonal Pyramid (6 sides)"): {
-                PATH_KEY: "pyramids/pyramid_hexagon.stl",
+                PATH_KEY: "pyramids_cones/pyramid_hexagon.stl",
                 TOOLTIP_KEY: ""
             },
             catalog.i18nc("shape_name", "Octagonal Pyramid (8 sides)"): {
-                PATH_KEY: "pyramids/pyramid_octagon.stl",
+                PATH_KEY: "pyramids_cones/pyramid_octagon.stl",
                 TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Frustum (Conical)"): {
+                PATH_KEY: "pyramids_cones/frustum_conical.stl",
+                TOOLTIP_KEY: "A cone with the top cut off",
+            },
+            catalog.i18nc("shape_name", "Frustum (Square)"): {
+                PATH_KEY: "pyramids_cones/frustum_square.stl",
+                TOOLTIP_KEY: "The frustum princieple can also be applied to regular pyramids"
             }
         },
         _shape_category_platonics: {
@@ -239,6 +275,44 @@ class StacksOfShapes(QObject, Extension):
             catalog.i18nc("shape_name", "Icosahedron (20 sides)"): {
                 PATH_KEY: "platonics/icosahedron.stl",
                 TOOLTIP_KEY: "",
+            },
+        },
+        _shape_category_torus: {
+            catalog.i18nc("shape_name", "Torus (Thick)"): {
+                PATH_KEY: "torus/torus_thick.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Torus"): {
+                PATH_KEY: "torus/torus.stl",
+                TOOLTIP_KEY: "",
+            },
+            catalog.i18nc("shape_name", "Torus (Thin)"): {
+                PATH_KEY: "torus/torus_thin.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Torus (Extra Thin)"): {
+                PATH_KEY: "torus/torus_thin_extra.stl",
+                TOOLTIP_KEY: "",
+            },
+        },
+        _shape_category_curvy: {
+            catalog.i18nc("shape_name", "Ellipsoid"): {
+                PATH_KEY: "curvy/ellipsoid.stl",
+                TOOLTIP_KEY: "An ellipsoid basically means a stretched out sphere."
+            },
+        },
+        _shape_category_things: {
+            catalog.i18nc("shape_names", "Capsule"): {
+                PATH_KEY: "things/capsule.stl",
+                TOOLTIP_KEY: "Everybody hates taking their medicine. But trust me, it's good for you.",
+            },
+            catalog.i18nc("shape_names", "Helix"): {
+                PATH_KEY: "things/helix.stl",
+                TOOLTIP_KEY: "Springs are probably the best example of these... them and waterslides, anyway.",
+            },
+            catalog.i18nc("shape_names", "Utah Teapot"): {
+                PATH_KEY: "things/utah_teapot.stl",
+                TOOLTIP_KEY: "The Utah Teapot is a standard reference object in 3D computer graphics, from 1975. It was created by Martin Newell at the University of Utah and has been used in countless graphics papers and demos.\nSounds boring, but trust me, it's a big deal."
             }
         },
         _shape_category_tetrominoes: {
@@ -270,16 +344,42 @@ class StacksOfShapes(QObject, Extension):
                 PATH_KEY: "tetrominoes/tetromino_straight.stl",
                 TOOLTIP_KEY: "Also known as the \"I\""
             }
+        },
+        _shape_category_negative_spherical: {
+            catalog.i18nc("shape_name", "Negative Three Quarter Spherical Segment"): {
+                PATH_KEY: "negative_spherical/negative_three_quarter_spherical_sector.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Negative Hemisphere"): {
+                PATH_KEY: "negative_spherical/negative_hemisphere.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Negative Spherical Quadrant"): {
+                PATH_KEY: "negative_spherical/negative_spherical_quadrant.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Negative Spherical Octant"): {
+                PATH_KEY: "negative_spherical/negative_spherical_octant.stl",
+                TOOLTIP_KEY: ""
+            },
+            catalog.i18nc("shape_name", "Negative Spherical Octant (Corner)"): {
+                PATH_KEY: "negative_spherical/negative_spherical_octant_corner.stl",
+                TOOLTIP_KEY: "",
+            },
         }
     }
 
     Shape_Category_Tooltips = {
         _shape_category_basics: "",
-        _shape_category_spherical: "Spheres. And parts of them. Keep your \"ball\" jokes to yourself.",
+        _shape_category_spherical: catalog.i18nc("shape_category_tooltip", "Spheres. And parts of them. Keep your \"ball\" jokes to yourself."),
         _shape_category_prisms: "",
-        _shape_category_pyramids: "",
-        _shape_category_platonics: "3D objects where all faces and angles are exactly the same.\nOften used as dice.",
-        _shape_category_tetrominoes: "The different shapes possible when combining four cubes."
+        _shape_category_pyramids_cones: "",
+        _shape_category_platonics: catalog.i18nc("shape_category_tooltip", "3D objects where all faces and angles are exactly the same.\nOften used as dice."),
+        _shape_category_torus: catalog.i18nc("shape_category_tooltip", "Mmmm.... donuts. That's what they look like, at least."),
+        _shape_category_curvy: catalog.i18nc("shape_category_tooltip", "Things without straight edges."),
+        _shape_category_things: catalog.i18nc("shape_category_tooltip", "You may have seen these objects in real life."),
+        _shape_category_tetrominoes: catalog.i18nc("shape_category_tooltip", "The different shapes possible when combining four cubes."),
+        _shape_category_negative_spherical: catalog.i18nc("shape_category_tooltip", f"Bits of sphere subtracted from their cubic surroundings.  \n**Note that these pieces need to be 10% larger than the spherical pieces they would contain**")
     }
 
     _symbols_category_arrows = catalog.i18nc("symbol_category", "Arrows")
@@ -288,21 +388,41 @@ class StacksOfShapes(QObject, Extension):
     Symbols = {
         _symbols_category_arrows: {
             catalog.i18nc("symbol_name", "Straight Arrow"): {
-                PATH_KEY: "2d/arrows/arrow_single.stl",
+                PATH_KEY: "symbols/arrows/arrow_single.stl",
                 TOOLTIP_KEY: "",
             },
         },
         _symbols_category_hearts: {
             catalog.i18nc("symbol_name", "Heart"): {
-                PATH_KEY: "2d/hearts/heart.stl",
-                TOOLTIP_KEY: "Not anatomically correct.",
+                PATH_KEY: "symbols/hearts/heart.stl",
+                TOOLTIP_KEY: "",
             },
+            catalog.i18nc("symbol_name", "Heart (Outline)"): {
+                PATH_KEY: "symbols/hearts/heart_outline.stl",
+                TOOLTIP_KEY: "",
+            }
         }
     }
 
     Symbol_Category_Tooltips = {
         _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.\nRotate or mirror them and they can point at other things."),
         _symbols_category_hearts: ""
+    }
+
+    Category_Thumbnail_Filenames = {
+        _shape_category_basics: "basics.png",
+        _shape_category_spherical: "spherical.png",
+        _shape_category_prisms: "prisms.png",
+        _shape_category_pyramids_cones: "pyramids_cones.png",
+        _shape_category_platonics: "platonics.png",
+        _shape_category_torus:  "toruses.png",
+        _shape_category_curvy: "curvy.png",
+        _shape_category_things: "things.png",
+        _shape_category_tetrominoes: "tetrominoes.png",
+        _shape_category_negative_spherical: "negative_spherical.png",
+
+        _symbols_category_arrows: "symbols/arrows.png",
+        _symbols_category_hearts: "symbols/hearts.png",
     }
 
     @pyqtSlot(str, result=str)
@@ -518,7 +638,7 @@ class StacksOfShapes(QObject, Extension):
     
     @pyqtSlot(str, result=str)
     def getCategoryImage(self, value: str) -> str:
-        image_path = f"{self._qml_categories_icon_folder}{value}.png"
+        image_path = f"{self._qml_categories_icon_folder}{self.Category_Thumbnail_Filenames.get(value)}"
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", image_path))
         log("d", f"getCategoryImage got relative image path: {image_path} which a abspath is {abs_path}")
         if os.path.exists(abs_path):
@@ -531,7 +651,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str, result=str)
     def getShapeImage(self, value: str) -> str:
-        model_relative_path = f"{self._qml_models_icon_folder}{self.getModelPath(value)}".replace("stl", "png")
+        model_relative_path = f"{self._qml_models_icon_folder}{self.getModelPath(value)}".replace("stl", "png" if self._current_type != ShapeTypes.SYMBOL else "svg")
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", model_relative_path))
         log("d", f"getShapeImage got relative image path {model_relative_path} with an abspath of {abs_path}")
         if os.path.exists(abs_path):

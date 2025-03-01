@@ -1,0 +1,54 @@
+Symbols = {
+    _symbols_category_arrows: {  # Category: _symbols_category_arrows
+        catalog.i18nc("symbol_name", "Arrow Chevron"): {
+            PATH_KEY: "symbols\arrows\arrow_chevron.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Chevron Short"): {
+            PATH_KEY: "symbols\arrows\arrow_chevron_short.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Curve Clockwise"): {
+            PATH_KEY: "symbols\arrows\arrow_curve_clockwise.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Dual"): {
+            PATH_KEY: "symbols\arrows\arrow_dual.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Short"): {
+            PATH_KEY: "symbols\arrows\arrow_short.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Single"): {
+            PATH_KEY: "symbols\arrows\arrow_single.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Arrow Tail"): {
+            PATH_KEY: "symbols\arrows\arrow_tail.stl",
+            TOOLTIP_KEY: "",
+        },
+    },
+    _symbols_category_hearts: {  # Category: _symbols_category_hearts
+        catalog.i18nc("symbol_name", "Heart"): {
+            PATH_KEY: "symbols\hearts\heart.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Heart Broken"): {
+            PATH_KEY: "symbols\hearts\heart_broken.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Heart Broken Left"): {
+            PATH_KEY: "symbols\hearts\heart_broken_left.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Heart Broken Outline"): {
+            PATH_KEY: "symbols\hearts\heart_broken_outline.stl",
+            TOOLTIP_KEY: "",
+        },
+        catalog.i18nc("symbol_name", "Heart Outline"): {
+            PATH_KEY: "symbols\hearts\heart_outline.stl",
+            TOOLTIP_KEY: "",
+        },
+    },
+}
