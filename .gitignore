@@ -8,3 +8,9 @@ __pycache__/
 
 # Editor settings
 /.vscode
+
+# Temp files for other software
+*~lock~
+
+# Work folder for symbols
+/symbols

@@ -32,6 +32,10 @@ UM.Dialog {
     x: 200
     y: 200
 
+    property bool globalAltShiftPressed: false
+
+    
+
     modality: Qt.NonModal
     flags: (Qt.platform.os == "windows" ? Qt.Dialog : Qt.Window)  // <-- Ugly workaround for a bug in Windows, where the close-button doesn't show up unless we have a Dialog (but _not_ a Window).
         | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint
@@ -46,6 +50,28 @@ UM.Dialog {
         if(currentShapeType == shapeTypeSymbol){
             shapeTypeTabShape.checked = false
             shapeTypeTabSymbol.checked = true
+        }
+    }
+
+    Item {
+        id: keyListener
+        anchors.fill: parent
+        focus: true
+        // Ensure it always stays focused.
+        onActiveFocusChanged: {
+            if (!activeFocus) keyListener.forceActiveFocus();
+        }
+
+        Keys.onPressed: {
+            // Log key info for debugging.
+            manager.logMessage("Key pressed: " + event.key, " modifiers: " + event.modifiers);
+            // Update the global property when both Alt and Shift are held.
+            shapeDialog.globalAltShiftPressed = (event.modifiers & Qt.AltModifier) && (event.modifiers & Qt.ShiftModifier);
+        }
+        Keys.onReleased: {
+            manager.logMessage("Key released: " + event.key + " modifiers: " + event.modifiers);
+            // Re-check the modifiers on key release.
+            shapeDialog.globalAltShiftPressed = (event.modifiers & Qt.AltModifier) && (event.modifiers & Qt.ShiftModifier);
         }
     }
 
@@ -115,7 +141,11 @@ UM.Dialog {
                             return image_path
                         }
                         delegateClickedFunction: function(categoryName) {manager.selectCategory(categoryName)}
-                        delegateTooltipText: manager.getCategoryTooltip(modelData)
+                        defaultTooltipText: manager.getCategoryTooltip(modelData)
+                        alternateTooltipMode: {
+                            manager.logMessage("Delegate attempting to set alternateTooltipMode to " + globalAltShiftPressed)
+                            return shapeDialog.globalAltShiftPressed
+                        }
                     }
                     ScrollBar.vertical: ScrollBar{
                         policy: categoryListView.contentHeight > categoryListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
@@ -145,7 +175,7 @@ UM.Dialog {
                         delegateText: modelData.shapeName
                         delegateImageSource: manager.getShapeImage(modelData.shapeName)
                         delegateClickedFunction: function(shapeName) {manager.loadModel(shapeName)}
-                        delegateTooltipText: {
+                        defaultTooltipText: {
                             /*manager.logMessage("ShapeDelegate (Shape): modelData =" + modelData);
                             for (var key in modelData) {
                                 manager.logMessage("  Key: " + key + ", Value: " + modelData[key]);
@@ -155,6 +185,10 @@ UM.Dialog {
                             manager.logMessage("ShapeDelegate (Shape): modelData.shapeData[shapeDialog.tooltipKey] = " + modelData.shapeData[shapeDialog.tooltipKey]);
                             manager.logMessage("ShapeDelegate (Shape) - DEBUGGING - Trying modelData.shapeData.tooltip Directly: " + modelData.shapeData.tooltip); // NEW! - Try direct property access!*/
                             return modelData.shapeData[shapeDialog.tooltipKey]; // Keep original dictionary access for now, but log direct access result
+                        alternateTooltipMode: {
+                            manager.logMessage("Delegate attempting to set alternateTooltipMode to " + shapeDialog.globalAltShiftPressed)
+                            return shapeDialog.globalAltShiftPressed
+                            }
                             // return modelData.tooltip; // ALTERNATIVE -  *TEMPORARILY* TRY RETURNING DIRECT ACCESS - for debugging ONLY
                         }
                     }

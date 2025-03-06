@@ -12,6 +12,8 @@ import numpy
 import trimesh
 from enum import Enum, auto
 from pathlib import Path
+import time
+from threading import Timer
 
 from typing import Optional, List, Any, TYPE_CHECKING
 
@@ -31,6 +33,8 @@ from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
 from UM.Operations.AddSceneNodeOperation import AddSceneNodeOperation
 from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
 from UM.Operations.SetTransformOperation import SetTransformOperation
+from UM.Operations.TranslateOperation import TranslateOperation
+from UM.Math.Vector import Vector
 
 from UM.Logger import Logger
 from UM.Message import Message
@@ -129,36 +133,44 @@ class StacksOfShapes(QObject, Extension):
 
     PATH_KEY: str = "path"
     TOOLTIP_KEY: str = "tooltip"
+    JOKE_TOOLTIP_KEY: str = "jokeTooltip"
 
     Shapes = {
         _shape_category_basics: {
             catalog.i18nc("shape_name_basics", "Cube"): {
                 PATH_KEY: "platonics/hexahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cube", "All faces are the same size and all the angles are equal.\nIt is one of the platonic solids."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cube", "All faces are the same size and all the angles are equal.<br>It is one of the platonic solids."),
+                JOKE_TOOLTIP_KEY: catalog.i18nc("shape_joke_tooltip_basics:cube", "If you want to sound smart, the technical term is \"hexahedron\"."),
             },
             catalog.i18nc("shape_name_basics", "Sphere"): {
                 PATH_KEY: "spherical/sphere.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:sphere", "A perfectly round 3D shape. Often used as a ball.\nEvery part of the outside is the same distance from the centre."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:sphere", "A perfectly round 3D shape. Often used as a ball.<br>Every part of the outside is the same distance from the centre."),
+                JOKE_TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name_basics", "Cylinder"): {
                 PATH_KEY: "cylinders/cylinder.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cylinder", "Two circles with a rounded surface connecting them.\nA can of soup is a cylinder."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cylinder", "Two circles with a rounded surface connecting them.<br>A can of soup is a cylinder."),
+                JOKE_TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name_basics", "Cone"): {
                 PATH_KEY: "pyramids_cones/cone.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cone", "A round base which comes to a point at the top.\nCan be different heights depending on the taper angle."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cone", "A round base which comes to a point at the top.<br>Can be different heights depending on the taper angle."),
+                JOKE_TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name_basics", "Square Pyramid"): {
                 PATH_KEY: "pyramids_cones/pyramid_square.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:pyramid_square", "Similar to a cone except the base is a square.\nThe ancient Egyptians buried their pharoahs in buildings shaped like this."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:pyramid_square", "Similar to a cone except the base is a square.<br>The ancient Egyptians buried their pharoahs in buildings shaped like this."),
+                JOKE_TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name_basics", "Recangular Prism"): {
                 PATH_KEY: "prisms/prism_rectangular.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:prism_rectangular", "A \"cuboid\", like a cube except the faces are not the same size.\nMany things such as boxes are forms of this shape."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:prism_rectangular", "A \"cuboid\", like a cube except the faces are not the same size.<br>Many things such as boxes are forms of this shape."),
+                JOKE_TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name_basics", "Torus (Donut)"): {
                 PATH_KEY: "torus/torus.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:torus", "A ring shaped surface created by revolving a circle around a centre point.\nAlso a delicious treat.")
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:torus", "A ring shaped surface created by revolving a circle around a centre point.<br>Also a delicious treat."),
+                JOKE_TOOLTIP_KEY: "",
             }
         },
         _shape_category_spherical: {
@@ -167,7 +179,7 @@ class StacksOfShapes(QObject, Extension):
                 TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name", "Three Quarter Spherical Sector"): {
-                PATH_KEY: "spherical/three_quarter_spherical_sector.png",
+                PATH_KEY: "spherical/three_quarter_spherical_sector.stl",
                 TOOLTIP_KEY: "",
             },
             catalog.i18nc("shape_name", "Hemisphere"): {
@@ -262,7 +274,7 @@ class StacksOfShapes(QObject, Extension):
             },
             catalog.i18nc("shape_name", "Hexahedron (6 sides)"): {
                 PATH_KEY: "platonics/hexahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_platonic", "Technically the term is *regular* hexahedron.\nBut I've gotten nerdy enough already."),
+                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_platonic", "Technically the term is *regular* hexahedron.<br>But I've gotten nerdy enough already."),
             },
             catalog.i18nc("shape_name", "Octahedron (8 sides)"): {
                 PATH_KEY: "platonics/octahedron.stl",
@@ -312,7 +324,7 @@ class StacksOfShapes(QObject, Extension):
             },
             catalog.i18nc("shape_names", "Utah Teapot"): {
                 PATH_KEY: "things/utah_teapot.stl",
-                TOOLTIP_KEY: "The Utah Teapot is a standard reference object in 3D computer graphics, from 1975. It was created by Martin Newell at the University of Utah and has been used in countless graphics papers and demos.\nSounds boring, but trust me, it's a big deal."
+                TOOLTIP_KEY: "The Utah Teapot is a standard reference object in 3D computer graphics, from 1975. It was created by Martin Newell at the University of Utah and has been used in countless graphics papers and demos.<br>Sounds boring, but trust me, it's a big deal."
             }
         },
         _shape_category_tetrominoes: {
@@ -374,12 +386,12 @@ class StacksOfShapes(QObject, Extension):
         _shape_category_spherical: catalog.i18nc("shape_category_tooltip", "Spheres. And parts of them. Keep your \"ball\" jokes to yourself."),
         _shape_category_prisms: "",
         _shape_category_pyramids_cones: "",
-        _shape_category_platonics: catalog.i18nc("shape_category_tooltip", "3D objects where all faces and angles are exactly the same.\nOften used as dice."),
+        _shape_category_platonics: catalog.i18nc("shape_category_tooltip", "3D objects where all faces and angles are exactly the same.<br>Often used as dice."),
         _shape_category_torus: catalog.i18nc("shape_category_tooltip", "Mmmm.... donuts. That's what they look like, at least."),
         _shape_category_curvy: catalog.i18nc("shape_category_tooltip", "Things without straight edges."),
         _shape_category_things: catalog.i18nc("shape_category_tooltip", "You may have seen these objects in real life."),
         _shape_category_tetrominoes: catalog.i18nc("shape_category_tooltip", "The different shapes possible when combining four cubes."),
-        _shape_category_negative_spherical: catalog.i18nc("shape_category_tooltip", f"Bits of sphere subtracted from their cubic surroundings.  \n**Note that these pieces need to be 10% larger than the spherical pieces they would contain**")
+        _shape_category_negative_spherical: catalog.i18nc("shape_category_tooltip", f"Bits of sphere subtracted from their cubic surroundings.  <br><b>Note that these pieces need to be 10% larger than the spherical pieces they would contain if using spheres from this plugin</b>.")
     }
 
     _symbols_category_arrows = catalog.i18nc("symbol_category", "Arrows")
@@ -405,7 +417,7 @@ class StacksOfShapes(QObject, Extension):
     }
 
     Symbol_Category_Tooltips = {
-        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.\nRotate or mirror them and they can point at other things."),
+        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.<br>Rotate or mirror them and they can point at other things."),
         _symbols_category_hearts: ""
     }
 
@@ -669,7 +681,7 @@ class StacksOfShapes(QObject, Extension):
         mesh =  trimesh.load(model_definition_path)
         
         # addShape
-        self._addShape(mesh_name,self._toMeshData(mesh), **kwargs)
+        self._addShapeSimple(mesh_name,self._toMeshData(mesh), 2000)
 
     #----------------------------------------
     # Initial Source code from the awesome fieldOfView - with some amendments by Slashee
@@ -753,14 +765,13 @@ class StacksOfShapes(QObject, Extension):
 
         mesh_data = MeshData(vertices=vertices, indices=indices, normals=normals)
 
-        return mesh_data        
+        return mesh_data
     
-    def _createShape(self, shape_type):
-        Logger.log("i", f"StacksOfShapes._createShape called with {shape_type}")
+    _reset_timer = Timer
         
     # Initial Source code from  fieldOfView
     # https://github.com/fieldOfView/Cura-SimpleShapes/blob/bac9133a2ddfbf1ca6a3c27aca1cfdd26e847221/SimpleShapes.py#L70
-    def _addShape(self, mesh_name, mesh_data: MeshData, ext_pos = 0 , hole = False , thin = False , mode = "" ) -> None:
+    def _addShape(self, mesh_name, mesh_data: MeshData, ext_pos = 0) -> None:
         application = CuraApplication.getInstance()
         global_stack = application.getGlobalContainerStack()
         if not global_stack:
@@ -793,30 +804,6 @@ class StacksOfShapes(QObject, Extension):
         # Logger.log("d", "default_extruder_id= %s", default_extruder_id)
         node.callDecoration("setActiveExtruder", default_extruder_id)
  
-        stack = node.callDecoration("getStack") # created by SettingOverrideDecorator that is automatically added to CuraSceneNode
-        settings = stack.getTop()
-        # Remove All Holes
-        if hole :
-            definition = stack.getSettingDefinition("meshfix_union_all_remove_holes")
-            new_instance = SettingInstance(definition, settings)
-            new_instance.setProperty("value", True)
-            new_instance.resetState()  # Ensure that the state is not seen as a user state.
-            settings.addInstance(new_instance) 
-        # Print Thin Walls    
-        if thin :
-            definition = stack.getSettingDefinition("fill_outline_gaps")
-            new_instance = SettingInstance(definition, settings)
-            new_instance.setProperty("value", True)
-            new_instance.resetState()  # Ensure that the state is not seen as a user state.
-            settings.addInstance(new_instance)
- 
-        if len(mode) :
-            definition = stack.getSettingDefinition("magic_mesh_surface_mode")
-            new_instance = SettingInstance(definition, settings)
-            new_instance.setProperty("value", mode)
-            new_instance.resetState()  # Ensure that the state is not seen as a user state.
-            settings.addInstance(new_instance)
-
         # node.setSetting(SceneNodeSettings.AutoDropDown, True)  # I don't even know where this line came from
             
         active_build_plate = application.getMultiBuildPlateModel().activeBuildPlate
@@ -825,3 +812,68 @@ class StacksOfShapes(QObject, Extension):
         node.addDecorator(SliceableObjectDecorator())
 
         application.getController().getScene().sceneChanged.emit(node)
+    
+    def _addShapeSimple(self, mesh_name: str, mesh_data: MeshData, add_delay_ms: float = 0) -> None: # Corrected signature with 'self'
+        """
+        Adds a shape to the Cura scene with minimal essential functionality, primarily for
+        race condition testing.  Version 3 - Minimal but (hopefully) functional.
+
+        :param mesh_name: Name to give to the scene node.
+        :param mesh_data: MeshData object representing the shape.
+        :param add_delay_ms:  Optional delay in milliseconds.
+        """
+        application = CuraApplication.getInstance()
+        #global_stack = application.getGlobalContainerStack()
+        #if not global_stack:
+        #    return
+        original_auto_slice_value = bool(self._preferences.getValue("general/auto_slice"))
+        if original_auto_slice_value == True:
+            self._preferences.setValue("general/auto_slice", False)
+        log("d", f"preference general/auto_slice was {original_auto_slice_value}")
+
+        node = CuraSceneNode()
+
+        node.setMeshData(mesh_data)
+        node.setSelectable(True)
+        node.setName(mesh_name if mesh_name else "StackShape")
+
+        scene = self._controller.getScene()
+        op = AddSceneNodeOperation(node, scene.getRoot())
+        op.push()
+
+        extruder_stack = application.getExtruderManager().getActiveExtruderStacks() 
+        default_extruder_position = int(application.getMachineManager().defaultExtruderPosition)
+        default_extruder_id = extruder_stack[default_extruder_position].getId()
+        node.callDecoration("setActiveExtruder", default_extruder_id)
+
+        active_build_plate = application.getMultiBuildPlateModel().activeBuildPlate
+        node.addDecorator(BuildPlateDecorator(active_build_plate))
+        
+        node.addDecorator(SliceableObjectDecorator())
+                
+        application.getController().getScene().sceneChanged.emit(node)
+
+        if original_auto_slice_value == True:
+            self._reset_timer = Timer(add_delay_ms/1000, self.resetAutoSlice, [original_auto_slice_value, node], {})
+            self._reset_timer.start()
+        return
+    
+    def resetAutoSlice(self, value: bool, node: CuraSceneNode) -> None:
+        # Jiggle the node using TranslateOperation
+        translation_vector = Vector(0.01, 0, 0) # Tiny translation in X direction (0.01mm)
+        translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+        translate_op.push() # Push the translation operation
+        translation_vector = Vector(-0.01, 0, 0) # Tiny translation in X direction (0.01mm)
+        translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+        translate_op.push() # Push the translation operation
+        # Give Cura a bit of time to catch up
+        time.sleep(0.02)
+        log("d", f"resetAutoSlice run with a value of {value}")
+        self._preferences.setValue("general/auto_slice", value)
+        time.sleep(0.02)
+        translation_vector = Vector(0.01, 0, 0) # Tiny translation in X direction (0.01mm)
+        translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+        translate_op.push() # Push the translation operation
+        translation_vector = Vector(-0.01, 0, 0) # Tiny translation in X direction (0.01mm)
+        translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+        translate_op.push() # Push the translation operation

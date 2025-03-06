@@ -1,14 +1,33 @@
+# Full text of each license can be found in the "licenses" folder.
+
 Utah Teapot
 Created by zzubnik
 https://www.thingiverse.com/thing:852078
 Creative Commons Public Domain CC0 - https://creativecommons.org/publicdomain/zero/1.0/
 
-plato (Platonic Solids for OpenSCAD)
-Created by qalle2
-https://github.com/qalle2/plato
-Code is under GPL-3.0 - https://www.gnu.org/licenses/gpl-3.0.en.html
+Platonic Solids for OpenScad v0.2
+Created by WilliamAAdams
+https://www.thingiverse.com/thing:10725
+Creative Commons Public Domain CC0 - https://creativecommons.org/publicdomain/zero/1.0/
+Used for:
+    All platonic solids except hexahedron.
 
-Noto Emoji
+Noto Emoji font
 Developed by Google
+https://fonts.google.com/noto/specimen/Noto+Emoji
 SIL Open Font License 1.1 - http://scripts.sil.org/OFL
 Copyright 2014-2017 Google Inc. All Rights Reserved.
+Used for:
+    "Astrological Signs" category: all symbols
+    "Card Suits" category: club and spade
+    "Symbols and Icons" category: add, biohazard_warning, divide, radiation_warning, thumbs_down, thumbs_up
+
+
+Material Design symbols
+Developed by Google
+https://fonts.google.com/icons
+Apache License 2.0 - https://www.apache.org/licenses/LICENSE-2.0.html
+Copyright Google Inc.
+Used for:
+    "Weather" category: all symbols
+    "Symbols and Icons" category: all except those from Noto Emoji, cog, donut, tear

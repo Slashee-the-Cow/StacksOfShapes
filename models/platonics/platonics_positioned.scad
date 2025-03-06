@@ -1,16 +1,16 @@
 // Translations and rotations to roughly level one face with the ground.
 // This part by Slashee the Cow
 
-use <platonics.scad>
+use <platonic.scad>
 
 // Tetrahedron
-//color("SteelBlue") translate([0,0,0.205]) tetrahedron();
+//color("SteelBlue") translate([0,0,0.334]) rotate([180,0,0]) rotate([45,35.25,90]) makeTetrahedron();
 
 // Octahedron
-//color("DarkMagenta")translate([0,0,0.408]) rotate([54.7, 0, 0]) octahedron();
+//color("DarkMagenta")translate([0,0,0.576]) rotate([45, 35.3, 0]) makeOctahedron();
 
 // Dodecahedron
-//color("IndianRed")Stranslate([0,0,1.115]) rotate([-31.7, 0, 0]) dodecahedron();
+//color("IndianRed") translate([0,0,.795]) rotate([0, -31.8, 0]) makeDodecahedron();
 
 // Icosahedron
-color("SpringGreen") translate([0,0,0.405]) resize([1,0,0], auto=true) rotate([0, 21, 0]) icosahedron();
+color("SpringGreen") translate([0,0,0.405]) resize([1,0,0], auto=true) rotate([0, 21, 0]) makeIcosahedron();
