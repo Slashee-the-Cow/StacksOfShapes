@@ -14,6 +14,7 @@ from enum import Enum, auto
 from pathlib import Path
 import time
 from threading import Timer
+import tempfile
 
 from typing import Optional, List, Any, TYPE_CHECKING
 
@@ -35,6 +36,9 @@ from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
 from UM.Operations.SetTransformOperation import SetTransformOperation
 from UM.Operations.TranslateOperation import TranslateOperation
 from UM.Math.Vector import Vector
+from UM.Math.AxisAlignedBox import AxisAlignedBox
+
+from PyQt6.QtCore import QUrl
 
 from UM.Logger import Logger
 from UM.Message import Message
@@ -112,7 +116,15 @@ class StacksOfShapes(QObject, Extension):
         self._shape_names: list = []
         self._current_type = ShapeTypes.SHAPE
         self._current_category: str = ""
-        
+        self._current_type_category_thumbnails = self.Shape_Category_Thumbnail_Filenames
+        self._current_type_category_tooltips = self.Shape_Category_Tooltips
+
+        self._is_file_processing: bool = False
+        self._expected_filename: str | None = None
+        self._expected_title: str | None = None
+        CuraApplication.getInstance().fileCompleted.connect(self._on_file_loaded)
+        self._reset_tiny_scaling = False
+        self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
         #self.selectCategory("Basics")
@@ -135,6 +147,19 @@ class StacksOfShapes(QObject, Extension):
     PATH_KEY: str = "path"
     TOOLTIP_KEY: str = "tooltip"
     ALT_TOOLTIP_KEY: str = "altTooltip"
+
+    def _collect_symbol_filenames(self):
+        symbol_filenames = set()
+        for category_key in self.Symbols.keys():
+            log("d", f"_collect_symbol_filenames trying to get keys for category_key {category_key}")
+            for symbol_key in self.Symbols[category_key].keys():
+                log("d", f"_collect_symbol_filenames trying to get data for symbol_key {symbol_key}")
+                symbol_data = self.Symbols[category_key][symbol_key]
+                filename = os.path.basename(symbol_data[self.PATH_KEY])
+                symbol_filenames.add(filename)
+        log("d", f"_collect_symbol_filenames got {symbol_filenames}")
+        return symbol_filenames
+
 
     Shapes = {
         _shape_category_basics: {
@@ -513,13 +538,7 @@ class StacksOfShapes(QObject, Extension):
         if alt:
             value += "_alt"
         tooltip_text: str = ""
-        match self._current_type:
-            case ShapeTypes.SHAPE:
-                tooltip_text = self.Shape_Category_Tooltips.get(value)
-            case ShapeTypes.SYMBOL:
-                tooltip_text = self.Symbol_Category_Tooltips.get(value)
-            case _:
-                return ""  # Frankly I'm more concerned _current_type isn't one of the things it should be
+        tooltip_text = self._current_type_category_tooltips.get(value)
         log("d", f"getCategoryTooltip got tooltip text {tooltip_text}")
         return tooltip_text
 
@@ -627,10 +646,14 @@ class StacksOfShapes(QObject, Extension):
                 log("d", f"StackOfShapes.selectType matched Shape")
                 self._current_type = ShapeTypes.SHAPE
                 self._current_type_dict = self.Shapes
+                self._current_type_category_thumbnails = self.Shape_Category_Thumbnail_Filenames
+                self._current_type_category_tooltips = self.Shape_Category_Tooltips
             case ShapeTypes.SYMBOL.value:
                 log("d", f"StackOfShapes.selectType matched Symbol")
                 self._current_type = ShapeTypes.SYMBOL
                 self._current_type_dict = self.Symbols
+                self._current_type_category_thumbnails = self.Symbol_Category_Thumbnail_Filenames
+                self._current_type_category_tooltips = self.Symbol_Category_Tooltips
             case _:
                 log("w", f"StackOfShapes.selectType matched... nothing?")
                 return  # We shouldn't be here.
@@ -659,7 +682,12 @@ class StacksOfShapes(QObject, Extension):
     
     @pyqtSlot(str)
     def loadModel(self, value: str) -> None:
-        self._registerShapeStl(value, self.getModelPath(value))
+        # self._registerShapeStl(value, self.getModelPath(value))
+        log("d", f"loadModel() run with value = {value}")
+        stl_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "models", self.getModelPath(value)))
+        log("d", f"loadModel() got stl_file_path = {stl_file_path}")
+        #self._expected_title = value
+        self._addShapeLoad(value, stl_file_path)
 
     def getModelPath(self, model: str) -> str:
         return self._current_type_dict[self._current_category][model].get(self.PATH_KEY)
@@ -722,11 +750,7 @@ class StacksOfShapes(QObject, Extension):
     
     @pyqtSlot(str, result=str)
     def getCategoryImage(self, value: str) -> str:
-        match self._current_type:
-            case ShapeTypes.SHAPE:
-                image_path = f"{self._qml_categories_icon_folder}{self.Shape_Category_Thumbnail_Filenames.get(value)}"
-            case ShapeTypes.SYMBOL:
-                image_path = f"{self._qml_categories_icon_folder}{self.Symbol_Category_Thumbnail_Filenames.get(value)}"
+        image_path = f"{self._qml_categories_icon_folder}{self._current_type_category_thumbnails.get(value)}"
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", image_path))
         log("d", f"getCategoryImage got relative image path: {image_path} which a abspath is {abs_path}")
         if os.path.exists(abs_path):
@@ -754,10 +778,10 @@ class StacksOfShapes(QObject, Extension):
         model_definition_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", mesh_filename)
         log("d", f"_registerShapeStl going to load {model_definition_path}")
         log("d", f"self._shape_size = {self._shape_size}")
-        mesh =  trimesh.load(model_definition_path)
+        #mesh =  trimesh.load(model_definition_path)
         
         # addShape
-        self._addShapeSimple(mesh_name,self._toMeshData(mesh), 2000)
+        #self._addShapeSimple(mesh_name,self._toMeshData(mesh), 2000)
 
     #----------------------------------------
     # Initial Source code from the awesome fieldOfView - with some amendments by Slashee
@@ -953,3 +977,101 @@ class StacksOfShapes(QObject, Extension):
         translation_vector = Vector(-0.01, 0, 0) # Tiny translation in X direction (0.01mm)
         translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
         translate_op.push() # Push the translation operation
+
+    def _on_file_loaded(self, file_name):
+        log("d",f"_on_file_loaded saw {file_name}")
+        if not self._is_file_processing or os.path.basename(file_name) != self._expected_filename:
+            return
+
+        node_to_process = None
+        scene = CuraApplication.getInstance().getController().getScene()
+        basename = os.path.basename(file_name)
+        is_symbol = basename in self._symbol_filenames
+
+        for node in scene.getRoot().getChildren():
+            if isinstance(node, CuraSceneNode) and node.getName() == basename:
+                node_to_process = node
+                log("d", f"Found child node that seems like what we want: {node_to_process}")
+                break
+
+        if node_to_process:
+            bbox_mesh_data = node_to_process.getBoundingBoxMesh()
+            if bbox_mesh_data:
+                aabox = bbox_mesh_data.getExtents()
+                if aabox:
+                    size_x = aabox.width
+                    size_y = aabox.depth
+                    size_z = aabox.height
+                    log("d", f"_on_file_loaded got w/d/h of {aabox.width} x {aabox.depth} x {aabox.height}")
+
+                    if is_symbol:
+                        max_xy_size = max(size_x, size_z)
+                        if max_xy_size > 0:
+                            scale_factor_xy = self._symbol_size / max_xy_size
+                            scale_factor_z = self._symbol_height / size_z
+                            log("d", f"_on_file_loaded scaling symbol by xy {scale_factor_xy} and z {scale_factor_z} for a desired xy of {self.SymbolSize} and z of {self.SymbolHeight}")
+                            node_to_process.scale(Vector(scale_factor_xy, scale_factor_z, scale_factor_xy))
+                        else:
+                            log("w", f"_on_file_loaded tried scaling symbol {basename} but its max_xy_size was <= 0")
+                    else:
+                        max_size = max(size_x, size_y, size_z)
+                        if max_size > 0:
+                            scale_factor = self._shape_size / max_size
+                            log("d", f"_on_file_loaded scaling shape by {scale_factor}")
+                            node_to_process.scale(Vector(scale_factor,scale_factor,scale_factor))
+                        else:
+                            log("w", f"_on_file_loaded tried scaling shape {basename} but its max size was <= 0")
+                else:
+                    log("w", "_on_file_loaded couldn't get bounding box from MeshData")
+            else:
+                log("w", "_on_file_load couldn't get bounding box MeshData")
+        
+            if is_symbol:
+                # Due to how they aren't centred in OpenSCAD, the symbols can start way off course
+                # We fix this by forcing them into the centre
+                current_position = node_to_process.getPosition()
+                translation_vector = Vector(-current_position.x, -current_position.y, -current_position.z)
+                translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+                translate_op.push() # Push the translation operation
+
+            node_to_process.setName(self._expected_title)
+        
+        if self._reset_tiny_scaling:
+            self._preferences.setValue("mesh/scale_tiny_meshes", True)
+            self._reset_tiny_scaling = False
+
+        self._is_file_processing = False
+        self._expected_filename = None
+        self._expected_title = None
+
+    _reenable_scale_tiny: Timer | None = None
+
+    def _enable_scale_tiny(self):
+        self._preferences.setValue("mesh/scale_tiny_meshes", True)
+        self._reset_tiny_scaling = False
+
+    def _addShapeLoad(self, mesh_name: str, stl_file_path: str) -> None:
+        log("d", f"addShapeLoad() run with mesh_name = {mesh_name} and stl_file_path = {stl_file_path}")
+        application = CuraApplication.getInstance()
+
+        global_stack = application.getGlobalContainerStack()
+        if not global_stack:
+            return # Something's wrong with Cura
+        
+        if bool(self._preferences.getValue("mesh/scale_tiny_meshes")):
+            self._preferences.setValue("mesh/scale_tiny_meshes", False)
+            self._reset_tiny_scaling = True
+            if not self._reenable_scale_tiny:
+                self._reenable_scale_tiny = Timer(2, self._enable_scale_tiny)
+                self._reenable_scale_tiny.start()
+            else:
+                self._reenable_scale_tiny.cancel()
+                self._reenable_scale_tiny.start()
+            
+        
+        file_url = QUrl.fromLocalFile(stl_file_path)
+        self._is_file_processing = True
+        self._expected_title = mesh_name
+        self._expected_filename = os.path.basename(stl_file_path)
+        log("d", f"addShapeLoad() about to run readLocalFile, file_url = {file_url}, _expected_title = {self._expected_title}, _expected_filename = {self._expected_filename}")
+        application.readLocalFile(file_url, add_to_recent_files = False)

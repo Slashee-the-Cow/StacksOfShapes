@@ -33,13 +33,13 @@ Rectangle {  // Base element
     property bool alternateTooltipMode: false
 
         // Listen for changes on the global property.
-    Connections {
+    /*Connections {
         target: shapeDialog
         function onGlobalAltShiftPressedChanged() {
             shapeDelegateRoot.alternateTooltipMode = shapeDialog.globalAltShiftPressed
             manager.logMessage("Delegate updated: alternateTooltipMode = " + shapeDelegateRoot.alternateTooltipMode)
         }
-    }
+    }*/
 
     Image {
         id: shapeImage
@@ -93,6 +93,10 @@ Rectangle {  // Base element
         id: shapeDelegateMouseArea
         anchors.fill: parent
         hoverEnabled: true
+
+        onPositionChanged: {
+            alternateTooltipMode = (mouse.modifiers & Qt.AltModifier) && (mouse.modifiers & Qt.ShiftModifier)
+        }
 
         onClicked: {
             manager.logMessage("Current value of alternateTooltipMode: " + alternateTooltipMode)

@@ -32,9 +32,6 @@ UM.Dialog {
     x: 200
     y: 200
 
-    property bool globalAltShiftPressed: false
-
-    
 
     modality: Qt.NonModal
     flags: (Qt.platform.os == "windows" ? Qt.Dialog : Qt.Window)  // <-- Ugly workaround for a bug in Windows, where the close-button doesn't show up unless we have a Dialog (but _not_ a Window).
@@ -53,7 +50,7 @@ UM.Dialog {
         }
     }
 
-    Item {
+    /*Item {
         id: keyListener
         anchors.fill: parent
         focus: true
@@ -73,7 +70,7 @@ UM.Dialog {
             // Re-check the modifiers on key release.
             shapeDialog.globalAltShiftPressed = (event.modifiers & Qt.AltModifier) && (event.modifiers & Qt.ShiftModifier);
         }
-    }
+    }*/
 
     ColumnLayout{
         id: baseColumn
@@ -142,10 +139,10 @@ UM.Dialog {
                         }
                         delegateClickedFunction: function(categoryName) {manager.selectCategory(categoryName)}
                         defaultTooltipText: manager.getCategoryTooltip(modelData)
-                        alternateTooltipMode: {
+                        /*alternateTooltipMode: {
                             manager.logMessage("Delegate attempting to set alternateTooltipMode to " + globalAltShiftPressed)
                             return shapeDialog.globalAltShiftPressed
-                        }
+                        }*/
                     }
                     ScrollBar.vertical: ScrollBar{
                         policy: categoryListView.contentHeight > categoryListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
