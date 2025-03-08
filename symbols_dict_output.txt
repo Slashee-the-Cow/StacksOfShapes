@@ -1,54 +1,847 @@
+_symbols_category_arrows: str = catalog.i18nc("symbol_category", "arrows")
+_symbols_category_astrological_signs: str = catalog.i18nc("symbol_category", "astrological_signs")
+_symbols_category_card_suits: str = catalog.i18nc("symbol_category", "card_suits")
+_symbols_category_emojis: str = catalog.i18nc("symbol_category", "emojis")
+_symbols_category_geometric: str = catalog.i18nc("symbol_category", "geometric")
+_symbols_category_hearts: str = catalog.i18nc("symbol_category", "hearts")
+_symbols_category_stars: str = catalog.i18nc("symbol_category", "stars")
+_symbols_category_symbols_icons: str = catalog.i18nc("symbol_category", "symbols_icons")
+_symbols_category_weather: str = catalog.i18nc("symbol_category", "weather")
+
 Symbols = {
     _symbols_category_arrows: {  # Category: _symbols_category_arrows
         catalog.i18nc("symbol_name", "Arrow Chevron"): {
-            PATH_KEY: "symbols\arrows\arrow_chevron.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_chevron.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_chevron", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_chevron", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Chevron Short"): {
-            PATH_KEY: "symbols\arrows\arrow_chevron_short.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_chevron_short.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_chevron_short", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_chevron_short", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Curve Clockwise"): {
-            PATH_KEY: "symbols\arrows\arrow_curve_clockwise.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_curve_clockwise.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_curve_clockwise", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_curve_clockwise", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Dual"): {
-            PATH_KEY: "symbols\arrows\arrow_dual.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_dual.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_dual", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_dual", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Short"): {
-            PATH_KEY: "symbols\arrows\arrow_short.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_short.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_short", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_short", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Single"): {
-            PATH_KEY: "symbols\arrows\arrow_single.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_single.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_single", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_single", ""),
         },
         catalog.i18nc("symbol_name", "Arrow Tail"): {
-            PATH_KEY: "symbols\arrows\arrow_tail.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/arrows/arrow_tail.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_arrows:arrow_tail", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_arrows:arrow_tail", ""),
         },
     },
+
+    _symbols_category_astrological_signs: {  # Category: _symbols_category_astrological_signs
+        catalog.i18nc("symbol_name", "Aquarius 11"): {
+            PATH: "symbols/astrological_signs/aquarius_11.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:aquarius_11", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:aquarius_11", ""),
+        },
+        catalog.i18nc("symbol_name", "Aquarius Circled 11"): {
+            PATH: "symbols/astrological_signs/aquarius_circled_11.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:aquarius_circled_11", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:aquarius_circled_11", ""),
+        },
+        catalog.i18nc("symbol_name", "Aries 1"): {
+            PATH: "symbols/astrological_signs/aries_1.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:aries_1", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:aries_1", ""),
+        },
+        catalog.i18nc("symbol_name", "Aries Circled 1"): {
+            PATH: "symbols/astrological_signs/aries_circled_1.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:aries_circled_1", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:aries_circled_1", ""),
+        },
+        catalog.i18nc("symbol_name", "Cancer 4"): {
+            PATH: "symbols/astrological_signs/cancer_4.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:cancer_4", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:cancer_4", ""),
+        },
+        catalog.i18nc("symbol_name", "Cancer Circled 4"): {
+            PATH: "symbols/astrological_signs/cancer_circled_4.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:cancer_circled_4", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:cancer_circled_4", ""),
+        },
+        catalog.i18nc("symbol_name", "Capricorn 10"): {
+            PATH: "symbols/astrological_signs/capricorn_10.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:capricorn_10", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:capricorn_10", ""),
+        },
+        catalog.i18nc("symbol_name", "Capricorn Circled 10"): {
+            PATH: "symbols/astrological_signs/capricorn_circled_10.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:capricorn_circled_10", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:capricorn_circled_10", ""),
+        },
+        catalog.i18nc("symbol_name", "Gemini 3"): {
+            PATH: "symbols/astrological_signs/gemini_3.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:gemini_3", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:gemini_3", ""),
+        },
+        catalog.i18nc("symbol_name", "Gemini Circled 3"): {
+            PATH: "symbols/astrological_signs/gemini_circled_3.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:gemini_circled_3", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:gemini_circled_3", ""),
+        },
+        catalog.i18nc("symbol_name", "Leo 5"): {
+            PATH: "symbols/astrological_signs/leo_5.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:leo_5", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:leo_5", ""),
+        },
+        catalog.i18nc("symbol_name", "Leo Circled 5"): {
+            PATH: "symbols/astrological_signs/leo_circled_5.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:leo_circled_5", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:leo_circled_5", ""),
+        },
+        catalog.i18nc("symbol_name", "Libra 7"): {
+            PATH: "symbols/astrological_signs/libra_7.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:libra_7", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:libra_7", ""),
+        },
+        catalog.i18nc("symbol_name", "Libra Circled 7"): {
+            PATH: "symbols/astrological_signs/libra_circled_7.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:libra_circled_7", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:libra_circled_7", ""),
+        },
+        catalog.i18nc("symbol_name", "Pisces 12"): {
+            PATH: "symbols/astrological_signs/pisces_12.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:pisces_12", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:pisces_12", ""),
+        },
+        catalog.i18nc("symbol_name", "Pisces Circled 12"): {
+            PATH: "symbols/astrological_signs/pisces_circled_12.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:pisces_circled_12", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:pisces_circled_12", ""),
+        },
+        catalog.i18nc("symbol_name", "Sagittarius 9"): {
+            PATH: "symbols/astrological_signs/sagittarius_9.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:sagittarius_9", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:sagittarius_9", ""),
+        },
+        catalog.i18nc("symbol_name", "Sagittarius Circled 9"): {
+            PATH: "symbols/astrological_signs/sagittarius_circled_9.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:sagittarius_circled_9", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:sagittarius_circled_9", ""),
+        },
+        catalog.i18nc("symbol_name", "Scorpio 8"): {
+            PATH: "symbols/astrological_signs/scorpio_8.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:scorpio_8", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:scorpio_8", ""),
+        },
+        catalog.i18nc("symbol_name", "Scorpio Circled 8"): {
+            PATH: "symbols/astrological_signs/scorpio_circled_8.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:scorpio_circled_8", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:scorpio_circled_8", ""),
+        },
+        catalog.i18nc("symbol_name", "Taurus 2"): {
+            PATH: "symbols/astrological_signs/taurus_2.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:taurus_2", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:taurus_2", ""),
+        },
+        catalog.i18nc("symbol_name", "Taurus Circled 2"): {
+            PATH: "symbols/astrological_signs/taurus_circled_2.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:taurus_circled_2", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:taurus_circled_2", ""),
+        },
+        catalog.i18nc("symbol_name", "Virgo 6"): {
+            PATH: "symbols/astrological_signs/virgo_6.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:virgo_6", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:virgo_6", ""),
+        },
+        catalog.i18nc("symbol_name", "Virgo Circled 6"): {
+            PATH: "symbols/astrological_signs/virgo_circled_6.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_astrological_signs:virgo_circled_6", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_astrological_signs:virgo_circled_6", ""),
+        },
+    },
+
+    _symbols_category_card_suits: {  # Category: _symbols_category_card_suits
+        catalog.i18nc("symbol_name", "Club"): {
+            PATH: "symbols/card_suits/club.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_card_suits:club", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_card_suits:club", ""),
+        },
+        catalog.i18nc("symbol_name", "Club Outline"): {
+            PATH: "symbols/card_suits/club_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_card_suits:club_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_card_suits:club_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Spade"): {
+            PATH: "symbols/card_suits/spade.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_card_suits:spade", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_card_suits:spade", ""),
+        },
+        catalog.i18nc("symbol_name", "Spade Outline"): {
+            PATH: "symbols/card_suits/spade_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_card_suits:spade_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_card_suits:spade_outline", ""),
+        },
+    },
+
+    _symbols_category_emojis: {  # Category: _symbols_category_emojis
+        catalog.i18nc("symbol_name", "Grin"): {
+            PATH: "symbols/emojis/grin.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_emojis:grin", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_emojis:grin", ""),
+        },
+        catalog.i18nc("symbol_name", "Grin Toothy"): {
+            PATH: "symbols/emojis/grin_toothy.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_emojis:grin_toothy", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy", ""),
+        },
+        catalog.i18nc("symbol_name", "Smile"): {
+            PATH: "symbols/emojis/smile.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_emojis:smile", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_emojis:smile", ""),
+        },
+        catalog.i18nc("symbol_name", "Wink"): {
+            PATH: "symbols/emojis/wink.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_emojis:wink", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_emojis:wink", ""),
+        },
+    },
+
+    _symbols_category_geometric: {  # Category: _symbols_category_geometric
+        catalog.i18nc("symbol_name", "Circle"): {
+            PATH: "symbols/geometric/circle.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:circle", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:circle", ""),
+        },
+        catalog.i18nc("symbol_name", "Circle Outline"): {
+            PATH: "symbols/geometric/circle_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:circle_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:circle_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Diamond"): {
+            PATH: "symbols/geometric/diamond.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:diamond", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:diamond", ""),
+        },
+        catalog.i18nc("symbol_name", "Diamond Outline"): {
+            PATH: "symbols/geometric/diamond_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:diamond_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:diamond_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Hexagon"): {
+            PATH: "symbols/geometric/hexagon.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:hexagon", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:hexagon", ""),
+        },
+        catalog.i18nc("symbol_name", "Hexagon Outline"): {
+            PATH: "symbols/geometric/hexagon_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:hexagon_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:hexagon_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Octagon"): {
+            PATH: "symbols/geometric/octagon.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:octagon", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:octagon", ""),
+        },
+        catalog.i18nc("symbol_name", "Octagon Outline"): {
+            PATH: "symbols/geometric/octagon_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:octagon_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:octagon_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Oval"): {
+            PATH: "symbols/geometric/oval.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:oval", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:oval", ""),
+        },
+        catalog.i18nc("symbol_name", "Oval Outline"): {
+            PATH: "symbols/geometric/oval_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:oval_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:oval_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Parallelogram"): {
+            PATH: "symbols/geometric/parallelogram.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:parallelogram", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:parallelogram", ""),
+        },
+        catalog.i18nc("symbol_name", "Parallelogram Outline"): {
+            PATH: "symbols/geometric/parallelogram_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:parallelogram_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:parallelogram_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Pentagon"): {
+            PATH: "symbols/geometric/pentagon.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:pentagon", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:pentagon", ""),
+        },
+        catalog.i18nc("symbol_name", "Pentagon Outline"): {
+            PATH: "symbols/geometric/pentagon_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:pentagon_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:pentagon_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Rectangle"): {
+            PATH: "symbols/geometric/rectangle.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:rectangle", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:rectangle", ""),
+        },
+        catalog.i18nc("symbol_name", "Rectangle Outline"): {
+            PATH: "symbols/geometric/rectangle_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:rectangle_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:rectangle_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Rectangle Rounded"): {
+            PATH: "symbols/geometric/rectangle_rounded.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:rectangle_rounded", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:rectangle_rounded", ""),
+        },
+        catalog.i18nc("symbol_name", "Rectangle Rounded Outline"): {
+            PATH: "symbols/geometric/rectangle_rounded_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:rectangle_rounded_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:rectangle_rounded_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Square"): {
+            PATH: "symbols/geometric/square.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:square", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:square", ""),
+        },
+        catalog.i18nc("symbol_name", "Square Outline"): {
+            PATH: "symbols/geometric/square_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:square_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:square_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Square Rounded"): {
+            PATH: "symbols/geometric/square_rounded.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:square_rounded", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:square_rounded", ""),
+        },
+        catalog.i18nc("symbol_name", "Square Rounded Outline"): {
+            PATH: "symbols/geometric/square_rounded_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:square_rounded_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:square_rounded_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Trapezoid"): {
+            PATH: "symbols/geometric/trapezoid.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:trapezoid", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:trapezoid", ""),
+        },
+        catalog.i18nc("symbol_name", "Trapezoid Outline"): {
+            PATH: "symbols/geometric/trapezoid_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:trapezoid_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:trapezoid_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle"): {
+            PATH: "symbols/geometric/triangle.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:triangle", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:triangle", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle Outline"): {
+            PATH: "symbols/geometric/triangle_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:triangle_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:triangle_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle Right"): {
+            PATH: "symbols/geometric/triangle_right.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:triangle_right", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:triangle_right", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle Right Outline"): {
+            PATH: "symbols/geometric/triangle_right_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_geometric:triangle_right_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_geometric:triangle_right_outline", ""),
+        },
+    },
+
     _symbols_category_hearts: {  # Category: _symbols_category_hearts
         catalog.i18nc("symbol_name", "Heart"): {
-            PATH_KEY: "symbols\hearts\heart.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/hearts/heart.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart", ""),
+        },
+        catalog.i18nc("symbol_name", "Heart Arrow"): {
+            PATH: "symbols/hearts/heart_arrow.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_arrow", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_arrow", ""),
+        },
+        catalog.i18nc("symbol_name", "Heart Arrow Outline"): {
+            PATH: "symbols/hearts/heart_arrow_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_arrow_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_arrow_outline", ""),
         },
         catalog.i18nc("symbol_name", "Heart Broken"): {
-            PATH_KEY: "symbols\hearts\heart_broken.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/hearts/heart_broken.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken", ""),
         },
         catalog.i18nc("symbol_name", "Heart Broken Left"): {
-            PATH_KEY: "symbols\hearts\heart_broken_left.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/hearts/heart_broken_left.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken_left", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken_left", ""),
+        },
+        catalog.i18nc("symbol_name", "Heart Broken Left Outline"): {
+            PATH: "symbols/hearts/heart_broken_left_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken_left_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken_left_outline", ""),
         },
         catalog.i18nc("symbol_name", "Heart Broken Outline"): {
-            PATH_KEY: "symbols\hearts\heart_broken_outline.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/hearts/heart_broken_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Heart Broken Right"): {
+            PATH: "symbols/hearts/heart_broken_right.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken_right", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken_right", ""),
+        },
+        catalog.i18nc("symbol_name", "Heart Broken Right Outline"): {
+            PATH: "symbols/hearts/heart_broken_right_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_broken_right_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_broken_right_outline", ""),
         },
         catalog.i18nc("symbol_name", "Heart Outline"): {
-            PATH_KEY: "symbols\hearts\heart_outline.stl",
-            TOOLTIP_KEY: "",
+            PATH: "symbols/hearts/heart_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_hearts:heart_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_hearts:heart_outline", ""),
         },
     },
+
+    _symbols_category_stars: {  # Category: _symbols_category_stars
+        catalog.i18nc("symbol_name", "Double Star 5 Point"): {
+            PATH: "symbols/stars/double_star_5_point.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:double_star_5_point", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:double_star_5_point", ""),
+        },
+        catalog.i18nc("symbol_name", "Double Star 5 Point Outline"): {
+            PATH: "symbols/stars/double_star_5_point_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:double_star_5_point_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:double_star_5_point_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Star 5 Point"): {
+            PATH: "symbols/stars/star_5_point.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:star_5_point", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:star_5_point", ""),
+        },
+        catalog.i18nc("symbol_name", "Star 5 Point Outline"): {
+            PATH: "symbols/stars/star_5_point_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:star_5_point_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:star_5_point_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Star 8 Point"): {
+            PATH: "symbols/stars/star_8_point.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:star_8_point", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:star_8_point", ""),
+        },
+        catalog.i18nc("symbol_name", "Star 8 Point Outline"): {
+            PATH: "symbols/stars/star_8_point_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_stars:star_8_point_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_stars:star_8_point_outline", ""),
+        },
+    },
+
+    _symbols_category_symbols_icons: {  # Category: _symbols_category_symbols_icons
+        catalog.i18nc("symbol_name", "Add"): {
+            PATH: "symbols/symbols_icons/add.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:add", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:add", ""),
+        },
+        catalog.i18nc("symbol_name", "Agender"): {
+            PATH: "symbols/symbols_icons/agender.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:agender", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:agender", ""),
+        },
+        catalog.i18nc("symbol_name", "Biohazard Warning"): {
+            PATH: "symbols/symbols_icons/biohazard_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:biohazard_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:biohazard_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Check"): {
+            PATH: "symbols/symbols_icons/check.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:check", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:check", ""),
+        },
+        catalog.i18nc("symbol_name", "Circle Warning"): {
+            PATH: "symbols/symbols_icons/circle_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:circle_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:circle_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Circle Warning Outline"): {
+            PATH: "symbols/symbols_icons/circle_warning_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:circle_warning_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:circle_warning_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Cog"): {
+            PATH: "symbols/symbols_icons/cog.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:cog", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:cog", ""),
+        },
+        catalog.i18nc("symbol_name", "Cog Outline"): {
+            PATH: "symbols/symbols_icons/cog_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:cog_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:cog_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Cross"): {
+            PATH: "symbols/symbols_icons/cross.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:cross", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:cross", ""),
+        },
+        catalog.i18nc("symbol_name", "Dangerous"): {
+            PATH: "symbols/symbols_icons/dangerous.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:dangerous", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:dangerous", ""),
+        },
+        catalog.i18nc("symbol_name", "Dangerous Outline"): {
+            PATH: "symbols/symbols_icons/dangerous_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:dangerous_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:dangerous_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Divide"): {
+            PATH: "symbols/symbols_icons/divide.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:divide", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:divide", ""),
+        },
+        catalog.i18nc("symbol_name", "Donut"): {
+            PATH: "symbols/symbols_icons/donut.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:donut", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:donut", ""),
+        },
+        catalog.i18nc("symbol_name", "Donut Outline"): {
+            PATH: "symbols/symbols_icons/donut_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:donut_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:donut_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Exclamation"): {
+            PATH: "symbols/symbols_icons/exclamation.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:exclamation", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:exclamation", ""),
+        },
+        catalog.i18nc("symbol_name", "Female"): {
+            PATH: "symbols/symbols_icons/female.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:female", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:female", ""),
+        },
+        catalog.i18nc("symbol_name", "Hang Up"): {
+            PATH: "symbols/symbols_icons/hang up.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:hang up", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:hang up", ""),
+        },
+        catalog.i18nc("symbol_name", "Home"): {
+            PATH: "symbols/symbols_icons/home.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:home", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:home", ""),
+        },
+        catalog.i18nc("symbol_name", "Key"): {
+            PATH: "symbols/symbols_icons/key.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:key", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:key", ""),
+        },
+        catalog.i18nc("symbol_name", "Keyboard"): {
+            PATH: "symbols/symbols_icons/keyboard.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:keyboard", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:keyboard", ""),
+        },
+        catalog.i18nc("symbol_name", "Keyboard Outline"): {
+            PATH: "symbols/symbols_icons/keyboard_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:keyboard_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:keyboard_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Lightbulb"): {
+            PATH: "symbols/symbols_icons/lightbulb.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:lightbulb", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:lightbulb", ""),
+        },
+        catalog.i18nc("symbol_name", "Lightbulb Outline"): {
+            PATH: "symbols/symbols_icons/lightbulb_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:lightbulb_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:lightbulb_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Male"): {
+            PATH: "symbols/symbols_icons/male.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:male", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:male", ""),
+        },
+        catalog.i18nc("symbol_name", "Man"): {
+            PATH: "symbols/symbols_icons/man.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:man", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:man", ""),
+        },
+        catalog.i18nc("symbol_name", "Microphone"): {
+            PATH: "symbols/symbols_icons/microphone.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:microphone", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:microphone", ""),
+        },
+        catalog.i18nc("symbol_name", "Microphone Outline"): {
+            PATH: "symbols/symbols_icons/microphone_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:microphone_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:microphone_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Minus"): {
+            PATH: "symbols/symbols_icons/minus.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:minus", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:minus", ""),
+        },
+        catalog.i18nc("symbol_name", "Mouse"): {
+            PATH: "symbols/symbols_icons/mouse.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:mouse", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:mouse", ""),
+        },
+        catalog.i18nc("symbol_name", "Mouse Cursor"): {
+            PATH: "symbols/symbols_icons/mouse_cursor.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:mouse_cursor", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:mouse_cursor", ""),
+        },
+        catalog.i18nc("symbol_name", "Mouse Cursor Outline"): {
+            PATH: "symbols/symbols_icons/mouse_cursor_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:mouse_cursor_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:mouse_cursor_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Mouse Outline"): {
+            PATH: "symbols/symbols_icons/mouse_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:mouse_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:mouse_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "No Smoking"): {
+            PATH: "symbols/symbols_icons/no_smoking.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:no_smoking", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:no_smoking", ""),
+        },
+        catalog.i18nc("symbol_name", "No Symbol"): {
+            PATH: "symbols/symbols_icons/no_symbol.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:no_symbol", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:no_symbol", ""),
+        },
+        catalog.i18nc("symbol_name", "Octagonal Warning"): {
+            PATH: "symbols/symbols_icons/octagonal_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:octagonal_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:octagonal_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Octagonal Warning Outline"): {
+            PATH: "symbols/symbols_icons/octagonal_warning_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:octagonal_warning_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:octagonal_warning_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Paw"): {
+            PATH: "symbols/symbols_icons/paw.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:paw", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:paw", ""),
+        },
+        catalog.i18nc("symbol_name", "Phone"): {
+            PATH: "symbols/symbols_icons/phone.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:phone", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:phone", ""),
+        },
+        catalog.i18nc("symbol_name", "Plus"): {
+            PATH: "symbols/symbols_icons/plus.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:plus", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:plus", ""),
+        },
+        catalog.i18nc("symbol_name", "Radiation Warning"): {
+            PATH: "symbols/symbols_icons/radiation_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:radiation_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:radiation_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Recycling"): {
+            PATH: "symbols/symbols_icons/recycling.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:recycling", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:recycling", ""),
+        },
+        catalog.i18nc("symbol_name", "Rocket"): {
+            PATH: "symbols/symbols_icons/rocket.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:rocket", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:rocket", ""),
+        },
+        catalog.i18nc("symbol_name", "Search"): {
+            PATH: "symbols/symbols_icons/search.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:search", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:search", ""),
+        },
+        catalog.i18nc("symbol_name", "Shield Warning"): {
+            PATH: "symbols/symbols_icons/shield_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:shield_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:shield_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Shield Warning Outline"): {
+            PATH: "symbols/symbols_icons/shield_warning_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:shield_warning_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:shield_warning_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Smartphone"): {
+            PATH: "symbols/symbols_icons/smartphone.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:smartphone", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:smartphone", ""),
+        },
+        catalog.i18nc("symbol_name", "Tear"): {
+            PATH: "symbols/symbols_icons/tear.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:tear", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:tear", ""),
+        },
+        catalog.i18nc("symbol_name", "Tear Outline"): {
+            PATH: "symbols/symbols_icons/tear_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:tear_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:tear_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Thumbs Down"): {
+            PATH: "symbols/symbols_icons/thumbs_down.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:thumbs_down", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:thumbs_down", ""),
+        },
+        catalog.i18nc("symbol_name", "Thumbs Down Outline"): {
+            PATH: "symbols/symbols_icons/thumbs_down_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:thumbs_down_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:thumbs_down_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Thumbs Up"): {
+            PATH: "symbols/symbols_icons/thumbs_up.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:thumbs_up", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:thumbs_up", ""),
+        },
+        catalog.i18nc("symbol_name", "Thumbs Up Outline"): {
+            PATH: "symbols/symbols_icons/thumbs_up_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:thumbs_up_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:thumbs_up_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Transgender"): {
+            PATH: "symbols/symbols_icons/transgender.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:transgender", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:transgender", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle Warning"): {
+            PATH: "symbols/symbols_icons/triangle_warning.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:triangle_warning", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:triangle_warning", ""),
+        },
+        catalog.i18nc("symbol_name", "Triangle Warning Outline"): {
+            PATH: "symbols/symbols_icons/triangle_warning_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:triangle_warning_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:triangle_warning_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Woman"): {
+            PATH: "symbols/symbols_icons/woman.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_symbols_icons:woman", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_symbols_icons:woman", ""),
+        },
+    },
+
+    _symbols_category_weather: {  # Category: _symbols_category_weather
+        catalog.i18nc("symbol_name", "Cloud"): {
+            PATH: "symbols/weather/cloud.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:cloud", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:cloud", ""),
+        },
+        catalog.i18nc("symbol_name", "Cloud Outline"): {
+            PATH: "symbols/weather/cloud_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:cloud_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:cloud_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Electric Bolt"): {
+            PATH: "symbols/weather/electric_bolt.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:electric_bolt", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:electric_bolt", ""),
+        },
+        catalog.i18nc("symbol_name", "Electric Bolt Outline"): {
+            PATH: "symbols/weather/electric_bolt_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:electric_bolt_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:electric_bolt_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Night"): {
+            PATH: "symbols/weather/night.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:night", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:night", ""),
+        },
+        catalog.i18nc("symbol_name", "Night Outline"): {
+            PATH: "symbols/weather/night_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:night_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:night_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Partly Cloudy"): {
+            PATH: "symbols/weather/partly_cloudy.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:partly_cloudy", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:partly_cloudy", ""),
+        },
+        catalog.i18nc("symbol_name", "Partly Cloudy Outline"): {
+            PATH: "symbols/weather/partly_cloudy_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:partly_cloudy_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:partly_cloudy_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Rainy"): {
+            PATH: "symbols/weather/rainy.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:rainy", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:rainy", ""),
+        },
+        catalog.i18nc("symbol_name", "Rainy Outline"): {
+            PATH: "symbols/weather/rainy_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:rainy_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:rainy_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Snowy"): {
+            PATH: "symbols/weather/snowy.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:snowy", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:snowy", ""),
+        },
+        catalog.i18nc("symbol_name", "Snowy Outline"): {
+            PATH: "symbols/weather/snowy_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:snowy_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:snowy_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Sunny"): {
+            PATH: "symbols/weather/sunny.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:sunny", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:sunny", ""),
+        },
+        catalog.i18nc("symbol_name", "Sunny Outline"): {
+            PATH: "symbols/weather/sunny_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:sunny_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:sunny_outline", ""),
+        },
+        catalog.i18nc("symbol_name", "Thunderstorm"): {
+            PATH: "symbols/weather/thunderstorm.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:thunderstorm", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:thunderstorm", ""),
+        },
+        catalog.i18nc("symbol_name", "Thunderstorm Outline"): {
+            PATH: "symbols/weather/thunderstorm_outline.stl",
+            TOOLTIP: catalog.i18nc("symbol_tooltip_weather:thunderstorm_outline", ""),
+            ALT_TOOLTIP: catalog.i18nc("symbol_alt_tooltip_weather:thunderstorm_outline", ""),
+        },
+    },
+
+}
+
+Symbol_Category_Tooltips = {
+    _symbols_category_arrows: catalog.i18nc("category_tooltip",""),
+    _symbols_category_arrows_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_astrological_signs: catalog.i18nc("category_tooltip",""),
+    _symbols_category_astrological_signs_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_card_suits: catalog.i18nc("category_tooltip",""),
+    _symbols_category_card_suits_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_emojis: catalog.i18nc("category_tooltip",""),
+    _symbols_category_emojis_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_geometric: catalog.i18nc("category_tooltip",""),
+    _symbols_category_geometric_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_hearts: catalog.i18nc("category_tooltip",""),
+    _symbols_category_hearts_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_stars: catalog.i18nc("category_tooltip",""),
+    _symbols_category_stars_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_symbols_icons: catalog.i18nc("category_tooltip",""),
+    _symbols_category_symbols_icons_alt: catalog.i18nc("category_tooltip_alt",""),
+    _symbols_category_weather: catalog.i18nc("category_tooltip",""),
+    _symbols_category_weather_alt: catalog.i18nc("category_tooltip_alt",""),
+}
+
+Symbol_Category_Thumbnail_Filenames = {
+    _symbols_category_arrows: "symbols/",
+    _symbols_category_astrological_signs: "symbols/",
+    _symbols_category_card_suits: "symbols/",
+    _symbols_category_emojis: "symbols/",
+    _symbols_category_geometric: "symbols/",
+    _symbols_category_hearts: "symbols/",
+    _symbols_category_stars: "symbols/",
+    _symbols_category_symbols_icons: "symbols/",
+    _symbols_category_weather: "symbols/",
 }

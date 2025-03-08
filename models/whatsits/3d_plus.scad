@@ -1,0 +1,9 @@
+color("Lime")
+translate([-0.5,-0.5,0])
+union(){
+    cube([1,1,3]);
+    translate([-1,0,1])
+        cube([3,1,1]);
+    translate([0,-1,1])
+        cube([1,3,1]);
+    }
