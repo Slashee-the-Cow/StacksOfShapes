@@ -4,7 +4,7 @@ import os
 MODELS_SYMBOLS_DIR = os.path.join(os.path.dirname(__file__), "models", "symbols")
 OUTPUT_DICT_FILE = "symbols_dict_output.txt"  # Output filename for the dictionary text
 
-PATH_KEY = "PATH" # Replicate your PATH_KEY and TOOLTIP_KEY constants - for clarity in generated dict
+PATH_KEY = "PATH_KEY" # Replicate your PATH_KEY and TOOLTIP_KEY constants - for clarity in generated dict
 TOOLTIP_KEY = "TOOLTIP"
 ALT_TOOLTIP_KEY = "ALT_TOOLTIP"
 
@@ -43,6 +43,8 @@ def generate_symbols_dictionary():
 
     return symbols_dict
 
+def nameFromCategoryKey(category_key: str) -> str:
+    return '_'.join(category_key.split('_')[3:])
 
 if __name__ == "__main__":
     generated_dict = generate_symbols_dictionary()
@@ -51,10 +53,14 @@ if __name__ == "__main__":
     with open(OUTPUT_DICT_FILE, "w") as outfile:
         # Import and set active i18n catalog
         outfile.write("from UM.i18n import i18nCatalog\ncatalog = i18nCatalog(\"stacksofshapes\")\n\n")
+        # Insert constants which I really should grab from another file but whatever
+        outfile.write("PATH_KEY: str = \"path\"\n")
+        outfile.write("TOOLTIP_KEY: str = \"tooltip\"\n")
+        outfile.write("ALT_TOOLTIP_KEY: str = \"altTooltip\"\n\n")
         
         # Create definitions for each folder key
         for category_key in generated_dict.keys():
-            outfile.write(f"{category_key}: str = catalog.i18nc(\"symbol_category\", \"{'_'.join(category_key.split('_')[3:])}\")\n")
+            outfile.write(f"{category_key}: str = catalog.i18nc(\"symbol_category\", \"{nameFromCategoryKey(category_key)}\")\n")
 
         outfile.write("\nSymbols = {\n") # Start of dictionary
 
@@ -64,8 +70,8 @@ if __name__ == "__main__":
             for symbol_key, symbol_data in category_symbols.items():
                 outfile.write(f"        {symbol_key}: {{\n") # Symbol key
                 outfile.write(f"            {PATH_KEY}: \"{symbol_data[PATH_KEY]}\",\n") # PATH_KEY
-                outfile.write(f'            {TOOLTIP_KEY}: catalog.i18nc("symbol_tooltip_{'_'.join(category_key.split('_')[3:])}:{symbol_data["BASE_NAME"]}", ""),\n') # TOOLTIP_KEY - empty
-                outfile.write(f'            {ALT_TOOLTIP_KEY}: catalog.i18nc("symbol_alt_tooltip_{'_'.join(category_key.split('_')[3:])}:{symbol_data["BASE_NAME"]}", ""),\n') # TOOLTIP_KEY - empty
+                outfile.write(f'            {TOOLTIP_KEY}: catalog.i18nc("symbol_tooltip_{nameFromCategoryKey(category_key)}:{symbol_data["BASE_NAME"]}", ""),\n') # TOOLTIP_KEY - empty
+                outfile.write(f'            {ALT_TOOLTIP_KEY}: catalog.i18nc("symbol_alt_tooltip_{nameFromCategoryKey(category_key)}:{symbol_data["BASE_NAME"]}", ""),\n') # TOOLTIP_KEY - empty
                 outfile.write(f"        }},\n") # End of symbol entry
             outfile.write(f"    }},\n\n") # End of category
 
@@ -79,7 +85,7 @@ if __name__ == "__main__":
 
         outfile.write(f"\nSymbol_Category_Thumbnail_Filenames = {{\n")
         for category_key in generated_dict.keys():
-            outfile.write(f"    {category_key}: \"symbols/\",\n")
+            outfile.write(f"    {category_key}: \"symbols/{nameFromCategoryKey(category_key)}.png\",\n")
         outfile.write(f"}}\n")  # Close dictionary
 
     print(f"Symbols dictionary generated and saved to: {OUTPUT_DICT_FILE}")

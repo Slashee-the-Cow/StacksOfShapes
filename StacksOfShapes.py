@@ -1,4 +1,3 @@
-# Part of initial code by fieldOfView 2018
 # Stacks of Shapes copyright Slashee the Cow 2025-
 
 # Version history
@@ -38,15 +37,15 @@ from UM.Operations.TranslateOperation import TranslateOperation
 from UM.Math.Vector import Vector
 from UM.Math.AxisAlignedBox import AxisAlignedBox
 
-from PyQt6.QtCore import QUrl
-
 from UM.Logger import Logger
 from UM.Message import Message
 
 from UM.i18n import i18nCatalog
 
+from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty, QMetaType, QUrl
 
-from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty, QMetaType
+from .SymbolsData import *
+from .ShapesData import *
 
 class ShapeTypes(Enum):
     SHAPE = "SHAPE"
@@ -111,19 +110,20 @@ class StacksOfShapes(QObject, Extension):
         #self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
 
         # Set the default to use the Shapes dictionary
-        self._current_type_dict = self.Shapes
-        self._category_names = list(self.Shapes.keys())
+        self._current_type_dict = Shapes
+        self._category_names = list(Shapes.keys())
         self._shape_names: list = []
         self._current_type = ShapeTypes.SHAPE
         self._current_category: str = ""
-        self._current_type_category_thumbnails = self.Shape_Category_Thumbnail_Filenames
-        self._current_type_category_tooltips = self.Shape_Category_Tooltips
+        self._current_type_category_thumbnails = Shape_Category_Thumbnail_Filenames
+        self._current_type_category_tooltips = Shape_Category_Tooltips
 
         self._is_file_processing: bool = False
         self._expected_filename: str | None = None
         self._expected_title: str | None = None
         CuraApplication.getInstance().fileCompleted.connect(self._on_file_loaded)
         self._reset_tiny_scaling = False
+        self._reset_auto_slice = False
         self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
@@ -132,405 +132,21 @@ class StacksOfShapes(QObject, Extension):
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapelistPopup)
 
-    _shape_category_basics: str = catalog.i18nc("shape_category", "Basics")
-    _shape_category_spherical: str = catalog.i18nc("shape_category", "Spherical")
-    _shape_category_prisms: str = catalog.i18nc("shape_category", "Prisms")
-    _shape_category_pyramids_cones: str = catalog.i18nc("shape_category", "Pyramids & Cones")
-    _shape_category_platonics: str = catalog.i18nc("shape_category", "Platonic Solids")
-    _shape_category_torus: str = catalog.i18nc("shape_category", "Toruses")
-    _shape_category_curvy: str = catalog.i18nc("shape_category", "Curvy")
-    _shape_category_things: str = catalog.i18nc("shape_category", "Things")
-    _shape_category_whatsits: str = catalog.i18nc("shape_category", "Whatsits")
-    _shape_category_tetrominoes: str = catalog.i18nc("shape_category", "Tetrominoes")
-    _shape_category_negative_spherical: str = catalog.i18nc("shape_category", "Negative Spherical")
-
     PATH_KEY: str = "path"
     TOOLTIP_KEY: str = "tooltip"
     ALT_TOOLTIP_KEY: str = "altTooltip"
 
     def _collect_symbol_filenames(self):
         symbol_filenames = set()
-        for category_key in self.Symbols.keys():
+        for category_key in Symbols.keys():
             log("d", f"_collect_symbol_filenames trying to get keys for category_key {category_key}")
-            for symbol_key in self.Symbols[category_key].keys():
+            for symbol_key in Symbols[category_key].keys():
                 log("d", f"_collect_symbol_filenames trying to get data for symbol_key {symbol_key}")
-                symbol_data = self.Symbols[category_key][symbol_key]
+                symbol_data = Symbols[category_key][symbol_key]
                 filename = os.path.basename(symbol_data[self.PATH_KEY])
                 symbol_filenames.add(filename)
         log("d", f"_collect_symbol_filenames got {symbol_filenames}")
         return symbol_filenames
-
-
-    Shapes = {
-        _shape_category_basics: {
-            catalog.i18nc("shape_name_basics", "Cube"): {
-                PATH_KEY: "platonics/hexahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cube", "All faces are the same size and all the angles are equal.<br>It is one of the platonic solids."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_basics:cube", "If you want to sound smart, the technical term is \"hexahedron\"."),
-            },
-            catalog.i18nc("shape_name_basics", "Sphere"): {
-                PATH_KEY: "spherical/sphere.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:sphere", "A perfectly round 3D shape. Often used as a ball.<br>Every part of the outside is the same distance from the centre."),
-                ALT_TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("shape_name_basics", "Cylinder"): {
-                PATH_KEY: "cylinders/cylinder.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cylinder", "Two circles with a rounded surface connecting them.<br>A can of soup is a cylinder."),
-                ALT_TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("shape_name_basics", "Cone"): {
-                PATH_KEY: "pyramids_cones/cone.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:cone", "A round base which comes to a point at the top.<br>Can be different heights depending on the taper angle."),
-                ALT_TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("shape_name_basics", "Square Pyramid"): {
-                PATH_KEY: "pyramids_cones/pyramid_square.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:pyramid_square", "Similar to a cone except the base is a square.<br>The ancient Egyptians buried their pharoahs in buildings shaped like this."),
-                ALT_TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("shape_name_basics", "Recangular Prism"): {
-                PATH_KEY: "prisms/prism_rectangular.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:prism_rectangular", "A \"cuboid\", like a cube except the faces are not the same size.<br>Many things such as boxes are forms of this shape."),
-                ALT_TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("shape_name_basics", "Torus (Donut)"): {
-                PATH_KEY: "torus/torus.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_basics:torus", "A ring shaped surface created by revolving a circle around a centre point.<br>Also a delicious treat."),
-                ALT_TOOLTIP_KEY: "",
-            }
-        },
-        _shape_category_spherical: {
-            catalog.i18nc("shape_name", "Sphere"): {
-                PATH_KEY: "spherical/sphere.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Three Quarter Spherical Sector"): {
-                PATH_KEY: "spherical/three_quarter_spherical_sector.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Hemisphere"): {
-                PATH_KEY: "spherical/hemisphere.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Spherical Quadrant"): {
-                PATH_KEY: "spherical/spherical_quadrant.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Spherical Octant"): {
-                PATH_KEY: "spherical/spherical_octant.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Spherical Octant (Corner)"):{
-                PATH_KEY: "spherical/spherical_octant_corner.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-        },
-        _shape_category_prisms: {
-            catalog.i18nc("shape_name", "Rectangular Prism"): {
-                PATH_KEY: "prisms/prism_rectangular.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Hexagonal Prism"): {
-                PATH_KEY: "prisms/prism_hexagonal.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Octangonal Prism"): {
-                PATH_KEY: "prisms/prism_octagonal.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Triangular Prism (Equilateral)"): {
-                PATH_KEY: "prisms/prism_triangular_equilateral.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Triangular Prism (Right)"): {
-                PATH_KEY: "prisms/prism_triangular_right.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Trapezium Prism"): {
-                PATH_KEY: "prisms/prism_trapezium.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Rhombic Prism"): {
-                PATH_KEY: "prisms/prism_rhombic.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Parallelogram Prism"): {
-                PATH_KEY: "prisms/prism_parallelogram.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            }
-        },
-        _shape_category_pyramids_cones: {
-            catalog.i18nc("shape_name", "Triangular Pyramid (3 sides)"): {
-                PATH_KEY: "platonics/tetrahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Square Pyramid (4 sides)"): {
-                PATH_KEY: "pyramids_cones/pyramid_square.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Cone"): {
-                PATH_KEY: "pyramids_cones/cone.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_pyramids:cone", "A cone is just a pyramid with a round base."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Pentagonal Pyramid (5 sides)"): {
-                PATH_KEY: "pyramids_cones/pyramid_pentagon.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Hexagonal Pyramid (6 sides)"): {
-                PATH_KEY: "pyramids_cones/pyramid_hexagon.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Octagonal Pyramid (8 sides)"): {
-                PATH_KEY: "pyramids_cones/pyramid_octagon.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Frustum (Conical)"): {
-                PATH_KEY: "pyramids_cones/frustum_conical.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_pyramids_frustum:", "A cone with the top cut off"),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Frustum (Square)"): {
-                PATH_KEY: "pyramids_cones/frustum_square.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_pyramids:frustum_square", "The frustum princieple can also be applied to regular pyramids"),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            }
-        },
-        _shape_category_platonics: {
-            catalog.i18nc("shape_name", "Tetrahedron (4 sides)"): {
-                PATH_KEY: "platonics/tetrahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Hexahedron (6 sides)"): {
-                PATH_KEY: "platonics/hexahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_platonic", "Technically the term is *regular* hexahedron.<br>But I've gotten nerdy enough already."),
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Octahedron (8 sides)"): {
-                PATH_KEY: "platonics/octahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Dodecahedron (12 sides)"): {
-                PATH_KEY: "platonics/dodecahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Icosahedron (20 sides)"): {
-                PATH_KEY: "platonics/icosahedron.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-        },
-        _shape_category_torus: {
-            catalog.i18nc("shape_name", "Torus (Thick)"): {
-                PATH_KEY: "torus/torus_thick.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Torus"): {
-                PATH_KEY: "torus/torus.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Torus (Thin)"): {
-                PATH_KEY: "torus/torus_thin.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Torus (Extra Thin)"): {
-                PATH_KEY: "torus/torus_thin_extra.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-        },
-        _shape_category_curvy: {
-            catalog.i18nc("shape_name", "Ellipsoid"): {
-                PATH_KEY: "curvy/ellipsoid.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_curvy:ellipsoid", "An ellipsoid basically means a stretched out sphere."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_curvy:ellipsoid", ""),
-            },
-        },
-        _shape_category_things: {
-            catalog.i18nc("shape_names", "Capsule"): {
-                PATH_KEY: "things/capsule.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_things:", "Everybody hates taking their medicine. But trust me, it's good for you.",),
-            },
-            catalog.i18nc("shape_names", "Helix"): {
-                PATH_KEY: "things/helix.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_things:helix", "Springs are probably the best example of these.",),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_names", "Utah Teapot"): {
-                PATH_KEY: "things/utah_teapot.stl",
-                TOOLTIP_KEY: "The Utah Teapot is a standard reference object in 3D computer graphics, from 1975. It was created by Martin Newell at the University of Utah and has been used in countless graphics papers and demos.<br>Sounds boring, but trust me, it's a big deal.<br>You can see one in the original Toy Story if you look closely.",
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", "")
-            }
-        },
-        _shape_category_whatsits: {
-            catalog.i18nc("shape_name:whatsits", "3D Plus"): {
-                PATH_KEY: "whatsits/3d_plus.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_whatits:", "An addition sign in all directions."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_whatsits:", "As if maths wasn't hard enough, now this?"),
-            },
-            catalog.i18nc("shape_name:whatsits", "Tumbling Blocks 3x3"): {
-                PATH_KEY: "whatsits/tumbling_blocks_3x3.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_whatits:tumblingblocks3x3", "If you look at it from the correct angle, it looks as if you don't have depth perception.<br>The name for a 2D version of this is \"rhombille tiling\"."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:tumblingblocks3x3", "Also known as \"The World's Most Annoying Staircase\"."),
-            },
-            catalog.i18nc("shape_name:whatsits", "Tumbling Blocks 5x5"): {
-                PATH_KEY: "whatsits/tumbling_blocks_5x5.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_whatits:tumblingblocks5x5", "If you look at it from the correct angle, it looks as if you don't have depth perception.<br>The name for a 2D version of this is \"rhombille tiling\"."),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:tumblingblocks5x5", "Also known as \"The World's Most Annoying Staircase\"."),
-            },
-        },
-        _shape_category_tetrominoes: {
-            catalog.i18nc("shape_name", "J"): {
-                PATH_KEY: "tetrominoes/tetromino_j.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "L"): {
-                PATH_KEY: "tetrominoes/tetromino_l.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "S"): {
-                PATH_KEY: "tetrominoes/tetromino_s.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "T"): {
-                PATH_KEY: "tetrominoes/tetromino_t.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Z"): {
-                PATH_KEY: "tetrominoes/tetromino_z.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Square"): {
-                PATH_KEY: "tetrominoes/tetromino_square.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_tetrominoes:square", "Also known as the \"O\""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Straight"): {
-                PATH_KEY: "tetrominoes/tetromino_straight.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", "Also known as the \"I\""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            }
-        },
-        _shape_category_negative_spherical: {
-            catalog.i18nc("shape_name", "Negative Three Quarter Spherical Segment"): {
-                PATH_KEY: "negative_spherical/negative_three_quarter_spherical_sector.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Negative Hemisphere"): {
-                PATH_KEY: "negative_spherical/negative_hemisphere.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Negative Spherical Quadrant"): {
-                PATH_KEY: "negative_spherical/negative_spherical_quadrant.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Negative Spherical Octant"): {
-                PATH_KEY: "negative_spherical/negative_spherical_octant.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-            catalog.i18nc("shape_name", "Negative Spherical Octant (Corner)"): {
-                PATH_KEY: "negative_spherical/negative_spherical_octant_corner.stl",
-                TOOLTIP_KEY: catalog.i18nc("shape_tooltip_:", ""),
-                ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
-            },
-        }
-    }
-
-    Shape_Category_Tooltips = {
-        _shape_category_basics: "",
-        _shape_category_spherical: catalog.i18nc("shape_category_tooltip", "Spheres. And parts of them. Keep your \"ball\" jokes to yourself."),
-        _shape_category_prisms: "",
-        _shape_category_pyramids_cones: "",
-        _shape_category_platonics: catalog.i18nc("shape_category_tooltip", "3D objects where all faces and angles are exactly the same.<br>Often used as dice."),
-        _shape_category_torus: catalog.i18nc("shape_category_tooltip", "Mmmm.... donuts. That's what they look like, at least."),
-        _shape_category_curvy: catalog.i18nc("shape_category_tooltip", "Things without straight edges."),
-        _shape_category_things: catalog.i18nc("shape_category_tooltip", "You may have seen these objects in real life."),
-        _shape_category_whatsits: catalog.i18nc("shape_category_tooltip", "These may or may not be real things.<br>They are however interesting things."),
-        _shape_category_tetrominoes: catalog.i18nc("shape_category_tooltip", "The different shapes possible when combining four cubes."),
-        _shape_category_negative_spherical: catalog.i18nc("shape_category_tooltip", f"Bits of sphere subtracted from their cubic surroundings.  <br><b>Note that these pieces need to be 10% larger than the spherical pieces they would contain if using spheres from this plugin</b>.")
-    }
-
-    _symbols_category_arrows = catalog.i18nc("symbol_category", "Arrows")
-    _symbols_category_hearts = catalog.i18nc("symbol_category", "Hearts")
-
-    Symbols = {
-        _symbols_category_arrows: {
-            catalog.i18nc("symbol_name", "Straight Arrow"): {
-                PATH_KEY: "symbols/arrows/arrow_single.stl",
-                TOOLTIP_KEY: "",
-            },
-        },
-        _symbols_category_hearts: {
-            catalog.i18nc("symbol_name", "Heart"): {
-                PATH_KEY: "symbols/hearts/heart.stl",
-                TOOLTIP_KEY: "",
-            },
-            catalog.i18nc("symbol_name", "Heart (Outline)"): {
-                PATH_KEY: "symbols/hearts/heart_outline.stl",
-                TOOLTIP_KEY: "",
-            }
-        }
-    }
-
-    Symbol_Category_Tooltips = {
-        _symbols_category_arrows: catalog.i18nc("category_tooltip", "They point at things.<br>Rotate or mirror them and they can point at other things."),
-        _symbols_category_hearts: ""
-    }
-
-    Shape_Category_Thumbnail_Filenames = {
-        _shape_category_basics: "basics.png",
-        _shape_category_spherical: "spherical.png",
-        _shape_category_prisms: "prisms.png",
-        _shape_category_pyramids_cones: "pyramids_cones.png",
-        _shape_category_platonics: "platonics.png",
-        _shape_category_torus:  "toruses.png",
-        _shape_category_curvy: "curvy.png",
-        _shape_category_things: "things.png",
-        _shape_category_whatsits: "whatsits.png",
-        _shape_category_tetrominoes: "tetrominoes.png",
-        _shape_category_negative_spherical: "negative_spherical.png",
-    }
-
-    Symbol_Category_Thumbnail_Filenames = {
-        _symbols_category_arrows: "symbols/arrows.png",
-        _symbols_category_hearts: "symbols/hearts.png",
-    }
 
     @pyqtSlot(str, result=str)
     def getCategoryTooltip(self, value, alt=False):
@@ -645,15 +261,15 @@ class StacksOfShapes(QObject, Extension):
             case ShapeTypes.SHAPE.value:
                 log("d", f"StackOfShapes.selectType matched Shape")
                 self._current_type = ShapeTypes.SHAPE
-                self._current_type_dict = self.Shapes
-                self._current_type_category_thumbnails = self.Shape_Category_Thumbnail_Filenames
-                self._current_type_category_tooltips = self.Shape_Category_Tooltips
+                self._current_type_dict = Shapes
+                self._current_type_category_thumbnails = Shape_Category_Thumbnail_Filenames
+                self._current_type_category_tooltips = Shape_Category_Tooltips
             case ShapeTypes.SYMBOL.value:
                 log("d", f"StackOfShapes.selectType matched Symbol")
                 self._current_type = ShapeTypes.SYMBOL
-                self._current_type_dict = self.Symbols
-                self._current_type_category_thumbnails = self.Symbol_Category_Thumbnail_Filenames
-                self._current_type_category_tooltips = self.Symbol_Category_Tooltips
+                self._current_type_dict = Symbols
+                self._current_type_category_thumbnails = Symbol_Category_Thumbnail_Filenames
+                self._current_type_category_tooltips = Symbol_Category_Tooltips
             case _:
                 log("w", f"StackOfShapes.selectType matched... nothing?")
                 return  # We shouldn't be here.
@@ -771,7 +387,7 @@ class StacksOfShapes(QObject, Extension):
         else:
             return ""
            
-    def _registerShapeStl(self, mesh_name, mesh_filename=None, **kwargs) -> None:
+    """def _registerShapeStl(self, mesh_name, mesh_filename=None, **kwargs) -> None:
         if mesh_filename is None:
             mesh_filename = mesh_name + ".stl"
         
@@ -868,7 +484,7 @@ class StacksOfShapes(QObject, Extension):
         return mesh_data
     
     _reset_timer = Timer
-        
+    
     # Initial Source code from  fieldOfView
     # https://github.com/fieldOfView/Cura-SimpleShapes/blob/bac9133a2ddfbf1ca6a3c27aca1cfdd26e847221/SimpleShapes.py#L70
     def _addShape(self, mesh_name, mesh_data: MeshData, ext_pos = 0) -> None:
@@ -912,16 +528,17 @@ class StacksOfShapes(QObject, Extension):
         node.addDecorator(SliceableObjectDecorator())
 
         application.getController().getScene().sceneChanged.emit(node)
-    
-    def _addShapeSimple(self, mesh_name: str, mesh_data: MeshData, add_delay_ms: float = 0) -> None: # Corrected signature with 'self'
         """
+    
+    """def _addShapeSimple(self, mesh_name: str, mesh_data: MeshData, add_delay_ms: float = 0) -> None: # Corrected signature with 'self'
+        """"""
         Adds a shape to the Cura scene with minimal essential functionality, primarily for
         race condition testing.  Version 3 - Minimal but (hopefully) functional.
 
         :param mesh_name: Name to give to the scene node.
         :param mesh_data: MeshData object representing the shape.
         :param add_delay_ms:  Optional delay in milliseconds.
-        """
+        """"""
         application = CuraApplication.getInstance()
         #global_stack = application.getGlobalContainerStack()
         #if not global_stack:
@@ -976,7 +593,7 @@ class StacksOfShapes(QObject, Extension):
         translate_op.push() # Push the translation operation
         translation_vector = Vector(-0.01, 0, 0) # Tiny translation in X direction (0.01mm)
         translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
-        translate_op.push() # Push the translation operation
+        translate_op.push() # Push the translation operation"""
 
     def _on_file_loaded(self, file_name):
         log("d",f"_on_file_loaded saw {file_name}")
@@ -997,7 +614,7 @@ class StacksOfShapes(QObject, Extension):
         if node_to_process:
             bbox_mesh_data = node_to_process.getBoundingBoxMesh()
             if bbox_mesh_data:
-                aabox = bbox_mesh_data.getExtents()
+                aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
                 if aabox:
                     size_x = aabox.width
                     size_y = aabox.depth
@@ -1005,7 +622,7 @@ class StacksOfShapes(QObject, Extension):
                     log("d", f"_on_file_loaded got w/d/h of {aabox.width} x {aabox.depth} x {aabox.height}")
 
                     if is_symbol:
-                        max_xy_size = max(size_x, size_z)
+                        max_xy_size = max(size_x, size_y)
                         if max_xy_size > 0:
                             scale_factor_xy = self._symbol_size / max_xy_size
                             scale_factor_z = self._symbol_height / size_z
@@ -1040,11 +657,24 @@ class StacksOfShapes(QObject, Extension):
             self._preferences.setValue("mesh/scale_tiny_meshes", True)
             self._reset_tiny_scaling = False
 
+        if self._reset_auto_slice:
+            self._reenable_auto_slice = Timer(2, self._enable_auto_slice)
+            self._reenable_auto_slice.start()
+        if self._reset_tiny_scaling:
+            self._reenable_scale_tiny = Timer(1,self._enable_scale_tiny)
+
         self._is_file_processing = False
         self._expected_filename = None
         self._expected_title = None
 
+
+
     _reenable_scale_tiny: Timer | None = None
+    _reenable_auto_slice: Timer | None = None
+
+    def _enable_auto_slice(self):
+        self._preferences.setValue("general/auto_slice", True)
+        self._reset_auto_slice = False
 
     def _enable_scale_tiny(self):
         self._preferences.setValue("mesh/scale_tiny_meshes", True)
@@ -1061,13 +691,17 @@ class StacksOfShapes(QObject, Extension):
         if bool(self._preferences.getValue("mesh/scale_tiny_meshes")):
             self._preferences.setValue("mesh/scale_tiny_meshes", False)
             self._reset_tiny_scaling = True
-            if not self._reenable_scale_tiny:
-                self._reenable_scale_tiny = Timer(2, self._enable_scale_tiny)
-                self._reenable_scale_tiny.start()
+        if bool(self._preferences.getValue("general/auto_slice")):
+            self._preferences.setValue("general/auto_slice", False)
+            self._reset_auto_slice = True
+            """if not self._reenable_auto_slice:
+                self._reenable_auto_slice = Timer(3, self._enable_auto_slice)
+                self._reenable_auto_slice.start()
             else:
-                self._reenable_scale_tiny.cancel()
-                self._reenable_scale_tiny.start()
-            
+                self._reenable_auto_slice.cancel()
+                time.sleep(0.02)
+                self._reenable_auto_slice.start()"""
+
         
         file_url = QUrl.fromLocalFile(stl_file_path)
         self._is_file_processing = True
