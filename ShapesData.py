@@ -352,8 +352,8 @@ Shapes = {
 Shape_Category_Tooltips = {
     _shape_category_basics: catalog.i18nc("shape_category_tooltip", ""),
     f"{_shape_category_basics}_alt": catalog.i18nc("shape_category_tooltip_alt", ""),
-    _shape_category_spherical: catalog.i18nc("shape_category_tooltip", "Spheres. And parts of them. Keep your \"ball\" jokes to yourself."),
-    f"{_shape_category_spherical}_alt": catalog.i18nc("shape_category_tooltip_alt", ""),
+    _shape_category_spherical: catalog.i18nc("shape_category_tooltip", "Spheres. And parts of them."),
+    f"{_shape_category_spherical}_alt": catalog.i18nc("shape_category_tooltip_alt", "Keep your \"ball\" jokes to yourself."),
     _shape_category_prisms: catalog.i18nc("shape_category_tooltip", ""),
     f"{_shape_category_prisms}_alt": catalog.i18nc("shape_category_tooltip_alt", ""),
     _shape_category_pyramids_cones: catalog.i18nc("shape_category_tooltip", ""),

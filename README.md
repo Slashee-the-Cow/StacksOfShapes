@@ -1,6 +1,9 @@
 # Stacks of Shapes
 A cornucopia of delightful things to add to your scene! Not only do we have 3D objects (mostly based on geometry) but we also have 2D shapes extruded you can add to your print for the finishing touch.
 
+### Notice:
+**If you have automatic slicing turned on, it will be turned off for a few seconds after adding a shape. This is to avoid a bug in Cura which could make it crash.**
+
 ## 3D
 You want some basic shapes to add to your scene? **We got them.**  
 You want some slightly less than basic shapes to add to your scene? **We got them.**  
@@ -19,7 +22,7 @@ This plugin incorporates third-party models and symbols made available under mul
 
 ---
 ### Known Issues
-- **Creating a shape temporarily disables automatic slicing for a few seconds. It may also briefly display an "Unable to slice" warning. This is to prevent a crash occuring due to Cura attempting to create a thumbnail before the graphics system loads because it can process such simple models so quickly.**
+- **Creating a shape temporarily disables automatic slicing for a few seconds. It may also briefly display an "Unable to slice" warning. This is to prevent a condition that can make Cura crash.**
 - In some older versions of Cura, some shapes may load partway through the floor or slightly in the air. This is due to not having the "drop down model" setting available per model in newer versions. I intend to fix any models that exhibit this behaviour when I see them.
 - My grasp of geometry is not nearly as good as it should be for someone making a plugin like this. If anything is wrong, please let me know.
 - Holding certain combinations of modifier keys (Ctrl, Alt, Shift) can lead to unexpected behaviour with tooltips in the shape list.

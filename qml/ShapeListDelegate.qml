@@ -6,17 +6,20 @@ import UM 1.6 as UM
 Rectangle {  // Base element
     Component.onCompleted: {
         manager.logMessage("ShapeListDelegate Component.onCompleted: modelData = " + modelData);
-        defaultTooltipText = modelData.shapeData.tooltip;
-        alternateTooltipText = modelData.shapeData.altTooltip;
-        manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData = " + modelData.shapeData);
-        manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.tooltip = " + modelData.shapeData.tooltip);
-        manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.altTooltip = " + modelData.shapeData.altTooltip);
+        if (modelData.shapeData){
+            defaultTooltipText = modelData.shapeData.tooltip;
+            alternateTooltipText = modelData.shapeData.altTooltip;
+            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData = " + modelData.shapeData);
+            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.tooltip = " + modelData.shapeData.tooltip);
+            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.altTooltip = " + modelData.shapeData.altTooltip);
+        }
     }
 
     // Background colours so I don't have to grab them from UM more than once.
     readonly property var normalBackground: UM.Theme.getColor("main_background")
     readonly property var hoverBackground: UM.Theme.getColor("expandable_hover")
     readonly property string tooltipKey: "tooltip"
+    readonly property string altTooltipKey: "altTooltip"
 
     id: shapeDelegateRoot
     width: ListView.view.width
@@ -26,8 +29,8 @@ Rectangle {  // Base element
     property var delegateClickedFunction: function(text){}
     property alias delegateText: textItem.text
     property string delegateImageSource: ""
-    property string defaultTooltipText: modelData.shapeData.tooltip
-    property string alternateTooltipText: modelData.shapeData.altTooltip
+    property string defaultTooltipText: ""
+    property string alternateTooltipText: ""
     //property string delegateTooltipText: alternateTooltipMode ? alternateTooltipText : defaultTooltipText
 
     property bool alternateTooltipMode: false

@@ -147,13 +147,18 @@ class StacksOfShapes(QObject, Extension):
                 symbol_filenames.add(filename)
         log("d", f"_collect_symbol_filenames got {symbol_filenames}")
         return symbol_filenames
+    
+    @pyqtSlot(str, result=str)
+    def getCategoryAltTooltip(self, value):
+        return self.getCategoryTooltip(value, True)
 
     @pyqtSlot(str, result=str)
     def getCategoryTooltip(self, value, alt=False):
-        log("d", f"getCategoryTooltip called. self._current_type = {self._current_type} and value passed to function is {value}")
+        log("d", f"getCategoryTooltip called. self._current_type = {self._current_type} and value passed to function is {value} and alt is {alt}")
         if alt:
             value += "_alt"
         tooltip_text: str = ""
+        log("d", f"getCategoryTooltip trying to get value for key {value}")
         tooltip_text = self._current_type_category_tooltips.get(value)
         log("d", f"getCategoryTooltip got tooltip text {tooltip_text}")
         return tooltip_text

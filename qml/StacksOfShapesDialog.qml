@@ -139,6 +139,7 @@ UM.Dialog {
                         }
                         delegateClickedFunction: function(categoryName) {manager.selectCategory(categoryName)}
                         defaultTooltipText: manager.getCategoryTooltip(modelData)
+                        alternateTooltipText: manager.getCategoryAltTooltip(modelData)
                         /*alternateTooltipMode: {
                             manager.logMessage("Delegate attempting to set alternateTooltipMode to " + globalAltShiftPressed)
                             return shapeDialog.globalAltShiftPressed
