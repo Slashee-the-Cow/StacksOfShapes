@@ -1,7 +1,7 @@
 {
     "name": "Stacks of Shapes",
     "author": "Slashee the Cow",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Plenty of geometrical shapes and fun shapes and symbols to add to your scene.",
     "minimum_cura_version": "5.0",
     "api": 8,

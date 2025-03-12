@@ -226,7 +226,7 @@ Shapes = {
         catalog.i18nc("shape_name", "Ellipsoid"): {
             PATH_KEY: "curvy/ellipsoid.stl",
             TOOLTIP_KEY: catalog.i18nc("shape_tooltip_curvy:ellipsoid", "An ellipsoid basically means a stretched out sphere."),
-            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_curvy:ellipsoid", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_curvy:ellipsoid", "Whether or not this particular ellipsoid can be called a \"football\" depends on what part of the world you live in."),
         },
     },
     _shape_category_things: {
@@ -238,7 +238,7 @@ Shapes = {
         catalog.i18nc("shape_names", "Helix"): {
             PATH_KEY: "things/helix.stl",
             TOOLTIP_KEY: catalog.i18nc("shape_tooltip_things:helix", "Springs are probably the best example of these.",),
-            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_:", "I wouldn't recommend trying to print this in TPU.<br>I never said it was a <i>good</i> spring."),
         },
         catalog.i18nc("shape_names", "Utah Teapot"): {
             PATH_KEY: "things/utah_teapot.stl",

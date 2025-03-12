@@ -32,6 +32,16 @@ UM.Dialog {
     x: 200
     y: 200
 
+    property bool race_condition_workaround: false
+
+    onClosing: (close) => {
+        close.accepted = false
+        manager.logMessage("shapeDialog.onClosing{} running: explicitly destroying Dialog")
+        Qt.callLater(function(){
+            manager.justDestroyShapeList()
+        })
+    }
+
 
     modality: Qt.NonModal
     flags: (Qt.platform.os == "windows" ? Qt.Dialog : Qt.Window)  // <-- Ugly workaround for a bug in Windows, where the close-button doesn't show up unless we have a Dialog (but _not_ a Window).
@@ -43,10 +53,44 @@ UM.Dialog {
         manager.categoryList; // Keep for potential initial category list refresh
         manager.logMessage("Component.onCompleted: categoryList = " + manager.categoryList);
         manager.logMessage("Component.onCompleted: manager.CurrentType = " + manager.CurrentType)
+        manager.logMessage("Component.onCompleted: race_version = " + race_version)
+        manager.logMessage("Component.onCompleted: UM.Preferences.getValue(general/auto_slice) = " + UM.Preferences.getValue("general/auto_slice"))
+        if (race_version && UM.Preferences.getValue("general/auto_slice")){
+            // This is required due to a race condition in Cura <= 5.9 which causes crashing when trying to automatically slice simple geometry.
+            race_condition_workaround = true // Only enable force false if it's true to begin with
+            UM.Preferences.setValue("general/auto_slice", false)
+        }
         currentShapeType = manager.CurrentType
         if(currentShapeType == shapeTypeSymbol){
-            shapeTypeTabShape.checked = false
-            shapeTypeTabSymbol.checked = true
+            shapeTypeTabShape.checked = false;
+            shapeTypeTabSymbol.checked = true;
+        }
+    }
+
+
+    Component.onDestruction: {
+        manager.logMessage("shapeDialog.onDestruction{} running")
+        if (race_condition_workaround){
+            manager.logMessage("shapeDialog.onDestruction{} should be setting general/auto_slice back to true")
+            UM.Preferences.setValue("general/auto_slice", true)
+            manager.logMessage("shapeDialog.onDestruction{} should have just set general/auto_slice back to true")
+            // The workaround would only have been enabled if it were true when the window was opened.
+        }
+    }
+
+    Item{
+        id: preferenceWatcher
+        Connections{
+            target: UM.Preferences
+            function onPreferenceChanged(preference){
+                manager.logMessage("shapeDialog UM.Preferences.onPreferenceChanged connection fired with preference " + preference)
+                if (!race_condition_workaround){
+                    return // I'm not doing a workaround
+                }
+                if (preference === "general/auto_slice"){
+                    UM.Preferences.setValue("general/auto_slice", false) // If someone tries to change it, we don't want to let them
+                }
+            }
         }
     }
 
@@ -372,6 +416,24 @@ UM.Dialog {
 
                 onClicked: {shapeDialog.close()}
                 //background: Rectangle { color: "green"}
+            }
+
+            UM.Label{
+                id: autoSliceWarning
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                //Layout.preferredHeight: implicitHeight
+                Layout.row: 2
+                Layout.column: 1
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                text: catalog.i18nc("dialog:workaround_warning", "<b>Automatic slicing has been disabled while this window is open to prevent Cura crashing due to a bug.</b>")
+                visible: race_condition_workaround
+                wrapMode: Text.WordWrap
+                color: UM.Theme.getColor("error")
+                horizontalAlignment: Text.AlignHCenter
+                Layout.leftMargin: UM.Theme.getSize("default_margin").width
+                Layout.rightMargin: UM.Theme.getSize("default_margin").width
+                font.pointSize: 10
             }
         }
     }

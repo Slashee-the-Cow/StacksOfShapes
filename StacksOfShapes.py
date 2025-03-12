@@ -17,6 +17,7 @@ import tempfile
 
 from typing import Optional, List, Any, TYPE_CHECKING
 
+from UM.Version import Version
 from UM.Extension import Extension
 from UM.Application import Application
 from cura.CuraApplication import CuraApplication
@@ -83,6 +84,9 @@ if catalog.hasTranslationLoaded():
 #This class is the extension and doubles as QObject to manage the qml    
 class StacksOfShapes(QObject, Extension):
     
+    AUTO_SLICE_KEY = "general/auto_slice"
+    _fixed_version_minimum = Version("5.11")  # Workaround for a race condition fixed in 5.10 (hopefully) that causes instant CTD on loading simple objects
+    _race_condition_version = False
     
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -94,11 +98,15 @@ class StacksOfShapes(QObject, Extension):
         self._preferences.addPreference("stacksofshapes/shapesize", 20)
         self._preferences.addPreference("stacksofshapes/symbolsize", 50)
         self._preferences.addPreference("stacksofshapes/symbolheight", 5)
+        self._preferences.addPreference("stacksofshapes/restore_auto_slice", False)
 
         # Get values from preferences
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
         self._symbol_size = float(self._preferences.getValue("stacksofshapes/symbolsize"))
         self._symbol_height = float(self._preferences.getValue("stacksofshapes/symbolheight"))
+        if bool(self._preferences.getValue("stacksofshapes/restore_auto_slice")):
+            self._preferences.setValue(self.AUTO_SLICE_KEY, True)
+            self._preferences.setValue("stacksofshapes/restore_auto_slice", False)
 
         self._shape_list_dialog = None
         
@@ -127,10 +135,16 @@ class StacksOfShapes(QObject, Extension):
         self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
-        #self.selectCategory("Basics")
+        self._race_condition_version: bool = Version(Application.getInstance().getVersion()) < self._fixed_version_minimum
+        log("d", f"self._race_condition_version = {self._race_condition_version}")
+        """self._original_auto_slice_value: bool | None = None
+        self._race_condition_workaround_active: bool  = False
+        self._preferences_listener_exists: bool = False
+        #self.selectCategory("Basics")"""
+        #log("i", f"cura_version = {Application.getInstance().getVersion()} and == Version(5.9) is {Application.getInstance().getVersion() == Version(5.9)} and \"5.9.0\" < Version(5.10) is {'5.9.0' < Version(5.10)}")
         
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
-        self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapelistPopup)
+        self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapeListPopup)
 
     PATH_KEY: str = "path"
     TOOLTIP_KEY: str = "tooltip"
@@ -139,9 +153,9 @@ class StacksOfShapes(QObject, Extension):
     def _collect_symbol_filenames(self):
         symbol_filenames = set()
         for category_key in Symbols.keys():
-            log("d", f"_collect_symbol_filenames trying to get keys for category_key {category_key}")
+            #log("d", f"_collect_symbol_filenames trying to get keys for category_key {category_key}")
             for symbol_key in Symbols[category_key].keys():
-                log("d", f"_collect_symbol_filenames trying to get data for symbol_key {symbol_key}")
+                #log("d", f"_collect_symbol_filenames trying to get data for symbol_key {symbol_key}")
                 symbol_data = Symbols[category_key][symbol_key]
                 filename = os.path.basename(symbol_data[self.PATH_KEY])
                 symbol_filenames.add(filename)
@@ -164,19 +178,71 @@ class StacksOfShapes(QObject, Extension):
         return tooltip_text
 
     # Pop up the shape list
-    def showShapelistPopup(self):
+    def showShapeListPopup(self):
         if self._shape_list_dialog:  # You've got to be cruel to the code to be kind to the user
-            self._shape_list_dialog.destroy()
-            self._shape_list_dialog = None
+            self.destroyShapeList()
 
         if self._shape_list_dialog is None:
             self._createShapelistPopup()
+
+        """if self._race_condition_version:
+            self._race_condition_workaround_active = True
+            if self._original_auto_slice_value is None:
+                if bool(self._preferences.getValue(self.AUTO_SLICE_KEY)):
+                    self._original_auto_slice_value = True
+                    self._preferences.setValue("stacksofshapes/restore_auto_slice", True)
+                    self._preferences.setValue(self.AUTO_SLICE_KEY, False)
+            if not self._preferences_listener_exists:
+                self._preferences.preferenceChanged.connect(self._`preference_l`istener)
+                self._preferences_listener_exists = True
+            if self._shape_list_dialog:
+                self._shape_list_dialog.closing.connect(self.destroyShapeList)"""
+
         self._shape_list_dialog.show()
-            
+
+    """race_condition_workaround_change = pyqtSignal()
+
+    @pyqtProperty(bool, notify=race_condition_workaround_change)
+    def is_workaround_active(self):
+        return self._race_condition_workaround_active"""
+    
+    @pyqtSlot()
+    def justDestroyShapeList(self):
+        """self._shape_list_dialog.hide()
+        time.sleep(10)
+        log("d", "justDestroyShapeList() about to destroy")
+        self._shape_list_dialog.destroy()
+        log("d", "justDestroyShapeList() about to set to None")
+        if self._shape_list_dialog:
+            log("d", "justDestroyShapeList() inside if for None!")
+            self._shape_list_dialog = None"""
+        self.destroyShapeList()
+    
+    def destroyShapeList(self):
+        if self._shape_list_dialog:
+            self._shape_list_dialog.destroy()
+            self._shape_list_dialog = None
+        """if self._race_condition_workaround_active:
+            if self._original_auto_slice_value is not None:  # Turn auto slice back on if it was on
+                self._preferences.setValue(self.AUTO_SLICE_KEY, self._original_auto_slice_value)
+                self._original_auto_slice_value = None
+                self._preferences.setValue("stacksofshapes/restore_auto_slice", False)
+            if self._preferences_listener_exists:
+                self._preferences.preferenceChanged.disconnect(self._preference_listener)
+                self._preferences_listener_exists = False
+            self._race_condition_workaround_active = False
+
+    def _preference_listener(self, preference_name, new_value):  # Force auto slice to stay off
+        if preference_name == self.AUTO_SLICE_KEY:
+            if self._race_condition_workaround_active and new_value:
+                self._preferences.setValue(self.AUTO_SLICE_KEY, False)
+                log("d", "StacksOfShapes forced auto slice to False to prevent race condition.")"""
+    
     def _createShapelistPopup(self):
         #qml_file_path = os.path.join(os.path.dirname(__file__), "qml", "settings.qml")
         dialog_context = {
             "manager": self,
+            "race_version": self._race_condition_version,
         }
         self._shape_list_dialog = CuraApplication.getInstance().createQmlComponent(self._shapelist_qml, dialog_context)
     
@@ -332,7 +398,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str)
     def logMessage(self, value: str) -> None:
-        log("i", f"StacksOfShapes QML Log: {value}")
+        log("d", f"StacksOfShapes QML Log: {value}")
 
     _shape_size_changed = pyqtSignal()
     
@@ -617,6 +683,9 @@ class StacksOfShapes(QObject, Extension):
                 break
 
         if node_to_process:
+            # Give it half a sec to catch up in case we're too quick off the mark.
+            # Or something. Figure it can't hurt.
+            time.sleep(0.5)
             bbox_mesh_data = node_to_process.getBoundingBoxMesh()
             if bbox_mesh_data:
                 aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
@@ -662,11 +731,12 @@ class StacksOfShapes(QObject, Extension):
             self._preferences.setValue("mesh/scale_tiny_meshes", True)
             self._reset_tiny_scaling = False
 
-        if self._reset_auto_slice:
-            self._reenable_auto_slice = Timer(2, self._enable_auto_slice)
+        """if self._reset_auto_slice:
+            self._reenable_auto_slice = Timer(5, self._enable_auto_slice)
             self._reenable_auto_slice.start()
         if self._reset_tiny_scaling:
             self._reenable_scale_tiny = Timer(1,self._enable_scale_tiny)
+            self._reenable_scale_tiny.start()"""
 
         self._is_file_processing = False
         self._expected_filename = None
@@ -696,10 +766,10 @@ class StacksOfShapes(QObject, Extension):
         if bool(self._preferences.getValue("mesh/scale_tiny_meshes")):
             self._preferences.setValue("mesh/scale_tiny_meshes", False)
             self._reset_tiny_scaling = True
-        if bool(self._preferences.getValue("general/auto_slice")):
+        """if bool(self._preferences.getValue("general/auto_slice")):
             self._preferences.setValue("general/auto_slice", False)
             self._reset_auto_slice = True
-            """if not self._reenable_auto_slice:
+            if not self._reenable_auto_slice:
                 self._reenable_auto_slice = Timer(3, self._enable_auto_slice)
                 self._reenable_auto_slice.start()
             else:

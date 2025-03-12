@@ -93,6 +93,9 @@ if __name__ == "__main__":
         for svg_filepath, relative_path in svg_files_with_paths: # Loop through filepaths and relative paths
             stl_filename_relative = os.path.splitext(relative_path)[0] + ".stl" # STL filename from relative SVG path
             stl_output_filepath_relative = os.path.join(STL_OUTPUT_DIR, stl_filename_relative) # Output STL path - preserve folder structure!
+            if os.path.exists(stl_output_filepath_relative):
+                print(f"Skipping {stl_output_filepath_relative} as it already exists")
+                continue
 
             stl_output_dir_for_file = os.path.dirname(stl_output_filepath_relative) # Ensure output directory for THIS FILE exists - FEATURE REQUEST!
             os.makedirs(stl_output_dir_for_file, exist_ok=True) # Create directory if it doesn't exist - for folder structure preservation
