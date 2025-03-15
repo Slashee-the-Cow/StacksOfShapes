@@ -4,9 +4,9 @@ import os
 MODELS_SYMBOLS_DIR = os.path.join(os.path.dirname(__file__), "models", "symbols")
 OUTPUT_DICT_FILE = "symbols_dict_output.txt"  # Output filename for the dictionary text
 
-PATH_KEY = "PATH_KEY" # Replicate your PATH_KEY and TOOLTIP_KEY constants - for clarity in generated dict
-TOOLTIP_KEY = "TOOLTIP"
-ALT_TOOLTIP_KEY = "ALT_TOOLTIP"
+PATH_KEY = "PATH_KEY"
+TOOLTIP_KEY = "TOOLTIP_KEY"
+ALT_TOOLTIP_KEY = "ALT_TOOLTIP_KEY"
 
 def generate_symbols_dictionary():
     """Generates a Python dictionary representation of symbols from the models/symbols directory."""
@@ -79,8 +79,8 @@ if __name__ == "__main__":
 
         outfile.write(f"\nSymbol_Category_Tooltips = {{\n")
         for category_key in generated_dict.keys():
-            outfile.write(f"    {category_key}: catalog.i18nc(\"category_tooltip\",\"\"),\n")
-            outfile.write(f"    {category_key}_alt: catalog.i18nc(\"category_tooltip_alt\",\"\"),\n")
+            outfile.write(f"    {category_key}: catalog.i18nc(\"symbol_category_tooltip:{nameFromCategoryKey(category_key)}\",\"\"),\n")
+            outfile.write(f"    f\"{{{category_key}}}_alt\": catalog.i18nc(\"symbol_category_tooltip_alt:{nameFromCategoryKey(category_key)}\",\"\"),\n")
         outfile.write(f"}}\n")  # Close dictionary
 
         outfile.write(f"\nSymbol_Category_Thumbnail_Filenames = {{\n")

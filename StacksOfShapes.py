@@ -85,7 +85,7 @@ if catalog.hasTranslationLoaded():
 class StacksOfShapes(QObject, Extension):
     
     AUTO_SLICE_KEY = "general/auto_slice"
-    _fixed_version_minimum = Version("5.11")  # Workaround for a race condition fixed in 5.10 (hopefully) that causes instant CTD on loading simple objects
+    _fixed_version_minimum = Version("5.10")  # Workaround for a race condition fixed in 5.10 (hopefully) that causes instant CTD on loading simple objects
     _race_condition_version = False
     
     def __init__(self, parent = None):
@@ -112,8 +112,8 @@ class StacksOfShapes(QObject, Extension):
         
         self._shapelist_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "StacksOfShapesDialog.qml"))
 
-        self._qml_categories_icon_folder = "../categories/"
-        self._qml_models_icon_folder = "../models/"
+        self._qml_categories_icon_folder: str = "../categories/"  # Relative path from QML folder to category thumbnails
+        self._qml_models_icon_folder:str = "../models/"  # Relative path from QML folder to model files.
         # self._settings_qml = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qml", "settings.qml")
         #self._settings_qml = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", "settings.qml"))
 
@@ -130,11 +130,14 @@ class StacksOfShapes(QObject, Extension):
         self._expected_filename: str | None = None
         self._expected_title: str | None = None
         CuraApplication.getInstance().fileCompleted.connect(self._on_file_loaded)
-        self._reset_tiny_scaling = False
-        self._reset_auto_slice = False
+        self._reset_tiny_scaling: bool = False
+        self._reset_auto_slice: bool = False
         self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
+        # There's a race condition bug in Cura versions < 5.10 that results in CTDs if simple geometry is loaded while auto slice is on.
+        # This is used as a flag to disable auto slicing if running an older version.
+        # https://github.com/Ultimaker/Cura/issues/19904
         self._race_condition_version: bool = Version(Application.getInstance().getVersion()) < self._fixed_version_minimum
         log("d", f"self._race_condition_version = {self._race_condition_version}")
         """self._original_auto_slice_value: bool | None = None
@@ -150,7 +153,8 @@ class StacksOfShapes(QObject, Extension):
     TOOLTIP_KEY: str = "tooltip"
     ALT_TOOLTIP_KEY: str = "altTooltip"
 
-    def _collect_symbol_filenames(self):
+    def _collect_symbol_filenames(self) -> set[str]:
+        """Creates a set() of filenames for all symbols to check against when loading models."""
         symbol_filenames = set()
         for category_key in Symbols.keys():
             #log("d", f"_collect_symbol_filenames trying to get keys for category_key {category_key}")
@@ -163,11 +167,12 @@ class StacksOfShapes(QObject, Extension):
         return symbol_filenames
     
     @pyqtSlot(str, result=str)
-    def getCategoryAltTooltip(self, value):
+    def getCategoryAltTooltip(self, value: str) -> str:
+        """Wrapper that gets the 'alternate' tooltip for a category."""
         return self.getCategoryTooltip(value, True)
 
     @pyqtSlot(str, result=str)
-    def getCategoryTooltip(self, value, alt=False):
+    def getCategoryTooltip(self, value: str, alt: bool = False) -> str:
         log("d", f"getCategoryTooltip called. self._current_type = {self._current_type} and value passed to function is {value} and alt is {alt}")
         if alt:
             value += "_alt"
@@ -178,8 +183,11 @@ class StacksOfShapes(QObject, Extension):
         return tooltip_text
 
     # Pop up the shape list
-    def showShapeListPopup(self):
-        if self._shape_list_dialog:  # You've got to be cruel to the code to be kind to the user
+    def showShapeListPopup(self) -> None:
+        """Destroys shape window if it already exists, then creates a new one
+        from scratch regardless of if it's already open."""
+        if self._shape_list_dialog:
+            # Even if it does already exist, we want to start from a fresh slate
             self.destroyShapeList()
 
         if self._shape_list_dialog is None:
@@ -207,38 +215,19 @@ class StacksOfShapes(QObject, Extension):
         return self._race_condition_workaround_active"""
     
     @pyqtSlot()
-    def justDestroyShapeList(self):
-        """self._shape_list_dialog.hide()
-        time.sleep(10)
-        log("d", "justDestroyShapeList() about to destroy")
-        self._shape_list_dialog.destroy()
-        log("d", "justDestroyShapeList() about to set to None")
-        if self._shape_list_dialog:
-            log("d", "justDestroyShapeList() inside if for None!")
-            self._shape_list_dialog = None"""
+    def justDestroyShapeList(self) -> None:
+        """Wrapper for destroyShapeList() that can be called from QML."""
         self.destroyShapeList()
     
-    def destroyShapeList(self):
+    def destroyShapeList(self) -> None:
+        """Calls destroy() on _shape_list_dialog and sets it to None so it starts from a fresh slate."""
         if self._shape_list_dialog:
             self._shape_list_dialog.destroy()
             self._shape_list_dialog = None
-        """if self._race_condition_workaround_active:
-            if self._original_auto_slice_value is not None:  # Turn auto slice back on if it was on
-                self._preferences.setValue(self.AUTO_SLICE_KEY, self._original_auto_slice_value)
-                self._original_auto_slice_value = None
-                self._preferences.setValue("stacksofshapes/restore_auto_slice", False)
-            if self._preferences_listener_exists:
-                self._preferences.preferenceChanged.disconnect(self._preference_listener)
-                self._preferences_listener_exists = False
-            self._race_condition_workaround_active = False
-
-    def _preference_listener(self, preference_name, new_value):  # Force auto slice to stay off
-        if preference_name == self.AUTO_SLICE_KEY:
-            if self._race_condition_workaround_active and new_value:
-                self._preferences.setValue(self.AUTO_SLICE_KEY, False)
-                log("d", "StacksOfShapes forced auto slice to False to prevent race condition.")"""
     
     def _createShapelistPopup(self):
+        """Actually creates and shows the shape list dialog.
+        Run by other functions, shouldn't be called by itself."""
         #qml_file_path = os.path.join(os.path.dirname(__file__), "qml", "settings.qml")
         dialog_context = {
             "manager": self,
@@ -250,10 +239,12 @@ class StacksOfShapes(QObject, Extension):
     shapeListChanged = pyqtSignal()
 
     @pyqtProperty(list, notify=categoryListChanged)
-    def categoryList(self):
+    def categoryList(self) -> list[str]:
         return self._category_names
     
-    def setShapeList(self, value):
+    def setShapeList(self, value: str) -> None:
+        """This should *NEVER* be called. Use selectCategory() instead.
+        It exists only because PyQt doesn't always seem satisfied if a property doesn't have a setter."""
         log("e", ">>>>>>>>>>>>> setShapeList setter FUNCTION WAS CALLED! <<<<<<<<<<<<<<<<<<")
         log("d", f"setShapeList: category_name argument passed = {value}")
         self.updateShapeList(value)
@@ -264,8 +255,8 @@ class StacksOfShapes(QObject, Extension):
     #def shapeList(self):
     #    return self._shape_names
     @pyqtProperty(list, notify=shapeListChanged, fset=setShapeList)
-    def shapeList(self):
-        shape_list_to_return = self._shape_names # Assuming self._shape_names is now the list of dicts as in Step 59A
+    def shapeList(self) -> dict:
+        shape_list_to_return = self._shape_names
         log("d", f"shapeList property - About to return shape list (length: {len(shape_list_to_return)}):")
         if not shape_list_to_return: # Handle empty list case
             log("d", f"  Shape list is empty.")
@@ -284,7 +275,13 @@ class StacksOfShapes(QObject, Extension):
         return shape_list_to_return
     
     @pyqtSlot(str)
-    def selectCategory(self, category_name):
+    def selectCategory(self, category_name: str) -> None:
+        """
+        Switches between categories of shapes (the groups on the left).
+
+        Args:
+            category_name (str): The category to switch to. Will be ignored if it is the current category.
+        """
         if category_name == self._current_category:  # Nothing to do here, don't want to waste time recomposing a ListView
             return
         log("d", f"Current category is {self._current_category} - Trying to access shapes category: {category_name}")
@@ -305,7 +302,7 @@ class StacksOfShapes(QObject, Extension):
         #log("d", f"For {category_name} we got {self._shape_names}")
         self.shapeListChanged.emit()"""
 
-    def updateShapeList(self, category_name = "", clear_only: bool = False):
+    def updateShapeList(self, category_name = "", clear_only: bool = False) -> None:
         if clear_only:
             log("d", f"updateShapeList called with clear_only")
             self._shape_names = []
@@ -326,7 +323,13 @@ class StacksOfShapes(QObject, Extension):
         self.shapeListChanged.emit()
 
     @pyqtSlot(str)
-    def selectType(self, type_name):
+    def selectType(self, type_name: str) -> None:
+        """
+        Switches between shape types (currently just shapes and symbols).
+
+        Args:
+            type_name (str): The type to switch to. Will be a no-op if it doesn't match a name.
+        """
         log("d", f"StackOfShapes.selectType called with {type_name}")
         match type_name:
             case ShapeTypes.SHAPE.value:
@@ -354,7 +357,7 @@ class StacksOfShapes(QObject, Extension):
     def CurrentType(self) -> str:
         return self._current_type.value
 
-    def updateCategoryList(self, clear_only: bool = False):
+    def updateCategoryList(self, clear_only: bool = False) -> None:
         log("d", f"StackOfShapes.updateCategoryList run. self._current_type = {self._current_type} and self._current_type_dict = {self._current_type_dict}")
         if clear_only:
             log("d", f"updateCategoryList called with clear_only")
@@ -377,6 +380,7 @@ class StacksOfShapes(QObject, Extension):
         self._addShapeLoad(value, stl_file_path)
 
     def getModelPath(self, model: str) -> str:
+        """Gets filename of selected model based on model name."""
         return self._current_type_dict[self._current_category][model].get(self.PATH_KEY)
 
     """def loadModel(self, shape_name):
@@ -398,6 +402,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str)
     def logMessage(self, value: str) -> None:
+        """Wrapper function so QML can log stuff since its own logging doesn't get into Cura's logs."""
         log("d", f"StacksOfShapes QML Log: {value}")
 
     _shape_size_changed = pyqtSignal()
@@ -444,9 +449,6 @@ class StacksOfShapes(QObject, Extension):
             return image_path
         else:
             return ""
-        # I tried about three zillion ways to get it to work with absolute paths.
-        # It's possible it just doesn't like Windows, considering the closest I got,
-        # it removed the : after the drive letter.
 
     @pyqtSlot(str, result=str)
     def getShapeImage(self, value: str) -> str:
@@ -665,8 +667,22 @@ class StacksOfShapes(QObject, Extension):
         translation_vector = Vector(-0.01, 0, 0) # Tiny translation in X direction (0.01mm)
         translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
         translate_op.push() # Push the translation operation"""
+    
+    def _reset_scene_node_scale(self, scene_node: SceneNode) -> None:
+        """
+        Resets the scale of a SceneNode to make its current scaling appear as 100% by baking the scaling into the mesh.
 
-    def _on_file_loaded(self, file_name):
+        Args:
+            scene_node (SceneNode): The node to reset the scale of.
+        """
+        #transformed_mesh = scene_node.getMeshDataTransformed()
+        transformed_mesh = MeshData(vertices = scene_node.getMeshDataTransformedVertices(), normals = scene_node.getMeshDataTransformedNormals(), indices = scene_node.getMeshData().getIndices())
+        scene_node.setScale(Vector(1.0,1.0,1.0))
+        scene_node.setMeshData(transformed_mesh)
+
+
+    def _on_file_loaded(self, file_name: str) -> None:
+        """Listener invoked on file load to see if it's ours to see if we need to manipulate it."""
         log("d",f"_on_file_loaded saw {file_name}")
         if not self._is_file_processing or os.path.basename(file_name) != self._expected_filename:
             return
@@ -681,11 +697,13 @@ class StacksOfShapes(QObject, Extension):
                 node_to_process = node
                 log("d", f"Found child node that seems like what we want: {node_to_process}")
                 break
-
+        if not node_to_process:
+            return  # Extremely unlikely that another load will arrive between our user's click and us checking. But just in case.
+        node_to_process.setName(self._expected_title)
         if node_to_process:
             # Give it half a sec to catch up in case we're too quick off the mark.
             # Or something. Figure it can't hurt.
-            time.sleep(0.5)
+            time.sleep(0.1)
             bbox_mesh_data = node_to_process.getBoundingBoxMesh()
             if bbox_mesh_data:
                 aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
@@ -716,6 +734,9 @@ class StacksOfShapes(QObject, Extension):
                     log("w", "_on_file_loaded couldn't get bounding box from MeshData")
             else:
                 log("w", "_on_file_load couldn't get bounding box MeshData")
+
+            self._reset_scene_node_scale(node_to_process)
+
         
             if is_symbol:
                 # Due to how they aren't centred in OpenSCAD, the symbols can start way off course
@@ -724,8 +745,11 @@ class StacksOfShapes(QObject, Extension):
                 translation_vector = Vector(-current_position.x, -current_position.y, -current_position.z)
                 translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
                 translate_op.push() # Push the translation operation
-
-            node_to_process.setName(self._expected_title)
+            else:  # Due to a lack of by-model "drop down model" in older versions of Cura, we make sure everything spawns at Z0.
+                current_position = node_to_process.getPosition()
+                translation_vector = Vector(0,0, -current_position.z)
+                translate_op = TranslateOperation(node, translation_vector) # Create TranslateOperation
+                translate_op.push() # Push the translation operation
         
         if self._reset_tiny_scaling:
             self._preferences.setValue("mesh/scale_tiny_meshes", True)
@@ -742,18 +766,11 @@ class StacksOfShapes(QObject, Extension):
         self._expected_filename = None
         self._expected_title = None
 
+    """_reenable_auto_slice: Timer | None = None
 
-
-    _reenable_scale_tiny: Timer | None = None
-    _reenable_auto_slice: Timer | None = None
-
-    def _enable_auto_slice(self):
+    def _enable_auto_slice(self) -> None:
         self._preferences.setValue("general/auto_slice", True)
-        self._reset_auto_slice = False
-
-    def _enable_scale_tiny(self):
-        self._preferences.setValue("mesh/scale_tiny_meshes", True)
-        self._reset_tiny_scaling = False
+        self._reset_auto_slice = False"""
 
     def _addShapeLoad(self, mesh_name: str, stl_file_path: str) -> None:
         log("d", f"addShapeLoad() run with mesh_name = {mesh_name} and stl_file_path = {stl_file_path}")
@@ -763,6 +780,8 @@ class StacksOfShapes(QObject, Extension):
         if not global_stack:
             return # Something's wrong with Cura
         
+        # Some of the models are only a few mm big so we disable automatic scaling
+        # so that the user doesn't get an "auto scaled" toast they need to manually dismiss
         if bool(self._preferences.getValue("mesh/scale_tiny_meshes")):
             self._preferences.setValue("mesh/scale_tiny_meshes", False)
             self._reset_tiny_scaling = True
