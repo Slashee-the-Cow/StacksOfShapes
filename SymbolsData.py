@@ -18,7 +18,7 @@ _symbols_category_symbols_icons: str = catalog.i18nc("symbol_category", "Symbols
 _symbols_category_weather: str = catalog.i18nc("symbol_category", "Weather")
 
 Symbols = {
-    _symbols_category_arrows: {  # Category: _symbols_category_arrows
+    _symbols_category_arrows: {
         catalog.i18nc("symbol_name", "Arrow Chevron"): {
             PATH_KEY: "symbols/arrows/arrow_chevron.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_arrows:arrow_chevron", ""),
@@ -56,7 +56,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_astrological_signs: {  # Category: _symbols_category_astrological_signs
+    _symbols_category_astrological_signs: {
         catalog.i18nc("symbol_name", "Aries"): {
             PATH_KEY: "symbols/astrological_signs/aries_1.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_astrological_signs:aries", ""),
@@ -179,7 +179,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_card_suits: {  # Category: _symbols_category_card_suits
+    _symbols_category_card_suits: {
         catalog.i18nc("symbol_name", "Heart"): {
             PATH_KEY: "symbols/hearts/heart.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_card_suits:heart", ""),
@@ -310,7 +310,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_geometric: {  # Category: _symbols_category_geometric
+    _symbols_category_geometric: {
         catalog.i18nc("symbol_name", "Circle"): {
             PATH_KEY: "symbols/geometric/circle.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_geometric:circle", ""),
@@ -453,7 +453,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_hearts: {  # Category: _symbols_category_hearts
+    _symbols_category_hearts: {
         catalog.i18nc("symbol_name", "Heart"): {
             PATH_KEY: "symbols/hearts/heart.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_hearts:heart", ""),
@@ -509,7 +509,7 @@ Symbols = {
     _symbols_category_pies: {
         catalog.i18nc("symbol_name", "Pie (Whole)"): {
             PATH_KEY: "symbols/geometric/circle.stl",
-            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_pies:pie_whole", "It's literally just a circle. It uses the same files any everything."),
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_pies:pie_whole", "It's literally just a circle. It uses the same files and everything."),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_pies:pie_whole", "Didn't anyone ever tell you to shut your pie whole?"),
         },
         catalog.i18nc("symbol_name", "Pie (Whole) (Outline)"): {
@@ -589,7 +589,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_stars: {  # Category: _symbols_category_stars
+    _symbols_category_stars: {
         catalog.i18nc("symbol_name", "Double Star 5 Point"): {
             PATH_KEY: "symbols/stars/double_star_5_point.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_stars:double_star_5_point", ""),
@@ -622,7 +622,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_symbols_icons: {  # Category: _symbols_category_symbols_icons
+    _symbols_category_symbols_icons: {
         catalog.i18nc("symbol_name", "Add"): {
             PATH_KEY: "symbols/symbols_icons/add.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:add", ""),
@@ -905,7 +905,7 @@ Symbols = {
         },
     },
 
-    _symbols_category_weather: {  # Category: _symbols_category_weather
+    _symbols_category_weather: {
         catalog.i18nc("symbol_name", "Cloud"): {
             PATH_KEY: "symbols/weather/cloud.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_weather:cloud", ""),
@@ -1014,14 +1014,14 @@ Symbol_Category_Tooltips = {
 }
 
 Symbol_Category_Thumbnail_Filenames = {
-    _symbols_category_arrows: "symbols/arrows.png",
-    _symbols_category_astrological_signs: "symbols/astrological_signs.png",
-    _symbols_category_card_suits: "symbols/card_suits.png",
-    _symbols_category_emojis: "symbols/emojis.png",
-    _symbols_category_geometric: "symbols/geometric.png",
-    _symbols_category_hearts: "symbols/hearts.png",
-    _symbols_category_pies: "symbols/pies.png",
-    _symbols_category_stars: "symbols/stars.png",
-    _symbols_category_symbols_icons: "symbols/symbols_icons.png",
-    _symbols_category_weather: "symbols/weather.png",
+    _symbols_category_arrows: "symbols/arrows.webp",
+    _symbols_category_astrological_signs: "symbols/astrological_signs.webp",
+    _symbols_category_card_suits: "symbols/card_suits.webp",
+    _symbols_category_emojis: "symbols/emojis.webp",
+    _symbols_category_geometric: "symbols/geometric.webp",
+    _symbols_category_hearts: "symbols/hearts.webp",
+    _symbols_category_pies: "symbols/pies.webp",
+    _symbols_category_stars: "symbols/stars.webp",
+    _symbols_category_symbols_icons: "symbols/symbols_icons.webp",
+    _symbols_category_weather: "symbols/weather.webp",
 }

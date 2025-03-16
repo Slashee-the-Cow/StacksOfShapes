@@ -452,7 +452,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str, result=str)
     def getShapeImage(self, value: str) -> str:
-        model_relative_path = f"{self._qml_models_icon_folder}{self.getModelPath(value)}".replace("stl", "png" if self._current_type != ShapeTypes.SYMBOL else "svg")
+        model_relative_path = f"{self._qml_models_icon_folder}{self.getModelPath(value)}".replace("stl", "webp" if self._current_type != ShapeTypes.SYMBOL else "svg")
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "qml", model_relative_path))
         log("d", f"getShapeImage got relative image path {model_relative_path} with an abspath of {abs_path}")
         if os.path.exists(abs_path):
