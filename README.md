@@ -1,8 +1,8 @@
 # Stacks of Shapes
-A cornucopia of delightful things to add to your scene! Not only do we have 3D objects (mostly based on geometry) but we also have 2D shapes extruded you can add to your print for the finishing touch.
+A cornucopia of delightful things to add to your scene! Not only do we have 3D objects (mostly based on geometry) but we also have 2D symbols extruded you can add to your print for the finishing touch.
 
 ### Notice:
-**If you have automatic slicing turned on, it will be turned off while the shape window is open. This to avoid a bug in Cura that could cause it to crash when adding a simple shape with auto slice turned on.**
+**In Cura versions older than 5.10, if you have automatic slicing turned on, it will be turned off while the shape window is open. This to avoid a bug in Cura that could cause a crash when adding a simple shape with auto slice turned on.**
 
 ## 3D
 You want some basic shapes to add to your scene? **We got them.**  
@@ -23,11 +23,11 @@ This plugin incorporates third-party models and symbols made available under mul
 
 ---
 ### Known Issues
-- In Cura versions older than 5.10, automatic slicing will be disabled if it is enabled. This is due to a bug in those versions which can cause an immediate crash when adding simple models to the scene. *This behaviour in Cura cannot be changed so the workaround is required for older versions.*
+- In Cura versions older than 5.10, automatic slicing will be disabled if it is enabled. This is due to a bug in those versions which can cause an immediate crash when adding simple models to the scene.
 - Some of the Symbols may come up as invalid/broken models. I'll deal with them as I find them. Or you can point them out to me!
-- In some older versions of Cura, some shapes may load partway through the floor or slightly in the air. This is due to not having the "drop down model" setting available per model in newer versions. I intend to fix any models that exhibit this behaviour when I see them. Or you can point them out to me!
-- Holding certain combinations of modifier keys (Ctrl, Alt, Shift) can lead to unexpected behaviour with tooltips in the shape list.
+- Rapidly clicking the tabs at the top of the window may cause incorrect data to be loaded.
 - It's not quite ready for translation yet. If you want to translate it, let me know and I can make it ready.
+- Holding certain combinations of modifier keys (Ctrl, Alt, Shift) can lead to unexpected behaviour with tooltips in the shape list.
 ---
 ### Do you want shapes?
 **I want to know.** I'm not (to the best of my or the guy next to me's knowledge) psychic, so I don't know what all you fine folks out there want. I'm happy to include shapes people are going to want... just open a thread on the discussions page and let me know!

@@ -9,9 +9,9 @@ Rectangle {  // Base element
         if (modelData.shapeData){
             defaultTooltipText = modelData.shapeData.tooltip;
             alternateTooltipText = modelData.shapeData.altTooltip;
-            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData = " + modelData.shapeData);
-            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.tooltip = " + modelData.shapeData.tooltip);
-            manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.altTooltip = " + modelData.shapeData.altTooltip);
+            //manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData = " + modelData.shapeData);
+            //manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.tooltip = " + modelData.shapeData.tooltip);
+            //manager.logMessage("ShapeListDelegate Component.onCompleted: modelData.shapeData.altTooltip = " + modelData.shapeData.altTooltip);
         }
     }
 
@@ -117,7 +117,7 @@ Rectangle {  // Base element
             shapeDelegateRoot.color = normalBackground
         }
 
-        ToolTip.text: alternateTooltipMode ? alternateTooltipText : defaultTooltipText
+        ToolTip.text: alternateTooltipMode ^ shapeDialog.altMode ? alternateTooltipText : defaultTooltipText
         ToolTip.visible: containsMouse && ToolTip.text !== ""
         ToolTip.delay: 500
     }

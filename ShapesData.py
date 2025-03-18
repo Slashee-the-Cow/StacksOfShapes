@@ -65,7 +65,7 @@ Shapes = {
         },
         catalog.i18nc("shape_name", "Three Quarter Spherical Sector"): {
             PATH_KEY: "spherical/three_quarter_spherical_sector.stl",
-            TOOLTIP_KEY: catalog.i18nc("shape_tooltip_spherical:three_quarter", "Only a whole sphere has no edges or corners. The chunk cut out menas this does."),
+            TOOLTIP_KEY: catalog.i18nc("shape_tooltip_spherical:three_quarter", "Only a whole sphere has no edges or corners. The chunk cut out means this does."),
             ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_spherical:three_quarter", "Any resemblance to any video game characters are entirely creations of your imagination<br>and I cannot be held legally accountable for them."),
         },
         catalog.i18nc("shape_name", "Hemisphere"): {

@@ -99,6 +99,7 @@ class StacksOfShapes(QObject, Extension):
         self._preferences.addPreference("stacksofshapes/symbolsize", 50)
         self._preferences.addPreference("stacksofshapes/symbolheight", 5)
         self._preferences.addPreference("stacksofshapes/restore_auto_slice", False)
+        self._preferences.addPreference("stacksofshapes/hide_tip", False)
 
         # Get values from preferences
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
@@ -107,6 +108,7 @@ class StacksOfShapes(QObject, Extension):
         if bool(self._preferences.getValue("stacksofshapes/restore_auto_slice")):
             self._preferences.setValue(self.AUTO_SLICE_KEY, True)
             self._preferences.setValue("stacksofshapes/restore_auto_slice", False)
+        self._display_tip = not bool(self._preferences.getValue("stacksofshapes/hide_tip"))  # Poor form, I get it.
 
         self._shape_list_dialog = None
         
@@ -237,6 +239,21 @@ class StacksOfShapes(QObject, Extension):
     
     categoryListChanged = pyqtSignal()
     shapeListChanged = pyqtSignal()
+    displayTipChanged = pyqtSignal()
+
+    def setDisplayTip(self, value: bool):
+        self._display_tip = value
+        self.displayTipChanged.emit()
+
+    @pyqtProperty(bool, notify=displayTipChanged, fset=setDisplayTip)
+    def displayTip(self) -> bool:
+        return self._display_tip
+    
+    @pyqtSlot()
+    def disableDisplayTip(self):
+        self._display_tip = False
+        self.displayTipChanged.emit()
+        self._preferences.setValue("stacksofshapes/hide_tip", True)
 
     @pyqtProperty(list, notify=categoryListChanged)
     def categoryList(self) -> list[str]:

@@ -17,22 +17,42 @@ UM.Dialog {
         return !isNaN(value)
     }
 
+    function stripNonAlphanumeric(str) {
+        return str.replace(/[^a-zA-Z0-9]/g, '');
+    }
+
+    function toggleAltMode(){
+        if (!altMode){
+            shapeTypeTabShape.text = shapeTypeTabShape.text + "🤣"
+        } else {
+            shapeTypeTabShape.text = stripNonAlphanumeric(shapeTypeTabShape.text)
+        }
+        altMode = !altMode
+    }
+
     readonly property string shapeTypeShape: "SHAPE"  // Would the equivalent of an enum be a regular object? Eh, this is easier
     readonly property string shapeTypeSymbol: "SYMBOL"
     readonly property string tooltipKey: "tooltip"
 
+    property bool race_condition_workaround: false
+    property bool display_tip: manager.displayTip
+
+    property int baseDialogHeight: 480
+    property int extraDialogHeight: (race_condition_workaround ? 0 : 0) + (display_tip ? tipLayout.implicitHeight : 0)
+
     property string currentShapeType: shapeTypeShape  // Default at startup
+    
+    property bool altMode: false
 
     property variant catalog: UM.I18nCatalog { name: "stacksofshapes" }
 
     id: shapeDialog
     title: catalog.i18nc("dialog:title", "Stacks of Shapes")
     width: 600
-    height: 400
+    height: baseDialogHeight + extraDialogHeight
     x: 200
     y: 200
 
-    property bool race_condition_workaround: false
 
     onClosing: (close) => {
         close.accepted = false
@@ -65,6 +85,8 @@ UM.Dialog {
             shapeTypeTabShape.checked = false;
             shapeTypeTabSymbol.checked = true;
         }
+        manager.logMessage("tipLayout.implicitHeight = " + tipLayout.implicitHeight)
+        manager.logMessage("shapeDialog.height = " + shapeDialog.height)
     }
 
 
@@ -131,10 +153,27 @@ UM.Dialog {
                 text: catalog.i18nc("dialog:shape_tab", "Shapes")
                 height: 30
 
+                property int clickCount: 0
+                property Timer clickTimer: Timer {
+                    interval: 300 // Adjust this value (in milliseconds)
+                    running: false
+                    repeat: false
+                    onTriggered: {
+                        shapeTypeTabShape.clickCount = 0
+                    }
+                }
+
                 onClicked: {
                     if (currentShapeType !== shapeTypeShape){
                         manager.selectType(shapeTypeShape)
                         currentShapeType = shapeTypeShape
+                    }
+                    
+                    clickCount++;
+                    clickTimer.restart();
+                    if (clickCount === 3){
+                        manager.logMessage("Triple click!")
+                        shapeDialog.toggleAltMode()
                     }
                 }
             }
@@ -421,7 +460,7 @@ UM.Dialog {
             UM.Label{
                 id: autoSliceWarning
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                //Layout.preferredHeight: implicitHeight
+                Layout.preferredHeight: implicitHeight
                 Layout.row: 2
                 Layout.column: 1
                 Layout.columnSpan: 2
@@ -434,6 +473,55 @@ UM.Dialog {
                 Layout.leftMargin: UM.Theme.getSize("default_margin").width
                 Layout.rightMargin: UM.Theme.getSize("default_margin").width
                 font.pointSize: 10
+            }
+        }
+
+        ColumnLayout {
+            id: tipLayout
+            Layout.fillWidth: true
+            visible: display_tip
+            Layout.preferredHeight: implicitHeight
+            
+            UM.Label {
+                id: transformTipText
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.preferredHeight: implicitHeight
+                wrapMode: Text.WordWrap
+                color: UM.Theme.getColor("text")
+                horizontalAlignment: Text.AlignHCenter
+                Layout.leftMargin: UM.Theme.getSize("default_margin").width
+                Layout.rightMargin: UM.Theme.getSize("default_margin").width
+                font.pointSize: 12
+                text: catalog.i18nc("dialog:transform_tip", "Don't forget that after you've created a shape you can move, scale, rotate and mirror it using Cura's own tools!")
+            }
+            RowLayout{
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+
+                Cura.TertiaryButton{
+                    id: disableTipButton
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                    Layout.preferredHeight: implicitHeight
+                    text: catalog.i18nc("dialog:disable_transform_tip", "Okay, don't tell me again.")
+                    anchors.left: parent.left
+
+                    onClicked: {manager.disableDisplayTip()}
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+                Cura.TertiaryButton{
+                    id: hideTipButton
+                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                    Layout.preferredHeight: implicitHeight
+                    text: catalog.i18nc("dialog:hide_transform_tip", "Cool, thanks!")
+                    anchors.right: parent.right
+
+                    onClicked: {manager.displayTip = false}
+                }
+
             }
         }
     }
