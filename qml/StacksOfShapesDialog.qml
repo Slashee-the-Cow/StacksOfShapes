@@ -2,7 +2,6 @@ import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
 
-
 import UM 1.6 as UM
 import Cura 1.7 as Cura
 
@@ -60,6 +59,53 @@ UM.Dialog {
         Qt.callLater(function(){
             manager.justDestroyShapeList()
         })
+    }
+
+    property bool showShapeAddedBanner: false
+    property bool shapeAddedBannerFading: false
+
+    Rectangle {
+        id: shapeAddedBanner
+        visible: showShapeAddedBanner || shapeAddedBannerFading
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 50
+        color: UM.Theme.getColor("background_2")
+        opacity: 1.0
+        z: 1
+
+        UM.Label {
+            anchors.centerIn: parent
+            text: catalog.i18nc("@shapelist:added_banner", "Shape added!")
+            font.bold: true
+            font.pointSize: 16
+        }
+
+        Timer {
+            id: shapeAddedBannerTimer
+            interval: 1000
+            running: showShapeAddedBanner
+            repeat: false
+            onTriggered: {
+                showShapeAddedBanner = false
+                shapeAddedBannerFading = true
+            }
+        }
+
+        NumberAnimation {
+            target: shapeAddedBanner
+            property: "opacity"
+            from: 1.0
+            to: 0.0
+            duration: 500
+            running: shapeAddedBannerFading && shapeAddedBanner.opacity > 0
+            onStopped: {
+                shapeAddedBannerFading = false
+                shapeAddedBanner.opacity = 1.0
+            }
+        }
+
     }
 
 
@@ -255,7 +301,7 @@ UM.Dialog {
                     delegate: ShapeListDelegate{
                         delegateText: modelData.shapeName
                         delegateImageSource: manager.getShapeImage(modelData.shapeName)
-                        delegateClickedFunction: function(shapeName) {manager.loadModel(shapeName)}
+                        delegateClickedFunction: function(shapeName) {shapeDialog.showShapeAddedBanner = true; manager.loadModel(shapeName)}
                         defaultTooltipText: {
                             /*manager.logMessage("ShapeDelegate (Shape): modelData =" + modelData);
                             for (var key in modelData) {

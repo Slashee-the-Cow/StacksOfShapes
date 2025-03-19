@@ -225,88 +225,193 @@ Symbols = {
     _symbols_category_emojis: {
         catalog.i18nc("symbol_name", "Angry"): {
             PATH_KEY: "symbols/emojis/angry.stl",
-            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:angry", "Angry Emoji 😠"),
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:angry", "Angry Emoji: 😠"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:angry", "Hey, don't look at me. It was <i>*eyes dart around*</i> that guy! <i>*starts running*</i>"),
+        },
+        catalog.i18nc("symbol_name", "Angry (Filled)"): {
+            PATH_KEY: "symbols/emojis/angry_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:angry_filled", "Angry Emoji: 😠 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:angry_filled", "If that store didn't want me to knock over all their bookshelves, they would have had the block set I wanted in stock."),
+        },
+        catalog.i18nc("symbol_name", "Cow"): {
+            PATH_KEY: "symbols/emojis/cow.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:cow", "Cow Emoji: 🐄"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:cow", "Mooooooooooo. That means either hello or goodbye, depending on how I feel.<br>Sometimes I'm conflicted and it's both. We're actually quite emotional creatures."),
+        },
+        catalog.i18nc("symbol_name", "Cow (Filled)"): {
+            PATH_KEY: "symbols/emojis/cow_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:cow_filled", "Cow Emoji: 🐄 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:cow_filled", "Standing around chewing the cud all day might not <i>sound</i> fun, but you do basically the same thing with beer at night."),
         },
         catalog.i18nc("symbol_name", "Crying"): {
             PATH_KEY: "symbols/emojis/crying.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying", "Crying Emoji: 😢"),
-            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying", "Buck up kiddo, things could be worse. Look at who's right below you."),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying", "Buck up kiddo, things could be worse. Look at who's two below you."),
+        },
+        catalog.i18nc("symbol_name", "Crying (Filled)"): {
+            PATH_KEY: "symbols/emojis/crying_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_filled", "Crying Emoji: 😢 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_filled", "All this time spent messing around with crying emojis and now I feel like joining them."),
         },
         catalog.i18nc("symbol_name", "Loudly Crying"): {
             PATH_KEY: "symbols/emojis/crying_loudly.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_loudly", "Loudly Crying Emoji: 😭"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_loudly", "Look, I know you didn't mean to knock over that milk truck. But there's no need to cry about it."),
         },
+        catalog.i18nc("symbol_name", "Loudly Crying (Filled)"): {
+            PATH_KEY: "symbols/emojis/crying_loudly_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_loudly_filled", "Loudly Crying Emoji: 😭 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_loudly_filled", "Don't blame yourself. If the circus had trained their elephant better it wouldn't have gotten startled<br>and run over eleven people when you accidentally brushed by it."),
+        },
         catalog.i18nc("symbol_name", "Facepalm"): {
             PATH_KEY: "symbols/emojis/facepalm.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:facepalm", "Facepalm Emoji: 🤦"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:facepalm", "Really? I have to explain this one? UGGGHHH."),
+        },
+        catalog.i18nc("symbol_name", "Facepalm (Filled)"): {
+            PATH_KEY: "symbols/emojis/facepalm_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:facepalm_filled", "Facepalm Emoji: 🤦 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:facepalm_filled", "I did two of these stupid things? What the heck is wrong with me?"),
         },
         catalog.i18nc("symbol_name", "Frown"): {
             PATH_KEY: "symbols/emojis/frown.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:frown", "Frown Emoji: ☹️"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:frown", "They might have replaced your steak with steamed tofu, but I still think we need to split the bill."),
         },
+        catalog.i18nc("symbol_name", "Frown (Filled)"): {
+            PATH_KEY: "symbols/emojis/frown_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:frown_filled", "Frown Emoji: ☹️ (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:frown_filled", "I don't care whether you agree with me or not, I am <b>not</b> going to fill your car's fuel tank with whiskey."),
+        },
         catalog.i18nc("symbol_name", "Grin"): {
             PATH_KEY: "symbols/emojis/grin.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin", "Grin Emoji: 😀"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin", "I know that look. Your seventeen hour print just finished successfully, didn't it?"),
+        },
+        catalog.i18nc("symbol_name", "Grin (Filled)"): {
+            PATH_KEY: "symbols/emojis/grin_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_filled", "Grin Emoji: 😀 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_filled", "Go ahead. Tell me how much you won on that lottery ticket. I know you want to."),
         },
         catalog.i18nc("symbol_name", "Toothy Grin"): {
             PATH_KEY: "symbols/emojis/grin_toothy.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy", "Toothy Grin Emoji: 😁"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy", "Okay, who did you just bankrupt at poker?"),
         },
+        catalog.i18nc("symbol_name", "Toothy Grin (Filled)"): {
+            PATH_KEY: "symbols/emojis/grin_toothy_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy_filled", "Toothy Grin Emoji: 😁 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy_filled", "Finally win that game of Monopoly did you? You've only been playing what, seven years?"),
+        },
+        catalog.i18nc("symbol_name", "Money Bag"): {
+            PATH_KEY: "symbols/emojis/money_bag.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:money_bag", "Money Bag Emoji: 💰"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle", "Feed the birds, tuppence a bag.<br>Tuppence, tuppence, tuppence a bag."),
+        },
+        catalog.i18nc("symbol_name", "Money Bag (Filled)"): {
+            PATH_KEY: "symbols/emojis/money_bag_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:monocle", "Money Bag Emoji: 💰 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle", "Why wouldn't you want the <b>filled</b> money bag?"),
+        },
         catalog.i18nc("symbol_name", "Monocle"): {
             PATH_KEY: "symbols/emojis/monocle.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:monocle", "Monocle Emoji: 🧐"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle", "This is actually a resourceful use of a broken pair of glasses and a broken necklace."),
         },
+        catalog.i18nc("symbol_name", "Monocle (Filled)"): {
+            PATH_KEY: "symbols/emojis/monocle_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:monocle_filled", "Monocle Emoji: 🧐 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle_filled", "This is a resourceful usage of the other half of the broken glasses and a lanyard from a boring conference."),
+        },
         catalog.i18nc("symbol_name", "Poop"): {
             PATH_KEY: "symbols/emojis/poop.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:poop", "Poop Emoji: 💩"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:poop", "Look, I know it stinks, but if I didn't include it people would just hassle me until I did."),
+        },    
+        catalog.i18nc("symbol_name", "Poop (Outline)"): {
+            PATH_KEY: "symbols/emojis/poop_outline.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:poop_outline", "Poop Emoji: 💩 (Outline)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:poop_outline", "Okay, who quit cleaning the toilet halfway through?"),
         },
         catalog.i18nc("symbol_name", "Raised Eyebrow"): {
             PATH_KEY: "symbols/emojis/raised_eyebrow.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:raised_eyebrow", "Raised Eyebrow Emoji: 🤨"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:raised_eyebrow", "Yes, I am sure about this. Don't give me that look."),
         },
+        catalog.i18nc("symbol_name", "Raised Eyebrow (Filled)"): {
+            PATH_KEY: "symbols/emojis/raised_eyebrow_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:raised_eyebrow_filled", "Raised Eyebrow Emoji: 🤨 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:raised_eyebrow_filled", "I didn't think the filled versions of the emojis were a good idea at first either, but I think it works."),
+        },
         catalog.i18nc("symbol_name", "Rolling On Floor Laughing"): {
             PATH_KEY: "symbols/emojis/rofl.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rofl", "Rolling On Floor Laughing Emoji: 🤣"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rofl", "...I must have just come up with the best ever version of \"why did the chicken cross the road?\""),
+        },
+        catalog.i18nc("symbol_name", "Rolling On Floor Laughing (Filled)"): {
+            PATH_KEY: "symbols/emojis/rofl_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rofl_filled", "Rolling On Floor Laughing Emoji: 🤣 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rofl_filled", "It's just a show of people getting hit in the crotch. Why has it beein going ten seasons and how is it still so ahahahahahhaahahahahaahahahahaa freaking hilarious?"),
         },
         catalog.i18nc("symbol_name", "Rolling Eyes"): {
             PATH_KEY: "symbols/emojis/rolling_eyes.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rolling_eyes", "Rolling Eyes Emoji: 🙄"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rolling_eyes", "Look, I know the Unicode Consortium might <b>sound</b> boring, but you wanted to know about emojis."),
         },
+        catalog.i18nc("symbol_name", "Rolling Eyes (Filled)"): {
+            PATH_KEY: "symbols/emojis/rolling_eyes_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rolling_eyes_filled", "Rolling Eyes Emoji: 🙄 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rolling_eyes_filled", "I don't care what you think. I think The Rolling Stones have still got it."),
+        },
         catalog.i18nc("symbol_name", "Slanted Mouth"): {
             PATH_KEY: "symbols/emojis/slanted_mouth.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:slanted_mouth", "Slanted Mouth Emoji: 🫤"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:slanted_mouth", "Fine. Believe me or not. Your choice. But I <b>swear</b> I saw a responsible motorcyclist."),
+        },
+        catalog.i18nc("symbol_name", "Slanted Mouth (Filled)"): {
+            PATH_KEY: "symbols/emojis/slanted_mouth_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:slanted_mouth_filled", "Slanted Mouth Emoji: 🫤 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:slanted_mouth_filled", "Spelunking without bringing lights was <b>your</b> idea. Don't look at me like that."),
         },
         catalog.i18nc("symbol_name", "Smile"): {
             PATH_KEY: "symbols/emojis/smile.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smile", "Smiling Emoji: 🙂"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smile", "Always look on the bright side of life.<br>Always look on the the right side of life."),
         },
+        catalog.i18nc("symbol_name", "Smile (Filled)"): {
+            PATH_KEY: "symbols/emojis/smile_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smile_filled", "Smiling Emoji: 🙂 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smile_filled", "Come on, get happy.<br>A whole lotta lovin' is what we'll be bringin'.<br>We'll make you happy."),
+        },
         catalog.i18nc("symbol_name", "Smirk"): {
             PATH_KEY: "symbols/emojis/smirk.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smirk", "Smirking Emoji: 😏"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smirk", "What, you think you know something I don't?"),
+        },
+        catalog.i18nc("symbol_name", "Smirk (Filled)"): {
+            PATH_KEY: "symbols/emojis/smirk_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smirk_filled", "Smirking Emoji: 😏 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smirk_filled", "Quit it with that look. You're nowhere near as punny as you think you are."),
         },
         catalog.i18nc("symbol_name", "Thinking"): {
             PATH_KEY: "symbols/emojis/thinking.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:thinking", "Thinking Emoji: 🤔"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:thinking", "I don't know why I thought writing all these jokes was a good idea either. But it's too late now."),
         },
+        catalog.i18nc("symbol_name", "Thinking (Filled)"): {
+            PATH_KEY: "symbols/emojis/thinking_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:thinking_filled", "Thinking Emoji: 🤔 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:thinking_filled", "Oh, I could tell you why<br>the ocean's near the shore.<br>I could think of things I'd never thunk before.<br>And then I'd sit, and think some more."),
+        },
         catalog.i18nc("symbol_name", "Wink"): {
             PATH_KEY: "symbols/emojis/wink.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:wink", "Winking Emoji: 😉"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:wink", "This guy gets me."),
+        },
+        catalog.i18nc("symbol_name", "Wink Filled"): {
+            PATH_KEY: "symbols/emojis/wink_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:wink_filled", "Winking Emoji: 😉 (Filled)"),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:wink_filled", "If there was a joke somewhere I'm not sure I'm in on it. Awww carp, that joke's on me, isn't it?"),
         },
     },
 

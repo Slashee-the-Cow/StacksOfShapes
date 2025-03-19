@@ -74,9 +74,9 @@ Rectangle {  // Base element
         enabled: false
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: shapeImage.right
-        anchors.leftMargin: 10  // Adjust as required
+        anchors.leftMargin: 10
         anchors.right: parent.right
-        font.pixelSize: 16  // ^
+        font.pointSize: 11
         text: "I'm a delegate!"
         wrapMode: Text.WordWrap
     }
@@ -102,9 +102,9 @@ Rectangle {  // Base element
         }
 
         onClicked: {
-            manager.logMessage("Current value of alternateTooltipMode: " + alternateTooltipMode)
-            manager.logMessage("Delegate clicked: " + delegateText + " and delegateImageSource is " + delegateImageSource + " and shapeImage.source is " + shapeImage.source)
-            manager.logMessage("On delegate click for " + delegateText + " ListView.view is currently: " + shapeDelegateRoot.ListView.view)
+            //manager.logMessage("Current value of alternateTooltipMode: " + alternateTooltipMode)
+            //manager.logMessage("Delegate clicked: " + delegateText + " and delegateImageSource is " + delegateImageSource + " and shapeImage.source is " + shapeImage.source)
+            //manager.logMessage("On delegate click for " + delegateText + " ListView.view is currently: " + shapeDelegateRoot.ListView.view)
             shapeDelegateRoot.ListView.view.currentIndex = index
             delegateClickedFunction(delegateText)
         }

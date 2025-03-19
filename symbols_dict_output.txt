@@ -207,85 +207,180 @@ Symbols = {
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:angry", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:angry", ""),
         },
+        catalog.i18nc("symbol_name", "Angry Filled"): {
+            PATH_KEY: "symbols/emojis/angry_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:angry_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:angry_filled", ""),
+        },
+        catalog.i18nc("symbol_name", "Cow"): {
+            PATH_KEY: "symbols/emojis/cow.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:cow", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:cow", ""),
+        },
+        catalog.i18nc("symbol_name", "Cow Filled"): {
+            PATH_KEY: "symbols/emojis/cow_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:cow_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:cow_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Crying"): {
             PATH_KEY: "symbols/emojis/crying.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying", ""),
+        },
+        catalog.i18nc("symbol_name", "Crying Filled"): {
+            PATH_KEY: "symbols/emojis/crying_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_filled", ""),
         },
         catalog.i18nc("symbol_name", "Crying Loudly"): {
             PATH_KEY: "symbols/emojis/crying_loudly.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_loudly", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_loudly", ""),
         },
+        catalog.i18nc("symbol_name", "Crying Loudly Filled"): {
+            PATH_KEY: "symbols/emojis/crying_loudly_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:crying_loudly_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:crying_loudly_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Facepalm"): {
             PATH_KEY: "symbols/emojis/facepalm.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:facepalm", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:facepalm", ""),
+        },
+        catalog.i18nc("symbol_name", "Facepalm Filled"): {
+            PATH_KEY: "symbols/emojis/facepalm_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:facepalm_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:facepalm_filled", ""),
         },
         catalog.i18nc("symbol_name", "Frown"): {
             PATH_KEY: "symbols/emojis/frown.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:frown", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:frown", ""),
         },
+        catalog.i18nc("symbol_name", "Frown Filled"): {
+            PATH_KEY: "symbols/emojis/frown_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:frown_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:frown_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Grin"): {
             PATH_KEY: "symbols/emojis/grin.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin", ""),
+        },
+        catalog.i18nc("symbol_name", "Grin Filled"): {
+            PATH_KEY: "symbols/emojis/grin_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_filled", ""),
         },
         catalog.i18nc("symbol_name", "Grin Toothy"): {
             PATH_KEY: "symbols/emojis/grin_toothy.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy", ""),
         },
+        catalog.i18nc("symbol_name", "Grin Toothy Filled"): {
+            PATH_KEY: "symbols/emojis/grin_toothy_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Monocle"): {
             PATH_KEY: "symbols/emojis/monocle.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:monocle", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle", ""),
+        },
+        catalog.i18nc("symbol_name", "Monocle Filled"): {
+            PATH_KEY: "symbols/emojis/monocle_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:monocle_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:monocle_filled", ""),
         },
         catalog.i18nc("symbol_name", "Poop"): {
             PATH_KEY: "symbols/emojis/poop.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:poop", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:poop", ""),
         },
+        catalog.i18nc("symbol_name", "Poop Outline"): {
+            PATH_KEY: "symbols/emojis/poop_outline.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:poop_outline", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:poop_outline", ""),
+        },
         catalog.i18nc("symbol_name", "Raised Eyebrow"): {
             PATH_KEY: "symbols/emojis/raised_eyebrow.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:raised_eyebrow", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:raised_eyebrow", ""),
+        },
+        catalog.i18nc("symbol_name", "Raised Eyebrow Filled"): {
+            PATH_KEY: "symbols/emojis/raised_eyebrow_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:raised_eyebrow_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:raised_eyebrow_filled", ""),
         },
         catalog.i18nc("symbol_name", "Rofl"): {
             PATH_KEY: "symbols/emojis/rofl.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rofl", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rofl", ""),
         },
+        catalog.i18nc("symbol_name", "Rofl Filled"): {
+            PATH_KEY: "symbols/emojis/rofl_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rofl_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rofl_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Rolling Eyes"): {
             PATH_KEY: "symbols/emojis/rolling_eyes.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rolling_eyes", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rolling_eyes", ""),
+        },
+        catalog.i18nc("symbol_name", "Rolling Eyes Filled"): {
+            PATH_KEY: "symbols/emojis/rolling_eyes_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:rolling_eyes_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:rolling_eyes_filled", ""),
         },
         catalog.i18nc("symbol_name", "Slanted Mouth"): {
             PATH_KEY: "symbols/emojis/slanted_mouth.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:slanted_mouth", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:slanted_mouth", ""),
         },
+        catalog.i18nc("symbol_name", "Slanted Mouth Filled"): {
+            PATH_KEY: "symbols/emojis/slanted_mouth_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:slanted_mouth_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:slanted_mouth_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Smile"): {
             PATH_KEY: "symbols/emojis/smile.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smile", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smile", ""),
+        },
+        catalog.i18nc("symbol_name", "Smile Filled"): {
+            PATH_KEY: "symbols/emojis/smile_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smile_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smile_filled", ""),
         },
         catalog.i18nc("symbol_name", "Smirk"): {
             PATH_KEY: "symbols/emojis/smirk.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smirk", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smirk", ""),
         },
+        catalog.i18nc("symbol_name", "Smirk Filled"): {
+            PATH_KEY: "symbols/emojis/smirk_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:smirk_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:smirk_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Thinking"): {
             PATH_KEY: "symbols/emojis/thinking.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:thinking", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:thinking", ""),
         },
+        catalog.i18nc("symbol_name", "Thinking Filled"): {
+            PATH_KEY: "symbols/emojis/thinking_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:thinking_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:thinking_filled", ""),
+        },
         catalog.i18nc("symbol_name", "Wink"): {
             PATH_KEY: "symbols/emojis/wink.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:wink", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:wink", ""),
+        },
+        catalog.i18nc("symbol_name", "Wink Filled"): {
+            PATH_KEY: "symbols/emojis/wink_filled.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:wink_filled", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:wink_filled", ""),
         },
     },
 
@@ -574,6 +669,16 @@ Symbols = {
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_stars:star_5_point", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_stars:star_5_point", ""),
         },
+        catalog.i18nc("symbol_name", "Star 5 Point Half"): {
+            PATH_KEY: "symbols/stars/star_5_point_half.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_stars:star_5_point_half", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_stars:star_5_point_half", ""),
+        },
+        catalog.i18nc("symbol_name", "Star 5 Point Half Outline"): {
+            PATH_KEY: "symbols/stars/star_5_point_half_outline.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_stars:star_5_point_half_outline", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_stars:star_5_point_half_outline", ""),
+        },
         catalog.i18nc("symbol_name", "Star 5 Point Outline"): {
             PATH_KEY: "symbols/stars/star_5_point_outline.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_stars:star_5_point_outline", ""),
@@ -697,6 +802,11 @@ Symbols = {
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:keyboard_outline", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_symbols_icons:keyboard_outline", ""),
         },
+        catalog.i18nc("symbol_name", "Kitchen Counter"): {
+            PATH_KEY: "symbols/symbols_icons/kitchen_counter.stl",
+            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:kitchen_counter", ""),
+            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_symbols_icons:kitchen_counter", ""),
+        },
         catalog.i18nc("symbol_name", "Lightbulb"): {
             PATH_KEY: "symbols/symbols_icons/lightbulb.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:lightbulb", ""),
@@ -781,11 +891,6 @@ Symbols = {
             PATH_KEY: "symbols/symbols_icons/phone.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:phone", ""),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_symbols_icons:phone", ""),
-        },
-        catalog.i18nc("symbol_name", "Plus"): {
-            PATH_KEY: "symbols/symbols_icons/plus.stl",
-            TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_symbols_icons:plus", ""),
-            ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_symbols_icons:plus", ""),
         },
         catalog.i18nc("symbol_name", "Radiation Warning"): {
             PATH_KEY: "symbols/symbols_icons/radiation_warning.stl",
