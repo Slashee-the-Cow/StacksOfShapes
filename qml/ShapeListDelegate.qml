@@ -35,15 +35,6 @@ Rectangle {  // Base element
 
     property bool alternateTooltipMode: false
 
-        // Listen for changes on the global property.
-    /*Connections {
-        target: shapeDialog
-        function onGlobalAltShiftPressedChanged() {
-            shapeDelegateRoot.alternateTooltipMode = shapeDialog.globalAltShiftPressed
-            manager.logMessage("Delegate updated: alternateTooltipMode = " + shapeDelegateRoot.alternateTooltipMode)
-        }
-    }*/
-
     Image {
         id: shapeImage
         enabled: false
@@ -58,16 +49,6 @@ Rectangle {  // Base element
         fillMode: Image.PreserveAspectFit
         
     }
-
-    /*UM.ToolTip {
-        id: delegateTooltip
-        text: delegateTooltipText
-        visible: shapeDelegateMouseArea.containsMouse
-        parent:delegateSeparator
-        contentAlignment: UM.Enums.ContentAlignment.AlignRight
-        //targetPoint: Qt.point(shapeDelegateRoot.x, shapeDelegateRoot.y + Math.round(shapeDelegateRoot.height * 1.25))
-        enabled: false
-    }*/
 
     UM.Label {
         id: textItem
@@ -122,16 +103,4 @@ Rectangle {  // Base element
         ToolTip.delay: 500
     }
     
-
-    /*ToolTip {
-        id: delegateTooltip // Keep the same ID for consistency
-        text: delegateTooltipText
-        visible: text !== "" && shapeDelegateMouseArea.containsMouse // Visible property - reuse your condition
-        parent: shapeDelegateMouseArea // Anchor it to the MouseArea
-        x: shapeDelegateMouseArea.width // Adjust positioning as needed (start with right edge of MouseArea)
-        y: 0 // Adjust vertical positioning as needed
-        // background:  // Standard ToolTip might have default background, or you can customize if needed
-        // contentItem: // Standard ToolTip usually uses a Text element internally
-        // ... You can further customize font, color, etc., if needed, but let's start basic.
-    }*/
 }

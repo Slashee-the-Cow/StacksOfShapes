@@ -19,12 +19,14 @@ You want some things that make you think "why would anyone want to print that"? 
   
 ---
   
-This plugin incorporates third-party models and symbols made available under multiple licenses. For detailed information, please consult the *ATTRIBUTIONS* file.
+This plugin incorporates third-party models and symbols made available under multiple licenses. For detailed information, please consult the *attributions* file.
 
 ---
 ### Known Issues
 - In Cura versions older than 5.10, automatic slicing will be disabled if it is enabled. This is due to a bug in those versions which can cause an immediate crash when adding simple models to the scene.
-- Some of the Symbols may come up as invalid/broken models. I'll deal with them as I find them. Or you can point them out to me!
+- Some of the Symbols may load rotated the wrong way. I'm looking into it.
+- Sometimes models will load slightly out of bounds. I've tried to fix it but without success. I'll try harder.
+- Sometimes a warning will appear saying a model is invalid. I can't reliably replicate it, so if you can, tell me how!
 - Rapidly clicking the tabs at the top of the window may cause incorrect data to be loaded.
 - It's not quite ready for translation yet. If you want to translate it, let me know and I can make it ready.
 - Holding certain combinations of modifier keys (Ctrl, Alt, Shift) can lead to unexpected behaviour with tooltips in the shape list.

@@ -496,7 +496,7 @@ Shapes = {
         catalog.i18nc("shape_name_tetrominoes", "Square"): {
             PATH_KEY: "tetrominoes/tetromino_square.stl",
             TOOLTIP_KEY: catalog.i18nc("shape_tooltip_tetrominoes:square", "A tetromino which is a square. Also known as the \"O\"."),
-            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_tetrominoes:", "This is an uncool shape. What's that? Kids these days don't use \"square\" like that any more? <i>*sigh<*/i> Kids these days..."),
+            ALT_TOOLTIP_KEY: catalog.i18nc("shape_alt_tooltip_tetrominoes:", "This is an uncool shape. What's that? Kids these days don't use \"square\" like that any more? <i>*sigh*</i> Kids these days..."),
         },
         catalog.i18nc("shape_name_tetrominoes", "Straight"): {
             PATH_KEY: "tetrominoes/tetromino_straight.stl",

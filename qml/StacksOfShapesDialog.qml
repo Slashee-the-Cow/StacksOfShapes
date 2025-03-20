@@ -99,7 +99,7 @@ UM.Dialog {
             from: 1.0
             to: 0.0
             duration: 500
-            running: shapeAddedBannerFading && shapeAddedBanner.opacity > 0
+            running: shapeAddedBannerFading
             onStopped: {
                 shapeAddedBannerFading = false
                 shapeAddedBanner.opacity = 1.0
@@ -125,6 +125,9 @@ UM.Dialog {
             // This is required due to a race condition in Cura <= 5.9 which causes crashing when trying to automatically slice simple geometry.
             race_condition_workaround = true // Only enable force false if it's true to begin with
             UM.Preferences.setValue("general/auto_slice", false)
+
+            // In case Cura crashes or something the main plugin will use this to restore auto slicing at next startup
+            UM.Preferences.setValue("stacksofshapes/restore_auto_slice", true)
         }
         currentShapeType = manager.CurrentType
         if(currentShapeType == shapeTypeSymbol){
@@ -141,6 +144,7 @@ UM.Dialog {
         if (race_condition_workaround){
             manager.logMessage("shapeDialog.onDestruction{} should be setting general/auto_slice back to true")
             UM.Preferences.setValue("general/auto_slice", true)
+            UM.Preferences.setValue("stacksofshapes/restore_auto_slice", false)
             manager.logMessage("shapeDialog.onDestruction{} should have just set general/auto_slice back to true")
             // The workaround would only have been enabled if it were true when the window was opened.
         }
@@ -161,28 +165,6 @@ UM.Dialog {
             }
         }
     }
-
-    /*Item {
-        id: keyListener
-        anchors.fill: parent
-        focus: true
-        // Ensure it always stays focused.
-        onActiveFocusChanged: {
-            if (!activeFocus) keyListener.forceActiveFocus();
-        }
-
-        Keys.onPressed: {
-            // Log key info for debugging.
-            manager.logMessage("Key pressed: " + event.key, " modifiers: " + event.modifiers);
-            // Update the global property when both Alt and Shift are held.
-            shapeDialog.globalAltShiftPressed = (event.modifiers & Qt.AltModifier) && (event.modifiers & Qt.ShiftModifier);
-        }
-        Keys.onReleased: {
-            manager.logMessage("Key released: " + event.key + " modifiers: " + event.modifiers);
-            // Re-check the modifiers on key release.
-            shapeDialog.globalAltShiftPressed = (event.modifiers & Qt.AltModifier) && (event.modifiers & Qt.ShiftModifier);
-        }
-    }*/
 
     ColumnLayout{
         id: baseColumn
@@ -249,15 +231,12 @@ UM.Dialog {
                 Layout.fillHeight: true
                 //Layout.preferredWidth: 200
 
-                /*UM.Label{
-                    text: "Categories"
-                } // Category label*/
 
                 ListView {
                     id: categoryListView
-                    clip: true
+                    clip: true  // Overflowing the UI below sucks.
                     Layout.preferredWidth: 200
-                    Layout.fillHeight: true // Make listview fill column height
+                    Layout.fillHeight: true
                     model: manager.categoryList  // Pulling a list straight from the Python file. Hey, if it works, right?
                     delegate: ShapeListDelegate{
                         delegateText: modelData
@@ -269,14 +248,12 @@ UM.Dialog {
                         delegateClickedFunction: function(categoryName) {manager.selectCategory(categoryName)}
                         defaultTooltipText: manager.getCategoryTooltip(modelData)
                         alternateTooltipText: manager.getCategoryAltTooltip(modelData)
-                        /*alternateTooltipMode: {
-                            manager.logMessage("Delegate attempting to set alternateTooltipMode to " + globalAltShiftPressed)
-                            return shapeDialog.globalAltShiftPressed
-                        }*/
                     }
+
                     ScrollBar.vertical: ScrollBar{
                         policy: categoryListView.contentHeight > categoryListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
                     }
+
                     Component.onCompleted: { // Delegate onCompleted - for debugging!
                         //manager.logMessage("ListView Component.onCompleted: categoryList = " + manager.categoryList + ", typeof categoryList = " + typeof manager.categoryList); // LIST LOG!
                     }
@@ -303,20 +280,7 @@ UM.Dialog {
                         delegateImageSource: manager.getShapeImage(modelData.shapeName)
                         delegateClickedFunction: function(shapeName) {shapeDialog.showShapeAddedBanner = true; manager.loadModel(shapeName)}
                         defaultTooltipText: {
-                            /*manager.logMessage("ShapeDelegate (Shape): modelData =" + modelData);
-                            for (var key in modelData) {
-                                manager.logMessage("  Key: " + key + ", Value: " + modelData[key]);
-                            }
-                            manager.logMessage("ShapeDelegate (Shape): tooltipKey = " + tooltipKey);
-                            manager.logMessage("ShapeDelegate (Shape): modelData.shapeData[tooltipKey] = " + modelData.shapeData[tooltipKey]);
-                            manager.logMessage("ShapeDelegate (Shape): modelData.shapeData[shapeDialog.tooltipKey] = " + modelData.shapeData[shapeDialog.tooltipKey]);
-                            manager.logMessage("ShapeDelegate (Shape) - DEBUGGING - Trying modelData.shapeData.tooltip Directly: " + modelData.shapeData.tooltip); // NEW! - Try direct property access!*/
-                            return modelData.shapeData[shapeDialog.tooltipKey]; // Keep original dictionary access for now, but log direct access result
-                        alternateTooltipMode: {
-                            manager.logMessage("Delegate attempting to set alternateTooltipMode to " + shapeDialog.globalAltShiftPressed)
-                            return shapeDialog.globalAltShiftPressed
-                            }
-                            // return modelData.tooltip; // ALTERNATIVE -  *TEMPORARILY* TRY RETURNING DIRECT ACCESS - for debugging ONLY
+                            return modelData.shapeData[shapeDialog.tooltipKey];
                         }
                     }
                     Component.onCompleted: {
