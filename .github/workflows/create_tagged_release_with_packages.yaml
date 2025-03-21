@@ -24,7 +24,7 @@ jobs:
           cp -r licenses ../build/
           cp -r models ../build/
           cp -r qml ../build/
-          cp -r resources/i18n ../build/resources/
+          cp -r resources/ ../build/resources/
           cp __init__.py ../build/
           cp attributions ../build/
           cp LICENSE ../build/
