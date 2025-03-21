@@ -36,7 +36,7 @@ jobs:
       - uses: fieldOfView/cura-plugin-packager-action@main
         with:
           source_folder: "build"
-          package_info_path: "build/.github/workflows/package.json"
+          package_info_path: "repo/.github/workflows/package.json"
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
