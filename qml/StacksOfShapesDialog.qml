@@ -264,8 +264,16 @@ UM.Dialog {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                /*UM.Label { text: "Shapes" } // Shape label*/
-
+                /* *** Maybe later
+                GridView {
+                    id: symbolGrid
+                    Layout.fillWidth: true
+                    model: yourPythonListModel
+                    cellHeight: someHeight
+                    cellWidth: symbolGrid.width / symbolGrid.columns
+                    columns: model.count > 50 ? 2 : 1
+                    delegate: // your delegate
+                }*/
                 ListView {
                     id: shapeListView
                     clip: true
@@ -514,7 +522,7 @@ UM.Dialog {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                     Layout.preferredHeight: implicitHeight
                     text: catalog.i18nc("dialog:disable_transform_tip", "Okay, don't tell me again.")
-                    anchors.left: parent.left
+                    //anchors.left: parent.left
 
                     onClicked: {manager.disableDisplayTip()}
                 }
@@ -527,7 +535,7 @@ UM.Dialog {
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                     Layout.preferredHeight: implicitHeight
                     text: catalog.i18nc("dialog:hide_transform_tip", "Cool, thanks!")
-                    anchors.right: parent.right
+                    //anchors.right: parent.right
 
                     onClicked: {manager.displayTip = false}
                 }

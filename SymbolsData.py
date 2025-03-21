@@ -1,3 +1,5 @@
+# Stacks of Shapes - Copyright Slashee the Cow 2025-
+
 from UM.i18n import i18nCatalog
 
 catalog = i18nCatalog("stacksofshapes")
@@ -328,7 +330,7 @@ Symbols = {
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy", "Toothy Grin Emoji: 😁"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy", "Finally beat Dark Souls, eh?"),
         },
-        catalog.i18nc("symbol_name", "Grin Toothy (Filled)"): {
+        catalog.i18nc("symbol_name", "Toothy Grin (Filled)"): {
             PATH_KEY: "symbols/emojis/grin_toothy_filled_no_outline.stl",
             TOOLTIP_KEY: catalog.i18nc("symbol_tooltip_emojis:grin_toothy_filled_no_outline", "Toothy Grin Emoji: 😁 (Filled)"),
             ALT_TOOLTIP_KEY: catalog.i18nc("symbol_alt_tooltip_emojis:grin_toothy_filled_no_outline", "Warning: Just because you have paid for extensive dental work does<br>not mean people won't try and <i>undo</i> if you shove it in their face."),

@@ -13,8 +13,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          path: "build"
+          path: "repo"
           submodules: "recursive"
+      - name: Create folder for files which are part of plugin
+        run: mkdir -p build
+      - name: Copy files needed for the build
+        working-directory: repo
+        run: |
+          cp -r categories ../build/
+          cp -r licenses ../build/
+          cp -r models ../build/
+          cp -r qml ../build/
+          cp -r resources/i18n ../build/resources/
+          cp __init__.py ../build/
+          cp attributions ../build/
+          cp LICENSE ../build/
+          cp plugin.json ../build/
+          cp README.md ../build/
+          cp ShapesData.py ../build/
+          cp StacksOfShapes.py ../build/
+          cp SymbolsData.py ../build/
       - uses: fieldOfView/cura-plugin-packager-action@main
         with:
           source_folder: "build"

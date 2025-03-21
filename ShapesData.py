@@ -1,3 +1,5 @@
+# Stacks of Shapes - Copyright Slashee the Cow 2025-
+
 from UM.i18n import i18nCatalog
 
 catalog = i18nCatalog("stacksofshapes")

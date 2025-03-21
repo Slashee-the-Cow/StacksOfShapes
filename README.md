@@ -23,7 +23,8 @@ This plugin incorporates third-party models and symbols made available under mul
 
 ---
 ### Known Issues
-- In Cura versions older than 5.10, automatic slicing will be disabled if it is enabled. This is due to a bug in those versions which can cause an immediate crash when adding simple models to the scene.
+- In Cura versions 5.7.0-5.9.1, automatic slicing will be disabled if it is enabled. This is due to a bug in those versions which can cause an immediate crash when adding simple models to the scene.
+- Some models may move when rotating due to the transform origin not being in the centre. *Definitely* working on this one.
 - Some of the Symbols may load rotated the wrong way. I'm looking into it.
 - Sometimes models will load slightly out of bounds. I've tried to fix it but without success. I'll try harder.
 - Sometimes a warning will appear saying a model is invalid. I can't reliably replicate it, so if you can, tell me how!

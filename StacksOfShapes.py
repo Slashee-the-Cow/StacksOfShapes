@@ -72,6 +72,7 @@ class StacksOfShapes(QObject, Extension):
     
     AUTO_SLICE_KEY = "general/auto_slice"
     _fixed_version_minimum = Version("5.10")  # Minimum version to check for that contains a fix for a bug which causes a CTD if auto slice is enabled
+    _unbroken_version_maximum = Version("5.6")  # Sorry, couldn't think of a better name. Versions this and below are fine, in my testing. So now I can more precisly target my victims.
     _race_condition_version = False  # Stores whether current version is <_fixed_version_minimum so I don't have to keep checking it.
     
     def __init__(self, parent = None):
@@ -91,7 +92,7 @@ class StacksOfShapes(QObject, Extension):
         self._shape_size = float(self._preferences.getValue("stacksofshapes/shapesize"))  
         self._symbol_size = float(self._preferences.getValue("stacksofshapes/symbolsize"))
         self._symbol_height = float(self._preferences.getValue("stacksofshapes/symbolheight"))
-        if bool(self._preferences.getValue("stacksofshapes/restore_auto_slice")):
+        if bool(self._preferences.getValue("stacksofshapes/restore_auto_slice")):  # For some reason it didn't re-enable it after it last disabled it
             self._preferences.setValue(self.AUTO_SLICE_KEY, True)
             self._preferences.setValue("stacksofshapes/restore_auto_slice", False)
         self._display_tip = not bool(self._preferences.getValue("stacksofshapes/hide_tip"))  # Poor form, I get it.
@@ -123,11 +124,13 @@ class StacksOfShapes(QObject, Extension):
         self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
-        # There's a race condition bug in Cura versions < 5.10 that results in CTDs if simple geometry is loaded while auto slice is on.
+        # There's a race condition bug in Cura versions 5.7.0 - 5.9.1 (by my testing) that results in CTDs if simple geometry is loaded while auto slice is on.
         # This is used as a flag to disable auto slicing if running an older version.
         # https://github.com/Ultimaker/Cura/issues/19904
-        self._race_condition_version: bool = Version(Application.getInstance().getVersion()) < self._fixed_version_minimum
-        log("d", f"self._race_condition_version = {self._race_condition_version}")
+        current_version = Application.getInstance().getVersion().split("-")[0]  # Fix for version comparison not working on the beta + patch build I've been testing with
+        self._race_condition_version: bool = current_version < self._fixed_version_minimum and current_version > self._unbroken_version_maximum
+        log("i", f"self._race_condition_version = {self._race_condition_version}, reported version = {current_version}")
+        log("i", f"current_version < _fixed_version_minimum = {current_version < self._fixed_version_minimum} current_version > _unbroken_version_maximum = {current_version > self._unbroken_version_maximum}")
         
         self.setMenuName(catalog.i18nc("@item:inmenu", "Stacks of Shapes"))
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Open Shape List"), self.showShapeListPopup)
@@ -248,7 +251,7 @@ class StacksOfShapes(QObject, Extension):
         shape_list_to_return = self._shape_names
         log("d", f"shapeList property - About to return shape list (length: {len(shape_list_to_return)}):")
         if not shape_list_to_return: # I don't intend to create any empty categories, but you never know.
-            log("w", f"shapeList is False when in category {self._current_category}")
+            log("d", f"shapeList is False when in category {self._current_category}")
 
         return shape_list_to_return
     
@@ -416,7 +419,7 @@ class StacksOfShapes(QObject, Extension):
 
     @pyqtSlot(str, result=str)
     def getShapeImage(self, value: str) -> str:
-        """Gets absolute path for a shape's thumbnail based on name.
+        """Gets absolute path for a shape's thumbnail based on model filename.
 
         Args:
             value (str): File name and relative path for model.
@@ -466,9 +469,12 @@ class StacksOfShapes(QObject, Extension):
             return  # Extremely unlikely that another load will arrive between our user's click and us checking. But just in case.
         node_to_process.setName(self._expected_title)
         if node_to_process:
+            local_transformation_before_scale = node_to_process.getLocalTransformation()
+            log("d", f"Local transformation matrix before scaling: {local_transformation_before_scale}")
             # Give it half a sec to catch up in case we're too quick off the mark.
             # Or something. Figure it can't hurt.
-            time.sleep(0.1)
+            #time.sleep(0.1)
+            log("d", f"_on_file_loaded node world position before scaling: {node_to_process.getWorldPosition()}")
             bbox_mesh_data = node_to_process.getBoundingBoxMesh()
             if bbox_mesh_data:
                 aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
@@ -476,6 +482,7 @@ class StacksOfShapes(QObject, Extension):
                     size_x = aabox.width
                     size_y = aabox.depth
                     size_z = aabox.height
+                    #node_to_process.setCenterPosition(Vector(0,-size_z,0))
                     log("d", f"_on_file_loaded got w/d/h of {aabox.width} x {aabox.depth} x {aabox.height}")
 
                     if is_symbol:
@@ -495,14 +502,26 @@ class StacksOfShapes(QObject, Extension):
                             node_to_process.scale(Vector(scale_factor,scale_factor,scale_factor))
                         else:
                             log("w", f"_on_file_loaded tried scaling shape {basename} but its max size was <= 0")
+                    local_transformation_after_scale = node_to_process.getLocalTransformation()     
+                    log("d", f"Local transformation matrix after scaling: {local_transformation_after_scale}")
                 else:
                     log("w", "_on_file_loaded couldn't get bounding box from MeshData")
             else:
                 log("w", "_on_file_load couldn't get bounding box MeshData")
 
             self._reset_scene_node_scale(node_to_process)
-
-        
+            local_transformation_after_scale = node_to_process.getLocalTransformation()     
+            log("d", f"Local transformation matrix after resetting scale to 1: {local_transformation_after_scale}")
+            bbox_mesh_data = node_to_process.getBoundingBoxMesh()
+            if bbox_mesh_data:
+                aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
+                if aabox:
+                    new_size_x = aabox.width
+                    new_size_y = aabox.depth
+                    new_size_z = aabox.height
+            node_to_process.setCenterPosition(Vector(0,-(new_size_z-size_z)/2,0))
+            scene.sceneChanged.emit(node_to_process)
+            time.sleep(.2)  # Can take a little bit to recalculate the mesh.
             if is_symbol:
                 # Due to how they aren't centred in OpenSCAD, the symbols can start way off course
                 # We fix this by forcing them into the centre
@@ -517,9 +536,14 @@ class StacksOfShapes(QObject, Extension):
                 log("d", f"file_loaded > is_symbol > has translated, new position is {new_position}")
             else:  # Due to a lack of by-model "drop down model" in older versions of Cura, we make sure everything spawns at Z0.
                 current_position = node_to_process.getPosition()
-                translation_vector = Vector(0,0, -current_position.z)
-                translate_op = TranslateOperation(node_to_process, translation_vector) # Create TranslateOperation
-                translate_op.push() # Push the translation operation
+                Logger.log("d", f"file_loaded > is_symbol:else > going to translate, current position is {current_position}, current scale is {node_to_process.getScale()}")
+                origin = Vector(0,0,0)
+                move_op = TranslateOperation(node_to_process, origin, set_position=True)
+                move_op.push()
+                new_position = node_to_process.getPosition()
+                Logger.log("d", f"file_loaded > is_symbol:else > has translated, new position is {new_position}")
+            scene.sceneChanged.emit(node_to_process)
+            
         
         if self._reset_tiny_scaling:
             self._preferences.setValue("mesh/scale_tiny_meshes", True)
@@ -540,9 +564,9 @@ class StacksOfShapes(QObject, Extension):
         log("d", f"addShapeLoad() run with mesh_name = {mesh_name} and stl_file_path = {stl_file_path}")
         application = CuraApplication.getInstance()
 
-        global_stack = application.getGlobalContainerStack()
+        """global_stack = application.getGlobalContainerStack()
         if not global_stack:
-            return # Something's wrong with Cura
+            return # Something's wrong with Cura"""
         
         # Some of the models are only a few mm big so we disable automatic scaling
         # so that the user doesn't get an "auto scaled" toast they need to manually dismiss
