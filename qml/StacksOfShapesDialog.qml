@@ -29,7 +29,7 @@ UM.Dialog {
         altMode = !altMode
     }
 
-    readonly property string shapeTypeShape: "SHAPE"  // Would the equivalent of an enum be a regular object? Eh, this is easier
+    readonly property string shapeTypeShape: "SHAPE"  // Would the equivalent of an enum be a regular object? Eh, this is easier.
     readonly property string shapeTypeSymbol: "SYMBOL"
     readonly property string tooltipKey: "tooltip"
 

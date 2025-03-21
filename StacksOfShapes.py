@@ -1,35 +1,33 @@
-# Stacks of Shapes copyright Slashee the Cow 2025-
+# Stacks of Shapes - Copyright Slashee the Cow 2025-
 
 # Version history
 # 1.0.0:    Initial release.
 
 import os
-import sys
 import math
 import numpy
 import trimesh
 from enum import Enum
-import time
 
 from UM.Version import Version
 from UM.Extension import Extension
 from UM.Application import Application
 from cura.CuraApplication import CuraApplication
 
-from UM.Mesh.MeshData import MeshData
+from UM.Mesh.MeshData import MeshData, calculateNormalsFromIndexedVertices
 from UM.Resources import Resources
 from cura.Scene.CuraSceneNode import CuraSceneNode
+from cura.Scene.SliceableObjectDecorator import SliceableObjectDecorator
+from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
 from UM.Scene.SceneNode import SceneNode
-from UM.Operations.TranslateOperation import TranslateOperation
-from UM.Math.Vector import Vector
-from UM.Math.AxisAlignedBox import AxisAlignedBox
+from UM.Operations.AddSceneNodeOperation import AddSceneNodeOperation
 
 from UM.Logger import Logger
 from UM.Message import Message
 
 from UM.i18n import i18nCatalog
 
-from PyQt6.QtCore import Qt, QObject, pyqtSlot, pyqtSignal, pyqtProperty, QUrl
+from PyQt6.QtCore import QObject, pyqtSlot, pyqtSignal, pyqtProperty
 
 from .SymbolsData import *
 from .ShapesData import *
@@ -115,13 +113,6 @@ class StacksOfShapes(QObject, Extension):
         self._current_type_category_thumbnails = Shape_Category_Thumbnail_Filenames
         self._current_type_category_tooltips = Shape_Category_Tooltips
 
-        self._is_file_processing: bool = False
-        self._expected_filename: str | None = None
-        self._expected_title: str | None = None
-        CuraApplication.getInstance().fileCompleted.connect(self._on_file_loaded)
-        self._reset_tiny_scaling: bool = False
-        self._reset_auto_slice: bool = False
-        self._symbol_filenames = self._collect_symbol_filenames()
         self._controller = CuraApplication.getInstance().getController()
 
         # There's a race condition bug in Cura versions 5.7.0 - 5.9.1 (by my testing) that results in CTDs if simple geometry is loaded while auto slice is on.
@@ -224,7 +215,7 @@ class StacksOfShapes(QObject, Extension):
     @pyqtSlot()
     def disableDisplayTip(self) -> None:
         """Permanently hides the "You can use Cura's
-        transform tools" tip in the shape list window
+        transform tools" tip in the shape list window.
         """
         self._display_tip = False
         self.displayTipChanged.emit()
@@ -341,11 +332,12 @@ class StacksOfShapes(QObject, Extension):
     
     @pyqtSlot(str)
     def loadModel(self, value: str) -> None:
+        """Wrapper for QML to add shape to the scene"""
         # self._registerShapeStl(value, self.getModelPath(value))
         log("d", f"loadModel() run with value = {value}")
         stl_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "models", self.getModelPath(value)))
         log("d", f"loadModel() got stl_file_path = {stl_file_path}")
-        self._addShapeLoad(value, stl_file_path)
+        self._addShapeStl(value, stl_file_path)
 
     def getModelPath(self, model: str) -> str:
         """Gets filename of selected model based on model name."""
@@ -434,149 +426,147 @@ class StacksOfShapes(QObject, Extension):
             return model_relative_path
         else:
             return ""
-           
-    
-    
-    def _reset_scene_node_scale(self, scene_node: SceneNode) -> None:
-        """Resets the scale of a SceneNode to make its current scaling appear as 100% by baking the scaling into the mesh.
 
-        Args:
-            scene_node (SceneNode): The node to reset the scale of.
-        """
-        #transformed_mesh = scene_node.getMeshDataTransformed()
-        transformed_mesh = MeshData(vertices = scene_node.getMeshDataTransformedVertices(), normals = scene_node.getMeshDataTransformedNormals(), indices = scene_node.getMeshData().getIndices())
-        scene_node.setScale(Vector(1.0,1.0,1.0))
-        scene_node.setMeshData(transformed_mesh)
-
-
-    def _on_file_loaded(self, file_name: str) -> None:
-        """Listener invoked on file load to see if it's ours to see if we need to manipulate it."""
-        log("d",f"_on_file_loaded saw {file_name}")
-        if not self._is_file_processing or os.path.basename(file_name) != self._expected_filename:
-            return
-
-        node_to_process = None
-        scene = CuraApplication.getInstance().getController().getScene()
-        basename = os.path.basename(file_name)
-        is_symbol = basename in self._symbol_filenames
-
-        for node in scene.getRoot().getChildren():
-            if isinstance(node, CuraSceneNode) and node.getName() == basename:
-                node_to_process = node
-                log("d", f"Found child node that seems like what we want: {node_to_process}")
-                break
-        if not node_to_process:
-            return  # Extremely unlikely that another load will arrive between our user's click and us checking. But just in case.
-        node_to_process.setName(self._expected_title)
-        if node_to_process:
-            local_transformation_before_scale = node_to_process.getLocalTransformation()
-            log("d", f"Local transformation matrix before scaling: {local_transformation_before_scale}")
-            # Give it half a sec to catch up in case we're too quick off the mark.
-            # Or something. Figure it can't hurt.
-            #time.sleep(0.1)
-            log("d", f"_on_file_loaded node world position before scaling: {node_to_process.getWorldPosition()}")
-            bbox_mesh_data = node_to_process.getBoundingBoxMesh()
-            if bbox_mesh_data:
-                aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
-                if aabox:
-                    size_x = aabox.width
-                    size_y = aabox.depth
-                    size_z = aabox.height
-                    #node_to_process.setCenterPosition(Vector(0,-size_z,0))
-                    log("d", f"_on_file_loaded got w/d/h of {aabox.width} x {aabox.depth} x {aabox.height}")
-
-                    if is_symbol:
-                        max_xy_size = max(size_x, size_y)
-                        if max_xy_size > 0:
-                            scale_factor_xy = self._symbol_size / max_xy_size
-                            scale_factor_z = self._symbol_height / size_z
-                            log("d", f"_on_file_loaded scaling symbol by xy {scale_factor_xy} and z {scale_factor_z} for a desired xy of {self.SymbolSize} and z of {self.SymbolHeight}")
-                            node_to_process.scale(Vector(scale_factor_xy, scale_factor_z, scale_factor_xy))
-                        else:
-                            log("w", f"_on_file_loaded tried scaling symbol {basename} but its max_xy_size was <= 0")
-                    else:
-                        max_size = max(size_x, size_y, size_z)
-                        if max_size > 0:
-                            scale_factor = self._shape_size / max_size
-                            log("d", f"_on_file_loaded scaling shape by {scale_factor}")
-                            node_to_process.scale(Vector(scale_factor,scale_factor,scale_factor))
-                        else:
-                            log("w", f"_on_file_loaded tried scaling shape {basename} but its max size was <= 0")
-                    local_transformation_after_scale = node_to_process.getLocalTransformation()     
-                    log("d", f"Local transformation matrix after scaling: {local_transformation_after_scale}")
-                else:
-                    log("w", "_on_file_loaded couldn't get bounding box from MeshData")
-            else:
-                log("w", "_on_file_load couldn't get bounding box MeshData")
-
-            self._reset_scene_node_scale(node_to_process)
-            local_transformation_after_scale = node_to_process.getLocalTransformation()     
-            log("d", f"Local transformation matrix after resetting scale to 1: {local_transformation_after_scale}")
-            bbox_mesh_data = node_to_process.getBoundingBoxMesh()
-            if bbox_mesh_data:
-                aabox: AxisAlignedBox = bbox_mesh_data.getExtents()
-                if aabox:
-                    new_size_x = aabox.width
-                    new_size_y = aabox.depth
-                    new_size_z = aabox.height
-            node_to_process.setCenterPosition(Vector(0,-(new_size_z-size_z)/2,0))
-            scene.sceneChanged.emit(node_to_process)
-            time.sleep(.2)  # Can take a little bit to recalculate the mesh.
-            if is_symbol:
-                # Due to how they aren't centred in OpenSCAD, the symbols can start way off course
-                # We fix this by forcing them into the centre
-                current_position = node_to_process.getPosition()
-                log("d", f"file_loaded > is_symbol > going to translate, current position is {current_position}")
-                #translation_vector = Vector(-current_position.x, -current_position.y, -current_position.z)
-                origin_position = Vector(0,0,0)
-                #log("d", f"file_loaded > is_symbol > going to translate, translation vector is {translation_vector}")
-                move_op = TranslateOperation(node_to_process, origin_position, set_position=True) # Create TranslateOperation
-                move_op.push() # Push the translation operation
-                new_position = node_to_process.getPosition()
-                log("d", f"file_loaded > is_symbol > has translated, new position is {new_position}")
-            else:  # Due to a lack of by-model "drop down model" in older versions of Cura, we make sure everything spawns at Z0.
-                current_position = node_to_process.getPosition()
-                Logger.log("d", f"file_loaded > is_symbol:else > going to translate, current position is {current_position}, current scale is {node_to_process.getScale()}")
-                origin = Vector(0,0,0)
-                move_op = TranslateOperation(node_to_process, origin, set_position=True)
-                move_op.push()
-                new_position = node_to_process.getPosition()
-                Logger.log("d", f"file_loaded > is_symbol:else > has translated, new position is {new_position}")
-            scene.sceneChanged.emit(node_to_process)
-            
+    def _addShapeStl(self, mesh_name, mesh_path) -> None:
         
-        if self._reset_tiny_scaling:
-            self._preferences.setValue("mesh/scale_tiny_meshes", True)
-            self._reset_tiny_scaling = False
+        mesh =  trimesh.load(mesh_path)
+        
+        self._addShape(mesh_name,self._toMeshData(mesh))
 
-        self._is_file_processing = False
-        self._expected_filename = None
-        self._expected_title = None
-
-
-    def _addShapeLoad(self, mesh_name: str, stl_file_path: str) -> None:
-        """Adds a shape to the scene by Cura's standard "load" function.
+    #----------------------------------------
+    # Initial Source code from the awesome fieldOfView - with some amendments by Slashee
+    #----------------------------------------  
+    def _toMeshData(self, tri_node: trimesh.base.Trimesh, target_size: float = None) -> MeshData:
+        """Generate MeshData suitable for adding to a scene node.
 
         Args:
-            mesh_name (str): What the shape should appear as in the object list.
-            stl_file_path (str): Path to model file to load.
+            tri_node (trimesh.base.Trimesh): Starting mesh (usually done by using trimesh.load() and passing it to this.)
+            target_size (float, optional): Manually enter scaled size for meshes to become. Figures out values if None. Defaults to None.
+
+        Returns:
+            MeshData: The model correctly scaled, rotated and ready to be added to the scene.
         """
-        log("d", f"addShapeLoad() run with mesh_name = {mesh_name} and stl_file_path = {stl_file_path}")
+        if target_size is None:
+            match self._current_type:
+                case ShapeTypes.SHAPE:
+                    target_size = self._shape_size
+                case ShapeTypes.SYMBOL:
+                    target_size = self._symbol_size
+                case _:  # This shouldn't happen. But be prepared for anything.
+                    target_size = 20
+
+        # How to scale to a target size
+        # 1 - Get the bounding box of the model
+        bounds_list: list[numpy.ndarray] = tri_node.bounds
+        bounds: tuple[numpy.ndarray, numpy.ndarray] = (bounds_list[0], bounds_list[1])
+        min_point: numpy.ndarray = bounds[0]
+        max_point: numpy.ndarray = bounds[1]
+
+        # 2 - Calculate the dimensions of the bounding box
+        dimensions: numpy.ndarray = max_point - min_point
+
+        if self._current_type == ShapeTypes.SHAPE:
+            # 3 - Get the size of the largest dimension
+            max_bound = numpy.max(dimensions)
+            # 4 - Calculate the scaling factor based on the largest dimension and the target size
+            if max_bound > 0:  # Make sure we handle a degenerate mesh gracefully
+                scale_factor = target_size / max_bound
+            else:
+                scale_factor = 1
+            # 5 - Scale your mesh by that much
+            tri_node.apply_scale(scale_factor)
+        elif self._current_type == ShapeTypes.SYMBOL:
+            # 3 - Get the larger of the X and Y dimeensions
+            max_bound_xy = max(dimensions[0], dimensions[1])
+            # 4 - Calculate the scaling factor based on the largest dimension and target size
+            if max_bound_xy > 0:
+                scale_factor_xy = target_size / max_bound_xy
+            else:
+                scale_factor_xy = 1
+            
+            # 5 - Get Z size and figure out the scaling factor by that
+            if dimensions[2] > 0:
+                scale_factor_z = self._symbol_height / dimensions[2]
+            else:
+                scale_factor_z = 1
+            # 6 - Put your scaling factors in a vector-ish
+            scale_vector =  [scale_factor_xy, scale_factor_xy, scale_factor_z]
+            # 7 - Actually do the scaling already
+            tri_node.apply_scale(scale_vector)
+        else: # Defensive default case - SHOULD NEVER HAPPEN, but for robustness
+            log("w", f"Unexpected shape type in _toMeshData: {self._current_type}. Defaulting to uniform scaling.")
+            max_bound = numpy.max(dimensions)
+            scale_factor = target_size / max_bound if max_bound > 0 else 1
+            tri_node.apply_scale(scale_factor) # Apply uniform scale as fallback
+
+
+        # Rotate the part to lay down on the build plate
+        tri_node.apply_transform(trimesh.transformations.rotation_matrix(math.radians(90), [-1, 0, 0]))
+        
+        tri_faces = tri_node.faces
+        tri_vertices = tri_node.vertices
+
+        # Initial code from fieldOfView
+        # https://github.com/fieldOfView/Cura-SimpleShapes/blob/bac9133a2ddfbf1ca6a3c27aca1cfdd26e847221/SimpleShapes.py#L45
+        indices = []
+        vertices = []
+
+        index_count = 0
+        face_count = 0
+        for tri_face in tri_faces:
+            face = []
+            for tri_index in tri_face:
+                vertices.append(tri_vertices[tri_index])
+                face.append(index_count)
+                index_count += 1
+            indices.append(face)
+            face_count += 1
+
+        vertices = numpy.asarray(vertices, dtype=numpy.float32)
+        indices = numpy.asarray(indices, dtype=numpy.int32)
+        normals = calculateNormalsFromIndexedVertices(vertices, indices, face_count)
+
+        mesh_data = MeshData(vertices=vertices, indices=indices, normals=normals)
+
+        return mesh_data
+        
+    # Initial code from fieldOfView
+    # https://github.com/fieldOfView/Cura-SimpleShapes/blob/bac9133a2ddfbf1ca6a3c27aca1cfdd26e847221/SimpleShapes.py#L70
+    def _addShape(self, mesh_name: str, mesh_data: MeshData, ext_pos = 0) -> None:
         application = CuraApplication.getInstance()
 
-        """global_stack = application.getGlobalContainerStack()
-        if not global_stack:
-            return # Something's wrong with Cura"""
+        new_node = CuraSceneNode()
+
+        new_node.setMeshData(mesh_data)
+        new_node.setSelectable(True)
+        if not mesh_name:
+            new_node.setName("Stack shape: " + str(id(mesh_data)))
+        else:
+            new_node.setName(mesh_name)
+
+        scene = self._controller.getScene()
+        op = AddSceneNodeOperation(new_node, scene.getRoot())
+        op.push()
+
+        extruder_stack = application.getExtruderManager().getActiveExtruderStacks() 
         
-        # Some of the models are only a few mm big so we disable automatic scaling
-        # so that the user doesn't get an "auto scaled" toast they need to manually dismiss
-        if bool(self._preferences.getValue("mesh/scale_tiny_meshes")):
-            self._preferences.setValue("mesh/scale_tiny_meshes", False)
-            self._reset_tiny_scaling = True
-        
-        file_url = QUrl.fromLocalFile(stl_file_path)
-        self._is_file_processing = True
-        self._expected_title = mesh_name
-        self._expected_filename = os.path.basename(stl_file_path)
-        log("d", f"addShapeLoad() about to run readLocalFile, file_url = {file_url}, _expected_title = {self._expected_title}, _expected_filename = {self._expected_filename}")
-        application.readLocalFile(file_url, add_to_recent_files = False)
+        extruder_nr=len(extruder_stack)
+        # Logger.log("d", "extruder_nr= %d", extruder_nr)
+        # default_extruder_position  : <class 'str'>
+        if ext_pos>0 and ext_pos<=extruder_nr :
+            default_extruder_position = int(ext_pos-1)
+        else :
+            default_extruder_position = int(application.getMachineManager().defaultExtruderPosition)
+        # Logger.log("d", "default_extruder_position= %s", type(default_extruder_position))
+        default_extruder_id = extruder_stack[default_extruder_position].getId()
+        # Logger.log("d", "default_extruder_id= %s", default_extruder_id)
+        new_node.callDecoration("setActiveExtruder", default_extruder_id)
+ 
+        # node.setSetting(SceneNodeSettings.AutoDropDown, True)  # I don't even know where this line came from
+            
+        active_build_plate = application.getMultiBuildPlateModel().activeBuildPlate
+        new_node.addDecorator(BuildPlateDecorator(active_build_plate))
+
+        new_node.addDecorator(SliceableObjectDecorator())
+
+        application.getController().getScene().sceneChanged.emit(new_node)
